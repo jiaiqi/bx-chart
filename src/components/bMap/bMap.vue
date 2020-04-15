@@ -17,62 +17,65 @@ export default {
       mapLevel: 20,
       chartSettings: {},
       trackPointList: [],//轨迹经纬度集合
-
     }
   },
-
   methods: {
+    makeMark (point) {
+      //创建标注
+      let pt = new BMapGL.Point(point.lng, point.lat);
+      let marker = new BMapGL.Marker(pt);  // 创建标注
+      this.map.addOverlay(marker);
+      let opts = {
+        position: pt,    // 指定文本标注所在的地理位置
+        offset: new BMapGL.Size(-50, 10)    //设置文本偏移量
+      }
+      let label = new BMapGL.Label(point.label, opts);  // 创建文本标注对象
+      label.setStyle({
+        color: 'red',
+        fontSize: '12px',
+        height: '20px',
+        lineHeight: '20px',
+        fontFamily: '微软雅黑'
+      });
+      this.map.addOverlay(label);
+    },
     initMap () {
+      let self = this
       this.map = new BMapGL.Map("bmap");    // 创建Map实例
       this.map.centerAndZoom(new BMapGL.Point(this.mapCenter[ 0 ], this.mapCenter[ 1 ]), this.mapLevel);  // 初始化地图,设置中心点坐标和地图级别
       this.map.setMapStyleV2({
         styleId: '56e2904e70a8447d06fa76839ef638ef'
       });
       this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
-      // this.map.setHeading(64.5);
-      // this.map.setTilt(73);
-      this.startTrackAnimation()
+      this.startTrackAnimation() //开始轨迹动画
     },
     startTrackAnimation () {
       let self = this
       // 轨迹视角动画
-      var path = [ {
-        'lng': 108.91552,
-        'lat': 34.218788
-      }, {
-        'lng': 108.915973,
-        'lat': 34.219254
-      }, {
-        'lng': 108.915996,
-        'lat': 34.219318
-      }, {
-        'lng': 108.916818,
-        'lat': 34.218836
-      }, {
-        'lng': 108.916818,
-        'lat': 34.218836
-      }, {
-        'lng': 108.91786,
-        'lat': 34.219892
-      }, {
-        'lng': 108.917994,
-        'lat': 34.219937
-      } ];
+      var path = this.pointLineData;
       var point = [];
+
       for (var i = 0; i < path.length; i++) {
         point.push(new BMapGL.Point(path[ i ].lng, path[ i ].lat));
       }
-      var pl = new BMapGL.Polyline(point);
-      setTimeout(()=>{
-trackAni = new BMapGLLib.TrackAnimation(self.map, pl, {
+      var pl = new BMapGL.Polyline(point, {
+        strokeColor: "#fff", //线路颜色
+        strokeWeight: 4//线路大小
+      })
+      setTimeout(() => {
+        let trackAni = new BMapGLLib.TrackAnimation(self.map, pl, {
           overallView: true,
           tilt: 30,
           duration: 20000,
-          delay: 300
+          delay: 300,
+          color: "white"
         });
         trackAni.start();
-      },3000)
-     
+      }, 3000)
+      // 创建标注
+      for (let i = 0; i < this.markData.length; i++) {
+        this.makeMark(this.markData[ i ])
+      }
     },
   },
   mounted () {
@@ -95,18 +98,58 @@ trackAni = new BMapGLLib.TrackAnimation(self.map, pl, {
     chartWidth: {
       type: Number,
       default: null
-    }
+    },
+    markData: {
+      type: Array,
+      default: () => {
+        return [
+          {
+            lng: "108.918026",
+            lat: "34.219776",
+            label: "西部电子社区B座"
+          }
+        ]
+      }
+    },
+    pointLineData: {
+      type: Array,
+      default: () => {
+        return [
+          {
+            lng: "108.917217",
+            lat: "34.219105",
+          },
+          {
+            lng: "108.917842",
+            lat: "34.219892",
+          },
+          {
+            lng: "108.918008",
+            lat: "34.219937",
+          },
+          {
+            lng: "108.918336",
+            lat: "34.219873",
+          },
+          {
+            lng: "108.918282",
+            lat: "34.219135",
+          },
+          {
+            lng: "108.917752",
+            lat: "34.219086",
+          }
+        ]
+      }
+    },
   },
   watch: {
     chartSettings: {
       deep: true,
       immediate: true,
       handler (newValue, oldValue) {
-        console.log('newValue', newValue)
         if (newValue.chart_width && newValue.chart_height) {
-          console.log("initMap")
           let bmap = document.getElementById('bmap')
-          // bmap.setAttribute('style', `width:${this.chartConfigs.chart_width}px;height:${this.chartConfigs.chart_height}px`)
           this.initMap()
         }
       }

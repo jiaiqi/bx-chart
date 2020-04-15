@@ -519,56 +519,26 @@ export default {
   mounted () {
     let self = this;
     self.getPageConfig()
-    let chartId = this.$route.params.chart
-    if (chartId) {
-      localStorage.setItem("chartId", chartId)
-    } else {
-      alert("没有ChartID")
+    try {
+      let chartId = this.$route.params.chart
+      if (chartId) {
+        localStorage.setItem("chartId", chartId)
+      } else {
+        alert("没有ChartID")
+      }
+      $(window, document)
+        .resize(function () {
+          self.resize()
+        })
+        .load(function () {
+          self.resize()
+        })
+      setTimeout(function () {
+        self.resize()
+      }, 10 * 1000)
+    } catch (error) {
+
     }
-    $(window, document)
-      .resize(function () {
-        self.resize()
-      })
-      .load(function () {
-        self.resize()
-      })
-    setTimeout(function () {
-      self.resize()
-    }, 10 * 1000)
-    // TimeOut.startTime()
-    // let datas = dataJson.dataJson; // 原始测试data,通过图标配置的 req 请求获得
-
-
-    // let arr = [];
-
-    // this.chartConfigOld = arr.concat(dataJson.chartConfig); // 加载的 图标配置原始数据
-    // this.chartConfig = arr.concat(this); //  更新和操作后的图标配置数据，需要提交保存时使用
-
-    // /**
-    //  * 构造处理图标数据
-    //  */
-    // let vChartInfo = this.vChartInfo;
-    // vChartInfo = new vChartInfo();
-
-    // /**
-    //  * 测试的业务字段
-    //  */
-    // let keys = ["ywfssj", "card_type"]; // 维度 +  指标合集
-    // let countColName = "create_time"; // count 字段
-    // let dataType = "yljgmc"; // 数据分类，例如tab时使用
-    // let chartType = "line"; // 图标类型
-    // let resData = vChartInfo.getChartColumns(datas, keys, dataType);
-    // resData = vChartInfo.getChart(keys, countColName, chartType);
-    // this.label = vChartInfo.columns.arrs.card_type; //图表的图例
-
-    // this.chartConfig = this.chartConfig.map((item, index) => {
-    //   item.chartData = resData.all;
-
-    //   return item;
-    // });
-
-    // this.chartConfig[1].chartData = resData.all
-
   }
 };
 </script>

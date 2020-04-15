@@ -79,7 +79,6 @@
           </el-table>
           <!-- </el-table> -->
         </div>
-
         <ve-liquidfill
           v-if="this.chartConfigs.chart_type === 'liquidfill'"
           :data="chartDatas"
@@ -464,6 +463,10 @@ export default {
   },
 
   methods: {
+    getBmapData (mapConfig) {
+      console.log(mapConfig, 'mapConfig')
+
+    },
     getChartExtend (e) {
       if (e === "pie") {
         return this.chartPieSettings;
@@ -602,20 +605,20 @@ export default {
     }
   },
   mounted () {
-    // if (this.chartConfigs.chart_type === "ranking") {
-    //   this.chartDatas["waitTime"] = 9999999;
-    // }
-    // this.chartPieSettings.legend.show =
-    //   this.chartConfigs.legend_visible === "是" ? true : false;
     let TimeOut = new this.timeOut(this.requestCycle, 0, this.getCharts);
     TimeOut.reqFun();
     TimeOut.startTime();
   },
   watch: {
     chartConfigs: {
+      immediate: true,
       handler: function (newValue, oldValue) {
+
         if (newValue.chart_type === "ranking") {
           this.chartDatas[ "waitTime" ] = 9999999;
+        }
+        if (newValue.chart_type === "baidumap") {
+          this.getBmapData(newValue)
         }
         return newValue;
       },
