@@ -60,7 +60,7 @@ let dummy = {
 			}
 			sessionStorage.setItem(
 				'bx_auth_ticket',
-				'xabxdzkj-6d7db354-7467-404c-b209-ffafe0801629'
+				'xabxdzkj-2adba909-7dc0-4f33-b34e-5459964e2615'
 			) //  开发bx_auth_ticket 更新后需清除浏览器缓存
 			// sessionStorage.setItem("current_login_user", JSON.stringify(top.user)); //  开发bx_auth_ticket
 		}

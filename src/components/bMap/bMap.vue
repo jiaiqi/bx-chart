@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="bmap-wrap">
     <div
       id="bmap"
-      :style="{ width: chartWidth + 'px', height: chartHeight - 30 + 'px' }"
+      :style="{ width: chartWidth + 'px', height: chartHeight - 50 + 'px' }"
     ></div>
   </div>
 </template>
@@ -16,6 +16,19 @@ export default {
       mapCenter: [ 108.917953, 34.220041 ],//[lon,lat]
       mapLevel: 20,
       chartSettings: {},
+      mapSettings: {
+        pointLine: {
+          lineStyle: {
+            strokeColor: "#eee", //线路颜色
+            strokeWeight: 1//线路大小(粗细)
+          }
+        },
+        marker: {
+          labelStyle: {
+
+          }
+        }
+      },
       trackPointList: [],//轨迹经纬度集合
     }
   },
@@ -31,11 +44,11 @@ export default {
       }
       let label = new BMapGL.Label(point.label, opts);  // 创建文本标注对象
       label.setStyle({
-        color: 'red',
+        border: "1px solid #333",
+        color: '#333',
         fontSize: '12px',
         height: '20px',
         lineHeight: '20px',
-        fontFamily: '微软雅黑'
       });
       this.map.addOverlay(label);
     },
@@ -59,19 +72,19 @@ export default {
         point.push(new BMapGL.Point(path[ i ].lng, path[ i ].lat));
       }
       var pl = new BMapGL.Polyline(point, {
-        strokeColor: "#fff", //线路颜色
-        strokeWeight: 4//线路大小
+        strokeColor: "#eee", //线路颜色
+        strokeWeight: 1//线路大小
       })
-      setTimeout(() => {
-        let trackAni = new BMapGLLib.TrackAnimation(self.map, pl, {
-          overallView: true,
-          tilt: 30,
-          duration: 20000,
-          delay: 300,
-          color: "white"
-        });
-        trackAni.start();
-      }, 3000)
+      // setTimeout(() => {
+      let trackAni = new BMapGLLib.TrackAnimation(self.map, pl, {
+        overallView: true,
+        tilt: 30,
+        duration: 10000,
+        delay: 100,
+        color: "white"
+      });
+      trackAni.start();
+      // }, 5000)
       // 创建标注
       for (let i = 0; i < this.markData.length; i++) {
         this.makeMark(this.markData[ i ])
@@ -151,6 +164,13 @@ export default {
         if (newValue.chart_width && newValue.chart_height) {
           let bmap = document.getElementById('bmap')
           this.initMap()
+          try {
+            this.mapSettings = JSON.parse(decodeURIComponent(newValue.chart_settings))
+
+          } catch (error) {
+            console.log(error);
+
+          }
         }
       }
     }
@@ -159,12 +179,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#bmap {
-  width: 300px;
-  height: 300px;
+.bmap-wrap {
+  box-sizing: border-box;
 }
-.bm-view {
-  width: 100%;
-  height: 300px;
+#bmap {
+  // // width: 300px;
+  // // height: 300px;
+  // padding: 20px;
+  // box-sizing: border-box;
+  margin-top: 20px;
 }
 </style>
