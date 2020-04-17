@@ -1,10 +1,15 @@
 <template>
   <div class="bx-data-view" :style="setViewStyle">
-    <div class="data-view-header" :style="setHeaderStyle">{{ title }}</div>
-    <div class="data-view-main" :style="setMainStyle">
+    <div class="data-view-header" :style="setHeaderStyle">
+      <div class="title">{{ title }}</div>
+      <div class="edit" @click="changeEditable" v-if="viewIsDraggable">
+        {{ editable ? "完成" : "编辑" }}
+      </div>
+    </div>
+    <div class="data-view-main" :style="setMainStyle" v-if="editable">
       <vue-drag-resize
-        :isDraggable="viewIsDraggable ? true : false"
-        :isResizable="viewIsDraggable ? true : false"
+        :isDraggable="viewIsDraggable && editable ? true : false"
+        :isResizable="viewIsDraggable && editable ? true : false"
         :aspectRatio="false"
         :isActive="chartCol._isActive"
         :parentLimitation="true"
@@ -32,6 +37,28 @@
         ></v-charts>
       </vue-drag-resize>
     </div>
+    <div class="data-view-main" :style="setMainStyle" v-if="!editable">
+      <div
+        v-for="(chartCol, index) in chartConfig"
+        :key="index"
+        class="absolute-box"
+        :style="{
+          width: chartCol.chart_width + 'px',
+          height: chartCol.chart_height + 'px',
+          left: chartCol.chart_left + 'px',
+          top: chartCol.chart_top + 'px'
+        }"
+      >
+        <v-charts
+          v-if="chartCol !== undefined"
+          :chartConfigs="chartCol"
+          :chartHeight="chartCol.chart_height"
+          :chartWidth="chartCol.chart_width"
+          :chartLabel="label"
+          v-on:onSave="onSubmint"
+        ></v-charts>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -39,7 +66,7 @@
 let moment = require("moment");
 let $ = require('jquery')
 import vCharts from "@/components/vcharts";
-import dataJson from "@/assets/common/data";
+// import dataJson from "@/assets/common/data";
 export default {
   components: { vCharts },
   computed: {
@@ -101,11 +128,22 @@ export default {
       chartConfig: [],
       label: [],
       share: null,
+      editable: false
     };
   },
   methods: {
     // activatedFun(e,index){
     // },
+    changeEditable () {
+      //更改可编辑状态(是否可编辑)
+      this.editable = !this.editable
+      let data = JSON.parse(JSON.stringify(this.chartConfig))
+      this.chartConfig = data.map((item, index) => {
+        item._isActive = false;
+        this.$set(this.chartConfig, index, item)
+        return item;
+      });
+    },
     onResize (newRect) {
       // 缩放 拖拽 时
       //   this.width = newRect.width;
@@ -547,11 +585,23 @@ export default {
 .bx-data-view {
   .data-view-header {
     text-align: center;
+    position: relative;
     font-size: 1.6rem;
+    .edit {
+      position: absolute;
+      top: 10px;
+      right: 30px;
+    }
   }
   .data-view-main {
     .data-view-item {
       height: 100%;
+    }
+    .absolute-box {
+      position: absolute;
+      z-index: auto;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
     }
   }
 }

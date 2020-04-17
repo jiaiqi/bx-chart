@@ -61,6 +61,8 @@ export default {
       });
       this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
       this.startTrackAnimation() //开始轨迹动画
+      self.map.setHeading(64.5);
+      self.map.setTilt(50);
     },
     startTrackAnimation () {
       let self = this
@@ -73,17 +75,17 @@ export default {
       }
       var pl = new BMapGL.Polyline(point, {
         strokeColor: "#eee", //线路颜色
-        strokeWeight: 1//线路大小
+        strokeWeight: 2//线路大小
       })
+      this.map.addOverlay(pl);
       // setTimeout(() => {
-      let trackAni = new BMapGLLib.TrackAnimation(self.map, pl, {
-        overallView: true,
-        tilt: 30,
-        duration: 10000,
-        delay: 100,
-        color: "white"
-      });
-      trackAni.start();
+      // let trackAni = new BMapGLLib.TrackAnimation(self.map, pl, {
+      //   overallView: true,
+      //   tilt: 40,
+      //   duration: 10000,
+      //   delay: 100,
+      //   color: "#eee"
+      // });
       // }, 5000)
       // 创建标注
       for (let i = 0; i < this.markData.length; i++) {

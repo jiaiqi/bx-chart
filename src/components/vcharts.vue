@@ -51,7 +51,12 @@
           v-if="this.chartConfigs.chart_type === 'baidumap'"
           :chartConfigs="chartConfigs"
         ></b-map>
-
+        <tab-list
+          :chartWidth="chartWidth"
+          :chartHeight="chartHeight"
+          v-if="this.chartConfigs.chart_type === 'tablist'"
+          :chartConfigs="chartConfigs"
+        ></tab-list>
         <ve-gauge
           :data="chartDatas"
           v-if="this.chartConfigs.chart_type === 'gauge'"
@@ -96,7 +101,8 @@
         ></ve-heatmap>
         <ve-chart
           v-else-if="
-            this.chartConfigs.chart_type !== 'map' &&
+            this.chartConfigs.chart_type !== 'tablist' &&
+              this.chartConfigs.chart_type !== 'map' &&
               this.chartConfigs.chart_type !== 'baidumap' &&
               this.chartConfigs.chart_type !== 'gauge' &&
               this.chartConfigs.chart_type !== 'ranking' &&
@@ -122,9 +128,10 @@ import testData from "../assets/common/data";
 import eMap from "./echartMap";
 import digital from "./digital";
 import bMap from '@/components/bMap/bMap.vue'
+import TabList from '@/components/tabList/tabList.vue'
 export default {
   name: "bx-chart-views",
-  components: { eMap, digital, bMap },
+  components: { eMap, digital, bMap, TabList },
   props: {
     chartConfigs: {
       type: Object,
@@ -505,7 +512,7 @@ export default {
         try {
           DataReq = JSON.parse(DataReq);
         } catch (error) {
-          console.log(DataReq)
+          console.log(error)
         }
         let conditions = DataReq.condition;
         if (conditions) {

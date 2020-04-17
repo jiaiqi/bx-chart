@@ -1,14 +1,27 @@
 <template>
   <div class="container_view">
     <div class="container">
-      <div class="title">社保医疗一卡通融合平台</div>
+      <div class="title">登录账号</div>
       <div class="panel">
         <div class="content login">
           <div class="form">
-            <div class="input" :class="{'focus':userNameFocus==true}" placeholder="用户名">
-              <input type="text" v-model="userName" @focus="focus('user')" @blur="blur('user')" />
+            <div
+              class="input"
+              :class="{ focus: userNameFocus == true }"
+              placeholder="用户名"
+            >
+              <input
+                type="text"
+                v-model="userName"
+                @focus="focus('user')"
+                @blur="blur('user')"
+              />
             </div>
-            <div class="input" :class="{'focus':pwdFocus==true}" placeholder="密 码">
+            <div
+              class="input"
+              :class="{ focus: pwdFocus == true }"
+              placeholder="密 码"
+            >
               <input
                 type="password"
                 v-model="pwd"
@@ -19,7 +32,12 @@
             </div>
 
             <div id="forget_pwd_id" class="remberPass">
-              <input type="checkbox" name id="ck_rmbUser" v-model="saveAccount" />
+              <input
+                type="checkbox"
+                name
+                id="ck_rmbUser"
+                v-model="saveAccount"
+              />
               <label for="ck_rmbUser">记住密码</label>
             </div>
             <div class="login-box">
@@ -34,7 +52,7 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       userName: "",
       pwd: "",
@@ -43,7 +61,7 @@ export default {
       pwdFocus: false,
     };
   },
-  mounted() {
+  mounted () {
     let account = localStorage.getItem("account");
     if (account) {
       account = JSON.parse(account);
@@ -54,14 +72,14 @@ export default {
     }
   },
   methods: {
-    focus(p) {
+    focus (p) {
       if (p == "user") {
         this.userNameFocus = true
       } else if (p == "pwd") {
         this.pwdFocus = true
       }
     },
-    blur(p) {
+    blur (p) {
       if (p === "user" && this.userName === "") {
         this.userNameFocus = false
       } else if (p === "pwd" && this.pwd === "") {
@@ -92,7 +110,7 @@ export default {
       return "";
     },
     /*保存登录账户信息*/
-    saveLoginUser() {
+    saveLoginUser () {
       let username = this.userName;
       let password = this.pwd;
       this.setCookie("login_user_name", username, { expires: 7 });
@@ -107,27 +125,27 @@ export default {
         this.setCookie("pwd", "", { expires: -1 });
       }
     },
-    toHome(param) {
+    toHome (param) {
       const self = this;
       const user_no = this.userName;
       const { pwd } = this;
       const bxReqs = [];
       const bxReq = {};
       bxReq.serviceName = "srvuser_login";
-      bxReq.data = [{ user_no: user_no, pwd: pwd }];
+      bxReq.data = [ { user_no: user_no, pwd: pwd } ];
       bxReqs.push(bxReq);
       sessionStorage.setItem("need_login_flag", null);
       let path = this.getServiceUrl("operate", "srvuser_login", "sso");
       const callBack = data => {
         if (data.state == "SUCCESS") {
-          const resp = data.response[0];
+          const resp = data.response[ 0 ];
           const { bx_auth_ticket } = resp.response;
           sessionStorage.setItem("bx_auth_ticket", bx_auth_ticket);
         } else {
           alert(data.resultMessage);
         }
       };
-      function crosAjax(url, method, jsonData, succFun) {
+      function crosAjax (url, method, jsonData, succFun) {
         if (sessionStorage.getItem("need_login_flag") != "need_login") {
           self.axios({
             url,
@@ -140,8 +158,8 @@ export default {
             .then(res => {
               if (res.data.resultCode === "SUCCESS") {
                 self.saveLoginUser();
-                const resp = res.data.response[0];
-                const { bx_auth_ticket } = res.data.response[0].response;
+                const resp = res.data.response[ 0 ];
+                const { bx_auth_ticket } = res.data.response[ 0 ].response;
                 sessionStorage.setItem("bx_auth_ticket", bx_auth_ticket);
                 const current_login_user = resp.response.login_user_info;
                 // alert(JSON.stringify(resp))
