@@ -46,7 +46,10 @@ export default {
     makeMark (point) {
       //创建标注
       let pt = new BMapGL.Point(point.lng, point.lat);
-      let marker = new BMapGL.Marker(pt);  // 创建标注
+      console.log(require(`@/assets/images/police.png`), point.icon)
+      let myIcon = new BMapGL.Icon(require(`@/assets/images/car.png`), new BMapGL.Size(52, 26));
+      let marker = new BMapGL.Marker(pt, { icon: myIcon });  // 创建标注
+
       this.map.addOverlay(marker);
       let opts = {
         icon: point.icon,
@@ -234,7 +237,7 @@ export default {
       }
     },
     markList: {
-      immediate: true,
+      // immediate: true,
       deep: true,
       handler (newValue, oldValue) {
         for (let i = 0; i < newValue.length; i++) {

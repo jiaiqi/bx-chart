@@ -503,7 +503,7 @@ export default {
               rulyType: "eq",
               value: subdataConfig.chart_no
             } ],
-            "colNames": [ "chart_columns", "chart_no", "chart_request_payload", "chart_request_url", "icon", "map_data_no", "name", "type", "_chart_no_disp" ],
+            "colNames": [ "chart_columns", "chart_no", "chart_request_payload", "chart_request_url", "icon", "map_data_no", "name", "type", "_chart_no_disp", "remark" ],
             "serviceName": chartSettings.subdataConfig.serviceName
           }
           const res = await this.$http.post(url, req)
@@ -512,6 +512,7 @@ export default {
           }
           if (Array.isArray(subdataList)) {
             let list = []
+            debugger
             subdataList.forEach((sub, subIndex) => {
               if (sub.chart_columns && typeof sub.chart_columns === 'string') {
                 try {
@@ -539,12 +540,12 @@ export default {
               }).then(data => {
                 // self.subdataList.push(data)
                 if (sub.type === "地标") {
-                  console.log('subdataList', data, sub, sub.chart_columns)
+                  console.log('subdataList', data, sub)
                   Array.isArray(data) && data.forEach(item => {
                     item[ 'lat' ] = item[ sub.chart_columns[ 'lat' ] ]
                     item[ 'lng' ] = item[ sub.chart_columns[ 'lon' ] ]
                     item[ 'label' ] = item[ sub.chart_columns[ 'name' ] ]
-                    item[ 'icon' ] = sub[ 'iconPath' ]
+                    item[ 'icon' ] = sub[ 'remark' ]
                   })
                   self.$set(self.markerData, subIndex, data)
                   // let item = self.subdataList[ 'marker' ]
@@ -559,7 +560,7 @@ export default {
                     // item[ 'label' ] = item[ sub.chart_columns[ 'name' ] ]
                     item[ 'icon' ] = sub[ 'iconPath' ]
                   })
-                  self.$set(self.lineData, subIndex, data)
+                  self.$set(self.subdataList, subIndex, data)
                 }
               })
             })
