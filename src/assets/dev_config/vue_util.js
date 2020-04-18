@@ -951,4 +951,28 @@ Vue.prototype.round = function (number, precision) {
   // round(1.005, 2);    //1.01
 }
 
+Vue.prototype.getPictureUrl = async function(file_no) {
+  const serviceName = 'srvfile_attachment_select';
+  const url = this.getServiceUrl('select', serviceName, 'file');
+  const req = {
+    serviceName: serviceName,
+    colNames: ['*'],
+    condition: [{ colName: 'file_no', value: file_no, ruleType: 'eq' }]
+  };
+  if (file_no !== null && file_no !== '' && file_no !== undefined) {
+    let res = await this.$http.post(url, req);
+    if (res.data.state === 'SUCCESS') {
+      const data = res.data.data[0];
+      if (data) {
+        const fileurl = top.backendIpAddr + '/file/download?filePath=' + data.fileurl;
+        return fileurl;
+      }else{
+        return false
+      }
+    }
+  }else{
+    return false
+  }
+}
+
 export default init_util;

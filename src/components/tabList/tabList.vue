@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="list-view" v-if="currentList.type === 'table'">
-        <div class="table-head">
+        <!-- <div class="table-head">
           <div
             class="head"
             v-for="(item, index) in currentList.colList"
@@ -27,8 +27,17 @@
           >
             {{ item.label }}
           </div>
-        </div>
+        </div> -->
         <div class="table-main">
+          <div class="table-row">
+            <div
+              class="table-column head"
+              v-for="(item, index) in currentList.colList"
+              :key="index"
+            >
+              {{ item.label }}
+            </div>
+          </div>
           <div
             class="table-row"
             v-for="(rowItem, rowIndex) in currentList.listData"
@@ -204,7 +213,7 @@ export default {
     }
   },
   created () {
-    console.log(this.chartConfigs, 'chartConfigs')
+    // console.log(this.chartConfigs, 'chartConfigs')
   },
 }
 </script>
@@ -305,8 +314,11 @@ export default {
         display: flex;
         margin: 10px 0;
         .head {
-          flex: 1;
+          min-width: 30%;
           text-align: center;
+          &:nth-child(2) {
+            flex: 1;
+          }
         }
       }
       .table-main {
@@ -321,15 +333,22 @@ export default {
           .table-column {
             text-align: center;
             line-height: 30px;
+            min-width: 20%;
             &:first-child {
               background-color: #008800;
               border-radius: 5px;
               height: 30px;
               margin: 5px 0;
               padding: 0 5px;
-              &:nth-child(2) {
-                background-color: #007799;
-              }
+            }
+            &:nth-child(2) {
+              flex: 1;
+            }
+            &.head {
+              background-color: transparent;
+              font-size: 18px;
+              font-weight: 400;
+              color: #efefef;
             }
           }
         }

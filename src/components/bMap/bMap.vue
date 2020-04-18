@@ -1,5 +1,8 @@
 <template>
-  <div class="bmap-wrap">
+  <div
+    class="bmap-wrap"
+    :style="{ width: chartWidth + 'px', height: chartHeight - 50 + 'px' }"
+  >
     <div
       id="bmap"
       :style="{ width: chartWidth + 'px', height: chartHeight - 50 + 'px' }"
@@ -13,23 +16,30 @@ export default {
     return {
       // key: value
       map: null,//地图实例
-      mapCenter: [ 108.917953, 34.220041 ],//[lon,lat]
-      mapLevel: 20,
+      // mapCenter: [ 108.917953, 34.220041 ],//[lon,lat]
+      mapCenter: [ 108.7330380000, 34.4605530000 ],
+
+      mapLevel: 19,
       chartSettings: {},
       mapSettings: {
+        mapCenter: [ 108.7330380000, 34.4605530000 ],
+        // mapCenter: [ 108.917953, 34.220041 ],
         pointLine: {
           lineStyle: {
             strokeColor: "#eee", //线路颜色
-            strokeWeight: 1//线路大小(粗细)
+            strokeWeight: 1//线路宽度(粗细)
           }
         },
         marker: {
+          icon: "",
           labelStyle: {
 
           }
         }
       },
       trackPointList: [],//轨迹经纬度集合
+      markList: [],
+      pointLineList: []
     }
   },
   methods: {
@@ -39,6 +49,7 @@ export default {
       let marker = new BMapGL.Marker(pt);  // 创建标注
       this.map.addOverlay(marker);
       let opts = {
+        icon: point.icon,
         position: pt,    // 指定文本标注所在的地理位置
         offset: new BMapGL.Size(-50, 10)    //设置文本偏移量
       }
@@ -51,6 +62,12 @@ export default {
         lineHeight: '20px',
       });
       this.map.addOverlay(label);
+      marker.addEventListener("click", function (e) {
+        alert("经度:" + point.lng + ",纬度:" + point.lat);
+      });
+      label.addEventListener("click", function (e) {
+        alert("经度:" + point.lng + ",纬度:" + point.lat);
+      });
     },
     initMap () {
       let self = this
@@ -60,11 +77,12 @@ export default {
         styleId: '56e2904e70a8447d06fa76839ef638ef'
       });
       this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
-      this.startTrackAnimation() //开始轨迹动画
+      this.makePointLine() //开始轨迹动画
       self.map.setHeading(64.5);
       self.map.setTilt(50);
     },
-    startTrackAnimation () {
+    makePointLine (pointLineData) {
+      //创建轨迹
       let self = this
       // 轨迹视角动画
       var path = this.pointLineData;
@@ -88,9 +106,22 @@ export default {
       // });
       // }, 5000)
       // 创建标注
-      for (let i = 0; i < this.markData.length; i++) {
-        this.makeMark(this.markData[ i ])
-      }
+      // for (let i = 0; i < this.markList.length; i++) {
+      //   // this.makeMark(this.markList[ i ])
+      //   if (Array.isArray(this.markList[ i ])) {
+      //     for (let index = 0; index < this.markList[ i ].length; index++) {
+      //       const element = this.markList[ i ][ index ];
+      //       this.makeMark(element)
+
+      //     }
+      //     try {
+      //       this.mapCenter = [ this.markList[ this.markList.length - 1 ][ 0 ].lng, this.markList[ this.markList.length - 1 ][ 0 ].at ]
+
+      //     } catch (error) {
+      //       console.log(error)
+      //     }
+      //   }
+      // }
     },
   },
   mounted () {
@@ -121,7 +152,8 @@ export default {
           {
             lng: "108.918026",
             lat: "34.219776",
-            label: "西部电子社区B座"
+            label: "西部电子社区B座",
+            icon: ""
           }
         ]
       }
@@ -159,6 +191,70 @@ export default {
     },
   },
   watch: {
+    markData: {
+      immediate: true,
+      deep: true,
+      handler (newValue, oldValue) {
+        this.markList.length = 0
+        this.markList = JSON.parse(JSON.stringify(newValue))
+      }
+    },
+    pointLineData: {
+      immediate: true,
+      deep: true,
+      handler (newValue, oldValue) {
+        this.pointLineList.length = 0
+        this.pointLineList = JSON.parse(JSON.stringify(newValue))
+      }
+    },
+    pointLineList: {
+      immediate: true,
+      deep: true,
+      handler (newValue, oldValue) {
+        for (let i = 0; i < newValue.length; i++) {
+          console.log(newValue, 'lineList')
+          if (Array.isArray(newValue[ i ])) {
+            this.makePointLine(newValue[ i ])
+          }
+          // this.makeMark(newValue[ i ])
+          // if (Array.isArray(newValue[ i ])) {
+          //   for (let index = 0; index < newValue[ i ].length; index++) {
+          //     const element = newValue[ i ][ index ];
+          //     this.makeMark(element)
+
+          //   }
+          //   try {
+          //     this.mapCenter = [ newValue[ newValue.length - 1 ][ 0 ].lng, newValue[ newValue.length - 1 ][ 0 ].at ]
+
+          //   } catch (error) {
+          //     console.log(error)
+          //   }
+          // }
+        }
+      }
+    },
+    markList: {
+      immediate: true,
+      deep: true,
+      handler (newValue, oldValue) {
+        for (let i = 0; i < newValue.length; i++) {
+          // this.makeMark(newValue[ i ])
+          if (Array.isArray(newValue[ i ])) {
+            for (let index = 0; index < newValue[ i ].length; index++) {
+              const element = newValue[ i ][ index ];
+              this.makeMark(element)
+
+            }
+            try {
+              this.mapCenter = [ newValue[ newValue.length - 1 ][ 0 ].lng, newValue[ newValue.length - 1 ][ 0 ].at ]
+
+            } catch (error) {
+              console.log(error)
+            }
+          }
+        }
+      }
+    },
     chartSettings: {
       deep: true,
       immediate: true,
@@ -170,8 +266,14 @@ export default {
             this.mapSettings = JSON.parse(decodeURIComponent(newValue.chart_settings))
 
           } catch (error) {
-            console.log(error);
-
+            console.log(error, '\n', newValue);
+            let obj = {
+              dataConfig: {
+                app: "dataanalyze",
+                operator: "select",
+                serviceName: "srvanalyze_chart_map_data_select"
+              }
+            }
           }
         }
       }
@@ -185,10 +287,6 @@ export default {
   box-sizing: border-box;
 }
 #bmap {
-  // // width: 300px;
-  // // height: 300px;
-  // padding: 20px;
-  // box-sizing: border-box;
   margin-top: 20px;
 }
 </style>

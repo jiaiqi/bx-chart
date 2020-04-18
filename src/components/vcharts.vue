@@ -48,6 +48,7 @@
         <b-map
           :chartWidth="chartWidth"
           :chartHeight="chartHeight"
+          :markData="markerData"
           v-if="this.chartConfigs.chart_type === 'baidumap'"
           :chartConfigs="chartConfigs"
         ></b-map>
@@ -450,6 +451,7 @@ export default {
       isStack: false, // 是否堆叠
       stackLabel: [], // 需要堆叠的项目
       rotate: 0,
+
       colors:
         this.chartConfigs.chart_type == "line"
           ? [ "#00B7C3", "#00CC6A", "F7630C", "#0078D7", "#6B69D6", "#009688" ]
@@ -465,15 +467,117 @@ export default {
             "#50616d",
             "#16a951",
             "#a88462"
-          ] // 图表颜色
+          ], // 图表颜色
+      subdataList: {
+        line: [],
+        marker: []
+      },
+      markerData: [],
+      lineData: [],
     };
+
   },
 
   methods: {
-    getBmapData (mapConfig) {
-      console.log(mapConfig, 'mapConfig')
+    async getSubdataConfig (subdataConfig = {}) {
+      //获取子表配置
+      const self = this
+      if (subdataConfig.chart_settings && typeof subdataConfig.chart_settings === "string") {
+        let chartSettings = JSON.parse(decodeURIComponent(subdataConfig.chart_settings))
+        // if(chartSettings.)
+        console.log(subdataConfig, chartSettings, 'getSubdata')
+        let subdataList = []
 
+        if (chartSettings.subdataConfig &&
+          chartSettings.subdataConfig.operator &&
+          chartSettings.subdataConfig.serviceName &&
+          chartSettings.subdataConfig.app) {
+          const url = this.getServiceUrl(
+            chartSettings.subdataConfig.operator,
+            chartSettings.subdataConfig.serviceName,
+            chartSettings.subdataConfig.app
+          );
+          let req = {
+            "condition": [ {
+              colName: "chart_no",
+              rulyType: "eq",
+              value: subdataConfig.chart_no
+            } ],
+            "colNames": [ "chart_columns", "chart_no", "chart_request_payload", "chart_request_url", "icon", "map_data_no", "name", "type", "_chart_no_disp" ],
+            "serviceName": chartSettings.subdataConfig.serviceName
+          }
+          const res = await this.$http.post(url, req)
+          if (res.data.state === "SUCCESS") {
+            subdataList = res.data.data.filter(item => item.chart_columns && item.chart_request_payload && item)
+          }
+          if (Array.isArray(subdataList)) {
+            let list = []
+            subdataList.forEach((sub, subIndex) => {
+              if (sub.chart_columns && typeof sub.chart_columns === 'string') {
+                try {
+                  sub.chart_columns = JSON.parse(sub.chart_columns)
+                } catch (error) {
+                  console.log(error)
+                }
+              }
+              if (sub.chart_request_payload && typeof sub.chart_request_payload === 'string') {
+                try {
+                  sub.chart_request_payload = JSON.parse(sub.chart_request_payload)
+                } catch (error) {
+                  console.log(error)
+                }
+              }
+              if (sub.icon) {
+                sub[ 'iconPath' ] = top.backendIpAddr + '/file/download?fileNo=' + sub.icon
+                // this.getPictureUrl(sub.icon).then(path => { sub[ 'iconPath' ] = path })
+              }
+              self.getSubdata({
+                url: sub.chart_request_url,
+                icon: sub.iconPath,
+                req: sub.chart_request_payload,
+                columns: sub.chart_columns
+              }).then(data => {
+                // self.subdataList.push(data)
+                if (sub.type === "地标") {
+                  console.log('subdataList', data, sub, sub.chart_columns)
+                  Array.isArray(data) && data.forEach(item => {
+                    item[ 'lat' ] = item[ sub.chart_columns[ 'lat' ] ]
+                    item[ 'lng' ] = item[ sub.chart_columns[ 'lon' ] ]
+                    item[ 'label' ] = item[ sub.chart_columns[ 'name' ] ]
+                    item[ 'icon' ] = sub[ 'iconPath' ]
+                  })
+                  self.$set(self.markerData, subIndex, data)
+                  // let item = self.subdataList[ 'marker' ]
+                  // item.push(data)
+                  // self.$set(self.subdataList, "marker", item)
+                } else if (sub.type === '路径') {
+                  // self.subdataList[ 'line' ].push(data)
+                  console.log('subdataList', data, sub, sub.chart_columns)
+                  Array.isArray(data) && data.forEach(item => {
+                    item[ 'lat' ] = item[ sub.chart_columns[ 'lat' ] ]
+                    item[ 'lng' ] = item[ sub.chart_columns[ 'lon' ] ]
+                    // item[ 'label' ] = item[ sub.chart_columns[ 'name' ] ]
+                    item[ 'icon' ] = sub[ 'iconPath' ]
+                  })
+                  self.$set(self.lineData, subIndex, data)
+                }
+              })
+            })
+          }
+        }
+      }
     },
+    async getSubdata (e) {
+      console.log(e)
+      if (e.columns && e.req && e.url) {
+        const url = top.backendIpAddr + e.url
+        let res = await this.$http.post(url, e.req)
+        if (res.data.state === "SUCCESS") {
+          return res.data.data
+        }
+      }
+    },
+
     getChartExtend (e) {
       if (e === "pie") {
         return this.chartPieSettings;
@@ -508,11 +612,11 @@ export default {
       let DataUrl = "";
       DataUrl = this.getIp() + information.chart_request_url;
       let DataReq = information.chart_request_payload;
-      if (typeof DataReq == "string") {
+      if (DataReq && typeof DataReq == "string") {
         try {
           DataReq = JSON.parse(DataReq);
         } catch (error) {
-          console.log(error)
+          console.log(error, DataReq)
         }
         let conditions = DataReq.condition;
         if (conditions) {
@@ -617,6 +721,13 @@ export default {
     TimeOut.startTime();
   },
   watch: {
+    // subdataList: {
+    //   handler: function (newValue, oldValue) {
+
+    //     // return newValue;
+    //   },
+    //   deep: true //对象内部的属性监听，即深度监听
+    // },
     chartConfigs: {
       immediate: true,
       handler: function (newValue, oldValue) {
@@ -624,8 +735,8 @@ export default {
         if (newValue.chart_type === "ranking") {
           this.chartDatas[ "waitTime" ] = 9999999;
         }
-        if (newValue.chart_type === "baidumap") {
-          this.getBmapData(newValue)
+        if (newValue.subdata === "是") {
+          this.getSubdataConfig(newValue)
         }
         return newValue;
       },

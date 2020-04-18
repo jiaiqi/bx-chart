@@ -56,6 +56,7 @@ function init() {
 	Vue.config.productionTip = false
 	// 封装axios
 	Vue.prototype.axios = axios // 将axios挂载到vue原型
+	Vue.prototype.$http = axios // 将axios挂载到vue原型
 	axios.defaults.retry = 3 // 设置请求超时后重新发起请求的次数
 	axios.defaults.retryDelay = 5000 // 设置超时时间（毫秒）
 	axios.interceptors.request.use(
