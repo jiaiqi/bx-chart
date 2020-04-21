@@ -49,12 +49,18 @@
           :chartWidth="chartWidth"
           :chartHeight="chartHeight"
           :markData="markerData"
+          :pointLineData="lineData"
           v-if="this.chartConfigs.chart_type === 'baidumap'"
           :chartConfigs="chartConfigs"
         ></b-map>
         <tab-list
           :chartWidth="chartWidth"
           :chartHeight="chartHeight"
+          :tabList="
+            typeof chartConfigs.chart_settings !== 'string'
+              ? chartConfigs.chart_settings
+              : null
+          "
           v-if="this.chartConfigs.chart_type === 'tablist'"
           :chartConfigs="chartConfigs"
         ></tab-list>
@@ -479,73 +485,128 @@ export default {
   },
 
   methods: {
+    getTabListData (chartSettings) {
+      console.log('chartConfig', chartSettings)
+      if (Array.isArray(chartSettings)) {
+        chartSettings.forEach((item, index) => {
+          let url = this.getIp() + item.requestUrl
+          let req = item.requestParams
+          this.$http.post(url, req).then(res => {
+            if (res.data.state === "SUCCESS") {
+              item[ 'listData' ] = res.data.data
+              this.$set(chartSettings, index, item)
+              this.$set(this.chartConfigs.chart_settings, index, item)
+            }
+          })
+        })
+      }
+    },
     async getSubdataConfig (subdataConfig = {}) {
       //获取子表配置
       const self = this
       if (subdataConfig.chart_settings && typeof subdataConfig.chart_settings === "string") {
-        let chartSettings = JSON.parse(decodeURIComponent(subdataConfig.chart_settings))
-        // if(chartSettings.)
-        console.log(subdataConfig, chartSettings, 'getSubdata')
+        let chart_request_payload = JSON.parse(decodeURIComponent(subdataConfig.chart_request_payload))
+        console.log(subdataConfig, chart_request_payload, 'getSubdata')
         let subdataList = []
-
-        if (chartSettings.subdataConfig &&
-          chartSettings.subdataConfig.operator &&
-          chartSettings.subdataConfig.serviceName &&
-          chartSettings.subdataConfig.app) {
-          const url = this.getServiceUrl(
-            chartSettings.subdataConfig.operator,
-            chartSettings.subdataConfig.serviceName,
-            chartSettings.subdataConfig.app
-          );
-          let req = {
-            "condition": [ {
-              colName: "chart_no",
-              rulyType: "eq",
-              value: subdataConfig.chart_no
-            } ],
-            "colNames": [ "chart_columns", "chart_no", "chart_request_payload", "chart_request_url", "icon", "map_data_no", "name", "type", "_chart_no_disp", "remark" ],
-            "serviceName": chartSettings.subdataConfig.serviceName
-          }
-          const res = await this.$http.post(url, req)
-          if (res.data.state === "SUCCESS") {
-            subdataList = res.data.data.filter(item => item.chart_columns && item.chart_request_payload && item)
-          }
-          if (Array.isArray(subdataList)) {
-            let list = []
-            debugger
-            subdataList.forEach((sub, subIndex) => {
-              if (sub.chart_columns && typeof sub.chart_columns === 'string') {
-                try {
-                  sub.chart_columns = JSON.parse(sub.chart_columns)
-                } catch (error) {
-                  console.log(error)
-                }
+        let url = this.getIp() + subdataConfig.chart_request_url;
+        let req = {
+          "condition": [ {
+            colName: "chart_no",
+            ruleType: "eq",
+            value: subdataConfig.chart_no
+          } ],
+          colNames: [ "*" ],
+          "serviceName": chart_request_payload.serviceName
+        }
+        // if (chartSettings.subdataConfig &&
+        //   chartSettings.subdataConfig.operator &&
+        //   chartSettings.subdataConfig.serviceName &&
+        //   chartSettings.subdataConfig.app) {
+        //   const url = this.getServiceUrl(
+        //     chartSettings.subdataConfig.operator,
+        //     chartSettings.subdataConfig.serviceName,
+        //     chartSettings.subdataConfig.app
+        //   );
+        //   let req = {
+        //     "condition": [ {
+        //       colName: "chart_no",
+        //       ruleType: "eq",
+        //       value: subdataConfig.chart_no
+        //     } ],
+        //     "colNames": [ "chart_columns", "chart_no", "chart_request_payload", "chart_request_url", "icon", "map_data_no", "name", "type", "_chart_no_disp", "remark" ],
+        //     "serviceName": chartSettings.subdataConfig.serviceName
+        //   }
+        const res = await this.$http.post(url, req)
+        if (res.data.state === "SUCCESS") {
+          subdataList = res.data.data.filter(item => item.chart_columns && item.chart_request_payload && item)
+        }
+        if (Array.isArray(subdataList)) {
+          let list = []
+          subdataList.forEach((sub, subIndex) => {
+            if (sub.chart_columns && typeof sub.chart_columns === 'string') {
+              try {
+                sub.chart_columns = JSON.parse(sub.chart_columns)
+              } catch (error) {
+                console.log(error)
               }
-              if (sub.chart_request_payload && typeof sub.chart_request_payload === 'string') {
-                try {
-                  sub.chart_request_payload = JSON.parse(sub.chart_request_payload)
-                } catch (error) {
-                  console.log(error)
-                }
+            }
+            if (sub.chart_request_payload && typeof sub.chart_request_payload === 'string') {
+              try {
+                sub.chart_request_payload = JSON.parse(sub.chart_request_payload)
+              } catch (error) {
+                console.log(error)
               }
-              if (sub.icon) {
-                sub[ 'iconPath' ] = top.backendIpAddr + '/file/download?fileNo=' + sub.icon
-                // this.getPictureUrl(sub.icon).then(path => { sub[ 'iconPath' ] = path })
-              }
+            }
+            if (sub.icon) {
+              // sub[ 'iconPath' ] = top.backendIpAddr + '/file/download?fileNo=' + sub.icon
+              this.getPictureUrl(sub.icon).then(path => {
+                this.$set(sub, 'iconPath', path)
+                sub[ 'iconPath' ] = path
+                self.getSubdata({
+                  url: sub.chart_request_url,
+                  icon: sub.iconPath,
+                  req: sub.chart_request_payload,
+                  columns: sub.chart_columns
+                }).then(data => {
+                  // self.subdataList.push(data)
+                  if (sub.type === "地标") {
+                    Array.isArray(data) && data.forEach(item => {
+                      item[ 'lat' ] = item[ sub.chart_columns[ 'lat' ] ]
+                      item[ 'lng' ] = item[ sub.chart_columns[ 'lon' ] ]
+                      item[ 'label' ] = item[ sub.chart_columns[ 'name' ] ]
+                      item[ 'icon' ] = sub[ 'iconPath' ]
+                      // item[ 'icon' ] = sub[ 'remark' ]
+                    })
+                    self.$set(self.markerData, subIndex, data)
+                    // let item = self.subdataList[ 'marker' ]
+                    // item.push(data)
+                    // self.$set(self.subdataList, "marker", item)
+                  } else if (sub.type === '路径') {
+                    // self.subdataList[ 'line' ].push(data)
+                    Array.isArray(data) && data.forEach(item => {
+                      item[ 'lat' ] = item[ sub.chart_columns[ 'lat' ] ]
+                      item[ 'lng' ] = item[ sub.chart_columns[ 'lon' ] ]
+                      item[ 'label' ] = item[ sub.chart_columns[ 'name' ] ]
+                      item[ 'icon' ] = sub[ 'iconPath' ]
+                    })
+                    self.$set(self.lineData, subIndex, data)
+                  }
+                })
+              })
+            } else {
               self.getSubdata({
                 url: sub.chart_request_url,
-                icon: sub.iconPath,
                 req: sub.chart_request_payload,
                 columns: sub.chart_columns
               }).then(data => {
                 // self.subdataList.push(data)
                 if (sub.type === "地标") {
-                  console.log('subdataList', data, sub)
                   Array.isArray(data) && data.forEach(item => {
                     item[ 'lat' ] = item[ sub.chart_columns[ 'lat' ] ]
                     item[ 'lng' ] = item[ sub.chart_columns[ 'lon' ] ]
                     item[ 'label' ] = item[ sub.chart_columns[ 'name' ] ]
                     item[ 'icon' ] = sub[ 'remark' ]
+                    // item[ 'icon' ] = sub[ 'remark' ]
                   })
                   self.$set(self.markerData, subIndex, data)
                   // let item = self.subdataList[ 'marker' ]
@@ -553,25 +614,25 @@ export default {
                   // self.$set(self.subdataList, "marker", item)
                 } else if (sub.type === '路径') {
                   // self.subdataList[ 'line' ].push(data)
-                  console.log('subdataList', data, sub, sub.chart_columns)
                   Array.isArray(data) && data.forEach(item => {
                     item[ 'lat' ] = item[ sub.chart_columns[ 'lat' ] ]
                     item[ 'lng' ] = item[ sub.chart_columns[ 'lon' ] ]
-                    // item[ 'label' ] = item[ sub.chart_columns[ 'name' ] ]
-                    item[ 'icon' ] = sub[ 'iconPath' ]
+                    item[ 'label' ] = item[ sub.chart_columns[ 'name' ] ]
+                    item[ 'icon' ] = sub[ 'remark' ]
                   })
-                  self.$set(self.subdataList, subIndex, data)
+                  self.$set(self.lineData, subIndex, data)
                 }
               })
-            })
-          }
+            }
+
+          })
         }
+        // }
       }
     },
     async getSubdata (e) {
-      console.log(e)
       if (e.columns && e.req && e.url) {
-        const url = top.backendIpAddr + e.url
+        const url = this.getIp() + e.url
         let res = await this.$http.post(url, e.req)
         if (res.data.state === "SUCCESS") {
           return res.data.data
@@ -732,12 +793,19 @@ export default {
     chartConfigs: {
       immediate: true,
       handler: function (newValue, oldValue) {
-
         if (newValue.chart_type === "ranking") {
           this.chartDatas[ "waitTime" ] = 9999999;
         }
         if (newValue.subdata === "是") {
           this.getSubdataConfig(newValue)
+        }
+        if (newValue.chart_type === 'tablist') {
+          try {
+            newValue.chart_settings = JSON.parse(newValue.chart_settings)
+            this.getTabListData(newValue.chart_settings)
+          } catch (error) {
+            newValue.chart_settings = newValue.chart_settings
+          }
         }
         return newValue;
       },

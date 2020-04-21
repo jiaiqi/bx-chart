@@ -19,15 +19,6 @@
         </div>
       </div>
       <div class="list-view" v-if="currentList.type === 'table'">
-        <!-- <div class="table-head">
-          <div
-            class="head"
-            v-for="(item, index) in currentList.colList"
-            :key="index"
-          >
-            {{ item.label }}
-          </div>
-        </div> -->
         <div class="table-main">
           <div class="table-row">
             <div
@@ -53,13 +44,33 @@
           </div>
         </div>
       </div>
-      <div class="list-view" v-if="currentList.type === 'progress'">
+      <div class="list-view detail" v-if="currentList.type === 'detail'">
+        <div
+          class="detail-item"
+          v-for="(item, index) in currentList.colList"
+          :key="index"
+        >
+          <div class="label">{{ item.label }}：</div>
+          <div class="value">{{ detailData[item.colName] }}</div>
+        </div>
+      </div>
+      <div
+        class="list-view progress"
+        v-if="currentList.type === 'progress' && currentList.fieldMap.first"
+      >
         <div
           class="list-item"
           v-for="(item, listIndex) in currentList.listData"
           :key="listIndex"
         >
-          <div class="label">{{ item.label }}</div>
+          <div
+            class="label"
+            v-if="
+              currentList.fieldMap.first && item[currentList.fieldMap.first]
+            "
+          >
+            {{ item[currentList.fieldMap.first] }}
+          </div>
           <div
             class="progress-box"
             :class="{
@@ -70,7 +81,10 @@
               class="progress-content"
               :style="{
                 width:
-                  parseInt((item.number * 100) / tabList[currentTab].max) + '%'
+                  parseInt(
+                    (item[currentList.fieldMap.end] * 100) /
+                      tabList[currentTab].max
+                  ) + '%'
               }"
             >
               <div
@@ -84,7 +98,7 @@
             </div>
           </div>
           <div class="data">
-            {{ parseInt(item.number) }}
+            {{ parseInt(item[currentList.fieldMap.end]) }}
           </div>
         </div>
       </div>
@@ -116,7 +130,7 @@ export default {
             tabTitle: "tab1",
             max: 10000,
             type: 'progress',
-            column: [],
+            colList: [],
             listData: [
               {
                 label: "生于忧患",
@@ -133,21 +147,24 @@ export default {
               {
                 label: "流水无情",
                 number: Math.random() * 10000 + 1
-              }, {
-                label: "天下三分",
-                number: Math.random() * 10000 + 1
-              }, {
-                label: "益州疲敝",
-                number: Math.random() * 10000 + 1
-              }, {
-                label: "危急存亡",
-                number: Math.random() * 10000 + 1
-              },
-
+              }
             ]
           },
           {
             tabTitle: "tab2",
+            max: 10000,
+            type: 'detail',
+            colList: [ { colName: "id", label: '车牌' }, { colName: "date", label: '过车时间' }, { colName: "origin", label: '来源' }, ],
+            listData: [
+              {
+                origin: "西安",
+                date: "2020-4-17 12:13:14",
+                id: "陕A12344"
+              }
+            ]
+          },
+          {
+            tabTitle: "tab3",
             max: 10000,
             type: 'table',
             colList: [ { colName: "id", label: '车牌' }, { colName: "date", label: '过车时间' }, { colName: "origin", label: '来源' }, ],
@@ -201,8 +218,27 @@ export default {
       if (this.tabList && Array.isArray(this.tabList)) {
         listData = this.tabList[ this.currentTab ]
       }
+      if (listData.fieldMap) {
+
+      }
       return listData
-    }
+    },
+    detailData () {
+      if (this.currentList && Array.isArray(this.currentList.listData) && this.currentList.listData.length > 0) {
+        return this.currentList.listData[ 0 ]
+      } else {
+        return {}
+      }
+    },
+    // chartSetting () {
+    //   if (this.chartConfigs?.chart_settings) {
+    //     try {
+    //       return JSON.parse(this.chartConfigs?.chart_settings)
+    //     } catch (error) {
+    //       console.log(error)
+    //     }
+    //   }
+    // }
   },
   methods: {
     changeTab (index) {
@@ -307,6 +343,34 @@ export default {
             100% {
               width: 100%;
             }
+          }
+        }
+      }
+      &.progress {
+        padding-left: 20px;
+      }
+      &.detail {
+        padding-left: 20px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        .detail-item {
+          display: flex;
+          min-width: 50%;
+          line-height: 30px;
+          align-items: center;
+          .label {
+            color: rgb(52, 89, 212);
+            min-width: 30%;
+            text-align: right;
+            text-align: justify;
+            text-align-last: justify;
+          }
+          .value {
+            margin-right: 20px;
+            font-size: 16px;
           }
         }
       }

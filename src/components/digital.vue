@@ -4,7 +4,7 @@
 <script>
 export default {
   name: "num",
-  data() {
+  data () {
     return {
       value: this.number.num,
       // value: 65656,
@@ -12,7 +12,7 @@ export default {
     };
   },
   methods: {
-    init() {
+    init () {
       let html = ""
       this.value.toString().split('').forEach(v => {
         html += '<div class="wrap"><ul class="list scroll' + v + '">'
@@ -24,24 +24,19 @@ export default {
       this.$refs.number.innerHTML = html
     }
   },
-  // mounted() {
-  //   this.init();
-  // },
-  updated() {
+  updated () {
     this.init();
   },
   props: {
     number: {
       type: Object,
-      default: function (params) {
-        return {}
-      }
+      default: () => { { num: 0 } }
     }
   },
   watch: {
     number: {
       deep: true,
-      handler(newValue, oldValue) {
+      handler (newValue, oldValue) {
         this.value = newValue.num;
         this.init();
         return newValue;

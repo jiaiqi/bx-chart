@@ -99,6 +99,7 @@ export default {
         "background-color": this.contentData.background_color,
         overflow: "hidden"
       };
+      document.body.style.backgroundColor = this.contentData.background_color
       return style;
     },
     title () {

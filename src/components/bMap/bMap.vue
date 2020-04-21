@@ -1,11 +1,11 @@
 <template>
-  <div
-    class="bmap-wrap"
-    :style="{ width: chartWidth + 'px', height: chartHeight - 50 + 'px' }"
-  >
+  <div class="bmap-wrap">
     <div
       id="bmap"
-      :style="{ width: chartWidth + 'px', height: chartHeight - 50 + 'px' }"
+      :style="{
+        width: chartWidth + 'px',
+        height: chartHeight - 50 + 'px'
+      }"
     ></div>
   </div>
 </template>
@@ -17,17 +17,16 @@ export default {
       // key: value
       map: null,//地图实例
       // mapCenter: [ 108.917953, 34.220041 ],//[lon,lat]
-      mapCenter: [ 108.7330380000, 34.4605530000 ],
-
+      mapCenter: [ 108.7875652300, 34.4330006200 ],
       mapLevel: 19,
       chartSettings: {},
       mapSettings: {
-        mapCenter: [ 108.7330380000, 34.4605530000 ],
+        mapCenter: [ 108.7875652300, 34.4330006200 ],
         // mapCenter: [ 108.917953, 34.220041 ],
         pointLine: {
           lineStyle: {
             strokeColor: "#eee", //线路颜色
-            strokeWeight: 1//线路宽度(粗细)
+            strokeWeight: 2//线路宽度(粗细)
           }
         },
         marker: {
@@ -46,24 +45,38 @@ export default {
     makeMark (point) {
       //创建标注
       let pt = new BMapGL.Point(point.lng, point.lat);
-      console.log(require(`@/assets/images/police.png`), point.icon)
-      let myIcon = new BMapGL.Icon(require(`@/assets/images/car.png`), new BMapGL.Size(52, 26));
+      // let myIcon = new BMapGL.Icon('/img/car.png', new BMapGL.Size(52, 26));
+      let myIcon = new BMapGL.Icon(point.icon, new BMapGL.Size(50, 50));
+      myIcon.imageSize = new BMapGL.Size(50, 50)
       let marker = new BMapGL.Marker(pt, { icon: myIcon });  // 创建标注
 
       this.map.addOverlay(marker);
       let opts = {
         icon: point.icon,
         position: pt,    // 指定文本标注所在的地理位置
-        offset: new BMapGL.Size(-50, 10)    //设置文本偏移量
+        offset: new BMapGL.Size(-20, 20)    //设置文本偏移量
       }
       let label = new BMapGL.Label(point.label, opts);  // 创建文本标注对象
-      label.setStyle({
-        border: "1px solid #333",
-        color: '#333',
-        fontSize: '12px',
-        height: '20px',
-        lineHeight: '20px',
-      });
+      let style = this?.mapSettings?.marker?.labelStyle?.color ? this?.mapSettings?.marker?.labelStyle : ""
+      if (style) {
+        if (!style.background) {
+          style.background = 'none'
+        }
+        if (!style.border) {
+          style.border = 'none'
+        }
+        label.setStyle(style)
+      } else {
+        label.setStyle({
+          background: "none",
+          // border: "1px solid #333",
+          border: "none",
+          color: '#fff',
+          fontSize: '12px',
+          height: '20px',
+          lineHeight: '20px',
+        });
+      }
       this.map.addOverlay(label);
       marker.addEventListener("click", function (e) {
         alert("经度:" + point.lng + ",纬度:" + point.lat);
@@ -75,28 +88,78 @@ export default {
     initMap () {
       let self = this
       this.map = new BMapGL.Map("bmap");    // 创建Map实例
-      this.map.centerAndZoom(new BMapGL.Point(this.mapCenter[ 0 ], this.mapCenter[ 1 ]), this.mapLevel);  // 初始化地图,设置中心点坐标和地图级别
+      const mapCenter = self.mapSettings.mapCenter ? self.mapSettings.mapCenter : self.mapCenter
+      self.map.centerAndZoom(new BMapGL.Point(mapCenter[ 0 ], mapCenter[ 1 ]), self.mapSettings.zoomLevel ? self.mapSettings.zoomLevel : self.mapLevel);  // 初始化地图,设置中心点坐标和地图级别
       this.map.setMapStyleV2({
         styleId: '56e2904e70a8447d06fa76839ef638ef'
       });
       this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
-      this.makePointLine() //开始轨迹动画
-      self.map.setHeading(64.5);
-      self.map.setTilt(50);
+      // for (let i in this.pointLineList) {
+      //   this.makePointLine(this.pointLineList[ i ]) //开始轨迹动画
+      // }
+      // this.makePointLine(this.pointLineList) //开始轨迹动画
+      // for (let i = 0; i < this.markList.length; i++) {
+      //   // this.makeMark(this.markList[ i ])
+      //   if (Array.isArray(this.markList[ i ])) {
+      //     for (let index = 0; index < this.markList[ i ].length; index++) {
+      //       const element = this.markList[ i ][ index ];
+      //       this.makeMark(element)
+
+      //     }
+      //     try {
+      //       this.mapCenter = [ this.markList[ this.markList.length - 1 ][ 0 ].lng, this.markList[ this.markList.length - 1 ][ 0 ].at ]
+      //     } catch (error) {
+      //       console.log(error)
+      //     }
+      //   }
+      // }
+      let rotationAngle = self.mapSettings.rotationAngle ? self.mapSettings.rotationAngle : 65;
+      let tiltAngle = self.mapSettings.tiltAngle ? self.mapSettings.tiltAngle : 50;
+      self.map.setHeading(rotationAngle);
+      self.map.setTilt(tiltAngle);
+    },
+    setLable (point, label) {
+      var opts = {
+        position: point,    // 指定文本标注所在的地理位置
+        offset: new BMapGL.Size(-10, 0)    //设置文本偏移量
+      }
+      var label = new BMapGL.Label(label, opts);  // 创建文本标注对象
+      label.setStyle({
+        color: self?.mapSettings?.pointLine?.labelStyle?.color ? self?.mapSettings?.pointLine?.labelStyle?.color : '#fff',
+        background: self?.mapSettings?.pointLine?.labelStyle?.background ? self?.mapSettings?.pointLine?.labelStyle?.background : 'none',
+        border: self?.mapSettings?.pointLine?.labelStyle?.border ? self?.mapSettings?.pointLine?.labelStyle?.border : 'none',
+        fontSize: self?.mapSettings?.pointLine?.labelStyle?.fontSize ? self?.mapSettings?.pointLine?.labelStyle?.fontSize : '12px',
+        height: self?.mapSettings?.pointLine?.labelStyle?.height ? self?.mapSettings?.pointLine?.labelStyle?.height : '20px',
+        lineHeight: self?.mapSettings?.pointLine?.labelStyle?.lineHeight ? self?.mapSettings?.pointLine?.labelStyle?.lineHeight : '20px',
+        fontFamily: self?.mapSettings?.pointLine?.labelStyle?.fontFamily ? self?.mapSettings?.pointLine?.labelStyle?.fontFamily : '微软雅黑'
+      });
+      this.map.addOverlay(label);
     },
     makePointLine (pointLineData) {
       //创建轨迹
       let self = this
       // 轨迹视角动画
-      var path = this.pointLineData;
+      var path = pointLineData;
       var point = [];
 
       for (var i = 0; i < path.length; i++) {
         point.push(new BMapGL.Point(path[ i ].lng, path[ i ].lat));
+        const labelColumn = self?.mapSettings?.pointLine?.labelColumn
+        const label = ''
+        if (Array.isArray(labelColumn)) {
+          labelColumn.forEach(item => {
+            label ? label += ' ' + path[ i ][ item ] : label += path[ i ][ item ]
+          })
+        } else if (typeof labelColumn === 'string') {
+          label = path[ i ][ labelColumn ]
+        }
+        if (labelColumn) { //标签文字对应字段
+          this.setLable(point[ i ], label)
+        }
       }
-      var pl = new BMapGL.Polyline(point, {
-        strokeColor: "#eee", //线路颜色
-        strokeWeight: 2//线路大小
+      let pl = new BMapGL.Polyline(point, {
+        strokeColor: self?.mapSettings?.pointLine?.lineStyle?.strokeColor ? self.mapSettings.pointLine.lineStyle.strokeColor : "#fff", //线路颜色
+        strokeWeight: self?.mapSettings?.pointLine?.lineStyle?.strokeWeight ? self?.mapSettings?.pointLine?.lineStyle?.strokeWeight : 2//线路大小
       })
       this.map.addOverlay(pl);
       // setTimeout(() => {
@@ -128,7 +191,6 @@ export default {
     },
   },
   mounted () {
-    // this.initMap()
     this.chartSettings = JSON.parse(JSON.stringify(this.chartConfigs))
   },
   props: {
@@ -195,15 +257,33 @@ export default {
   },
   watch: {
     markData: {
-      immediate: true,
       deep: true,
       handler (newValue, oldValue) {
         this.markList.length = 0
         this.markList = JSON.parse(JSON.stringify(newValue))
       }
     },
+    markList: {
+      deep: true,
+      handler (newValue, oldValue) {
+        for (let i = 0; i < newValue.length; i++) {
+          // this.makeMark(newValue[ i ])
+          if (Array.isArray(newValue[ i ])) {
+            for (let index = 0; index < newValue[ i ].length; index++) {
+              const element = newValue[ i ][ index ];
+              this.makeMark(element)
+            }
+            // try {
+            //   this.mapCenter = [ newValue[ newValue.length - 1 ][ 0 ].lng, newValue[ newValue.length - 1 ][ 0 ].at ]
+
+            // } catch (error) {
+            //   console.log(error)
+            // }
+          }
+        }
+      }
+    },
     pointLineData: {
-      immediate: true,
       deep: true,
       handler (newValue, oldValue) {
         this.pointLineList.length = 0
@@ -211,7 +291,6 @@ export default {
       }
     },
     pointLineList: {
-      immediate: true,
       deep: true,
       handler (newValue, oldValue) {
         for (let i = 0; i < newValue.length; i++) {
@@ -236,48 +315,18 @@ export default {
         }
       }
     },
-    markList: {
-      // immediate: true,
-      deep: true,
-      handler (newValue, oldValue) {
-        for (let i = 0; i < newValue.length; i++) {
-          // this.makeMark(newValue[ i ])
-          if (Array.isArray(newValue[ i ])) {
-            for (let index = 0; index < newValue[ i ].length; index++) {
-              const element = newValue[ i ][ index ];
-              this.makeMark(element)
-
-            }
-            try {
-              this.mapCenter = [ newValue[ newValue.length - 1 ][ 0 ].lng, newValue[ newValue.length - 1 ][ 0 ].at ]
-
-            } catch (error) {
-              console.log(error)
-            }
-          }
-        }
-      }
-    },
     chartSettings: {
       deep: true,
       immediate: true,
       handler (newValue, oldValue) {
         if (newValue.chart_width && newValue.chart_height) {
-          let bmap = document.getElementById('bmap')
-          this.initMap()
           try {
             this.mapSettings = JSON.parse(decodeURIComponent(newValue.chart_settings))
 
           } catch (error) {
             console.log(error, '\n', newValue);
-            let obj = {
-              dataConfig: {
-                app: "dataanalyze",
-                operator: "select",
-                serviceName: "srvanalyze_chart_map_data_select"
-              }
-            }
           }
+          this.initMap()
         }
       }
     }
@@ -287,9 +336,10 @@ export default {
 
 <style lang="scss" scoped>
 .bmap-wrap {
-  box-sizing: border-box;
-}
-#bmap {
+  // box-sizing: border-box;
   margin-top: 20px;
+  // background: url("../../assets/images/panel-l-b.png") 100% no-repeat;
+  border: 2px solid rgb(2, 94, 255);
+  overflow: hidden;
 }
 </style>
