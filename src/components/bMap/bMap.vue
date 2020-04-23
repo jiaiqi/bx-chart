@@ -46,8 +46,18 @@ export default {
       //创建标注
       let pt = new BMapGL.Point(point.lng, point.lat);
       // let myIcon = new BMapGL.Icon('/img/car.png', new BMapGL.Size(52, 26));
-      let myIcon = new BMapGL.Icon(point.icon, new BMapGL.Size(50, 50));
-      myIcon.imageSize = new BMapGL.Size(50, 50)
+      let iconStyle = {
+        width: this?.mapSettings?.marker?.iconStyle?.width,
+        height: this?.mapSettings?.marker?.iconStyle?.height
+      }
+      if (!iconStyle.width) {
+        iconStyle.width = 30
+      }
+      if (!iconStyle.height) {
+        iconStyle.height = 30
+      }
+      let myIcon = new BMapGL.Icon(point.icon, new BMapGL.Size(iconStyle.width, iconStyle.height));
+      myIcon.imageSize = new BMapGL.Size(iconStyle.width, iconStyle.height)
       let marker = new BMapGL.Marker(pt, { icon: myIcon });  // 创建标注
 
       this.map.addOverlay(marker);
@@ -69,7 +79,6 @@ export default {
       } else {
         label.setStyle({
           background: "none",
-          // border: "1px solid #333",
           border: "none",
           color: '#fff',
           fontSize: '12px',
@@ -90,29 +99,16 @@ export default {
       this.map = new BMapGL.Map("bmap");    // 创建Map实例
       const mapCenter = self.mapSettings.mapCenter ? self.mapSettings.mapCenter : self.mapCenter
       self.map.centerAndZoom(new BMapGL.Point(mapCenter[ 0 ], mapCenter[ 1 ]), self.mapSettings.zoomLevel ? self.mapSettings.zoomLevel : self.mapLevel);  // 初始化地图,设置中心点坐标和地图级别
-      this.map.setMapStyleV2({
-        styleId: '56e2904e70a8447d06fa76839ef638ef'
-      });
-      this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
-      // for (let i in this.pointLineList) {
-      //   this.makePointLine(this.pointLineList[ i ]) //开始轨迹动画
-      // }
-      // this.makePointLine(this.pointLineList) //开始轨迹动画
-      // for (let i = 0; i < this.markList.length; i++) {
-      //   // this.makeMark(this.markList[ i ])
-      //   if (Array.isArray(this.markList[ i ])) {
-      //     for (let index = 0; index < this.markList[ i ].length; index++) {
-      //       const element = this.markList[ i ][ index ];
-      //       this.makeMark(element)
+      if (self.mapSettings?.theme === 'dark') {
+        this.map.setMapStyleV2({
+          styleId: '56e2904e70a8447d06fa76839ef638ef'
+        });
+      }
 
-      //     }
-      //     try {
-      //       this.mapCenter = [ this.markList[ this.markList.length - 1 ][ 0 ].lng, this.markList[ this.markList.length - 1 ][ 0 ].at ]
-      //     } catch (error) {
-      //       console.log(error)
-      //     }
-      //   }
-      // }
+      // this.map.setMapStyleV2({
+      //   styleId: '56e2904e70a8447d06fa76839ef638ef'
+      // });
+      this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
       let rotationAngle = self.mapSettings.rotationAngle ? self.mapSettings.rotationAngle : 65;
       let tiltAngle = self.mapSettings.tiltAngle ? self.mapSettings.tiltAngle : 50;
       self.map.setHeading(rotationAngle);
@@ -141,7 +137,6 @@ export default {
       // 轨迹视角动画
       var path = pointLineData;
       var point = [];
-
       for (var i = 0; i < path.length; i++) {
         point.push(new BMapGL.Point(path[ i ].lng, path[ i ].lat));
         const labelColumn = self?.mapSettings?.pointLine?.labelColumn
@@ -157,41 +152,61 @@ export default {
           this.setLable(point[ i ], label)
         }
       }
+      let startPoint = new BMapGL.Point(path[ 0 ].lng, path[ 0 ].lat)
+      let endPoint = new BMapGL.Point(path[ path.length - 1 ].lng, path[ path.length - 1 ].lat)
+      let startMarker = new BMapGL.Marker(startPoint, { title: "起点" })
+      let endMarker = new BMapGL.Marker(endPoint, { title: "终点" })
+      let startLabel = new BMapGL.Label("起", { offset: new BMapGL.Size(-8, -25), position: startPoint });
+      startMarker.setLabel(startLabel);
+      let endLabel = new BMapGL.Label("终", { offset: new BMapGL.Size(-8, -25), position: endPoint });
+      endMarker.setLabel(endLabel);
+      startLabel.setStyle({
+        background: "none",
+        border: "none",
+        color: '#fff',
+        fontSize: '12px',
+        height: '20px',
+        lineHeight: '20px',
+      });
+      endLabel.setStyle({
+        background: "none",
+        border: "none",
+        color: '#fff',
+        fontSize: '12px',
+        height: '20px',
+        lineHeight: '20px',
+      });
+      this.map.addOverlay(startMarker);
+      this.map.addOverlay(endMarker);
       let pl = new BMapGL.Polyline(point, {
         strokeColor: self?.mapSettings?.pointLine?.lineStyle?.strokeColor ? self.mapSettings.pointLine.lineStyle.strokeColor : "#fff", //线路颜色
         strokeWeight: self?.mapSettings?.pointLine?.lineStyle?.strokeWeight ? self?.mapSettings?.pointLine?.lineStyle?.strokeWeight : 2//线路大小
       })
       this.map.addOverlay(pl);
-      // setTimeout(() => {
-      // let trackAni = new BMapGLLib.TrackAnimation(self.map, pl, {
-      //   overallView: true,
-      //   tilt: 40,
-      //   duration: 10000,
-      //   delay: 100,
-      //   color: "#eee"
-      // });
-      // }, 5000)
-      // 创建标注
-      // for (let i = 0; i < this.markList.length; i++) {
-      //   // this.makeMark(this.markList[ i ])
-      //   if (Array.isArray(this.markList[ i ])) {
-      //     for (let index = 0; index < this.markList[ i ].length; index++) {
-      //       const element = this.markList[ i ][ index ];
-      //       this.makeMark(element)
-
-      //     }
-      //     try {
-      //       this.mapCenter = [ this.markList[ this.markList.length - 1 ][ 0 ].lng, this.markList[ this.markList.length - 1 ][ 0 ].at ]
-
-      //     } catch (error) {
-      //       console.log(error)
-      //     }
-      //   }
-      // }
     },
+    insertScript () {
+
+    }
+  },
+  beforeMount () {
+    let script = document.createElement('script')
+    script.type = 'text/javascript'
+    // script.src = '//api.map.baidu.com/api?v=2.0&ak=M3oeNPOv6qb4CbiqcXVCpq27TaG9S7DB'
+    // document.getElementsByTagName('head')[ 0 ].appendChild(script)
+    script.src = '//api.map.baidu.com/api?type=webgl&v=1.0&ak=M3oeNPOv6qb4CbiqcXVCpq27TaG9S7DB'
+    document.getElementsByTagName('head')[ 0 ].appendChild(script)
   },
   mounted () {
+
+    // let node = document.createElement('script')
+    // node.setAttribute('src', '//api.map.baidu.com/api?v=2.0&ak=M3oeNPOv6qb4CbiqcXVCpq27TaG9S7DB')
+    // document.body.appendChild(node)
+
     this.chartSettings = JSON.parse(JSON.stringify(this.chartConfigs))
+    // this.mousePaint()
+  },
+  created () {
+
   },
   props: {
     chartConfigs: {
@@ -273,12 +288,6 @@ export default {
               const element = newValue[ i ][ index ];
               this.makeMark(element)
             }
-            // try {
-            //   this.mapCenter = [ newValue[ newValue.length - 1 ][ 0 ].lng, newValue[ newValue.length - 1 ][ 0 ].at ]
-
-            // } catch (error) {
-            //   console.log(error)
-            // }
           }
         }
       }
@@ -298,20 +307,6 @@ export default {
           if (Array.isArray(newValue[ i ])) {
             this.makePointLine(newValue[ i ])
           }
-          // this.makeMark(newValue[ i ])
-          // if (Array.isArray(newValue[ i ])) {
-          //   for (let index = 0; index < newValue[ i ].length; index++) {
-          //     const element = newValue[ i ][ index ];
-          //     this.makeMark(element)
-
-          //   }
-          //   try {
-          //     this.mapCenter = [ newValue[ newValue.length - 1 ][ 0 ].lng, newValue[ newValue.length - 1 ][ 0 ].at ]
-
-          //   } catch (error) {
-          //     console.log(error)
-          //   }
-          // }
         }
       }
     },
@@ -322,7 +317,6 @@ export default {
         if (newValue.chart_width && newValue.chart_height) {
           try {
             this.mapSettings = JSON.parse(decodeURIComponent(newValue.chart_settings))
-
           } catch (error) {
             console.log(error, '\n', newValue);
           }
@@ -330,7 +324,7 @@ export default {
         }
       }
     }
-  },
+  }
 }
 </script>
 

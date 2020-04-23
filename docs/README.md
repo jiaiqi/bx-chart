@@ -111,13 +111,15 @@
 [
         {
             "tabTitle":"", //tab标题
-            "type":"progress",//类型 - progress/table - 进度条/表格
-            "requestUrl":"",
-            "requestParams":"",
+            "type":"progress",//类型 - progress/table/detail/cardList - 进度条/表格/单条详情/卡片详情列表
+						"pictureCol":"icon", //图片字段,若type为detail并需要展示一张图片,则必须配置此属性
+						"pictureStyle":{
+							"width":"100px",
+							"heigth":"150px"
+						},//图片样式
+            "requestUrl":"", //请求url
+            "requestParams":{},//请求参数
             "max":"",//若类型为progress,则必须配置最大值
-            "req":{ //请求参数
-
-            },
             "colList": [ //要展示的字段及字段中文名
                 {
             		"colName": "name",

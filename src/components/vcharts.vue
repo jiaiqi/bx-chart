@@ -74,7 +74,7 @@
         ></ve-gauge>
         <div
           class="parent"
-          :style="{ height: chartHeight + 'px' }"
+          :style="{ height: chartHeight - 30 + 'px' }"
           v-if="this.chartConfigs.chart_type === 'table'"
         >
           <el-table
@@ -106,9 +106,18 @@
           :height="chartHeight - 30 + 'px'"
           :extend="getChartExtend(this.chartConfigs.chart_type)"
         ></ve-heatmap>
+        <customPage
+          v-if="this.chartConfigs.chart_type === 'custompage'"
+          :chartWidth="chartWidth"
+          :chartHeight="chartHeight"
+          :chartConfigs="chartConfigs"
+          :src="chartConfigs.chart_settings.src"
+        ></customPage>
         <ve-chart
           v-else-if="
-            this.chartConfigs.chart_type !== 'tablist' &&
+            this.chartConfigs.chart_type !== 'custompage' &&
+              this.chartConfigs.chart_type !== 'tablist' &&
+              this.chartConfigs.chart_type !== 'table' &&
               this.chartConfigs.chart_type !== 'map' &&
               this.chartConfigs.chart_type !== 'baidumap' &&
               this.chartConfigs.chart_type !== 'gauge' &&
@@ -136,9 +145,10 @@ import eMap from "./echartMap";
 import digital from "./digital";
 import bMap from '@/components/bMap/bMap.vue'
 import TabList from '@/components/tabList/tabList.vue'
+import customPage from '@/components/customPage/customPage'
 export default {
   name: "bx-chart-views",
-  components: { eMap, digital, bMap, TabList },
+  components: { eMap, digital, bMap, TabList, customPage },
   props: {
     chartConfigs: {
       type: Object,
@@ -181,6 +191,14 @@ export default {
       let chartSetting = { type: this.chartConfigs.chart_type };
       if (this.chartConfigs.chart_type === "histogram" && this.isStack) {
         chartSetting[ "stack" ] = { 用户: this.stackLabel };
+      }
+      if (this.chartConfigs.chart_type === "custompage" && this.isStack) {
+        try {
+          chartSetting[ "src" ] = JSON.parse(this.chartConfigs.chart_settings).src
+
+        } catch (error) {
+
+        }
       }
       if (
         this.chartConfigs.chart_type === "histogram" &&
@@ -805,6 +823,14 @@ export default {
             this.getTabListData(newValue.chart_settings)
           } catch (error) {
             newValue.chart_settings = newValue.chart_settings
+          }
+        }
+        if (newValue.chart_type === 'custompage') {
+          try {
+            newValue.chart_settings = JSON.parse(newValue.chart_settings)
+
+          } catch (error) {
+
           }
         }
         return newValue;
