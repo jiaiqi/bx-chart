@@ -5,6 +5,7 @@
         class="table-column head"
         v-for="(item, index) in colList"
         :key="index"
+        :style="item.style"
       >
         {{ item.label }}
       </div>
@@ -18,6 +19,7 @@
         class="table-column"
         v-for="(colItem, colIndex) in colList"
         :key="colIndex"
+        :style="colItem.style"
       >
         {{ rowItem[colItem["colName"]] }}
       </div>
@@ -76,8 +78,9 @@ export default {
         width: 25%;
       }
       &:nth-child(2) {
-        flex: 1;
+        // flex: 1;
         padding: 0 10px;
+        box-sizing: border-box;
         text-align: center;
       }
       &.head {

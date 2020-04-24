@@ -6,15 +6,29 @@
       frameborder="0"
       style="width:100%;height:100%"
     ></iframe>
-    <div class="tab-bar-box" v-if="menuList.length !== 0">
-      <div
-        class="tab-bar"
-        :class="{ active: bar.dashboard_no === currentPage.dashboard_no }"
-        v-for="bar in menuList"
-        :key="bar.no"
-        @click="checkPage(bar)"
-      >
-        {{ bar.label }}
+    <div
+      class="tab-bar-arrow"
+      :class="{ hide: showTabBar === true }"
+      @click="showTabBar = true"
+    >
+      菜单
+    </div>
+    <div
+      class="tab-bar-box"
+      v-if="menuList.length !== 0"
+      :class="{ active: showTabBar }"
+    >
+      <div class="menu" @click="showTabBar = false">收起</div>
+      <div class="tab-bars">
+        <div
+          class="tab-bar"
+          :class="{ active: bar.dashboard_no === currentPage.dashboard_no }"
+          v-for="bar in menuList"
+          :key="bar.no"
+          @click="checkPage(bar)"
+        >
+          {{ bar.label }}
+        </div>
       </div>
     </div>
   </div>
@@ -34,7 +48,7 @@ export default {
       currentTab: 0,
       dashboard_no: "",
       pageSrc: '',
-
+      showTabBar: false
     }
   },
   methods: {
@@ -104,39 +118,85 @@ export default {
   width: 100vw;
   height: 100vh;
   background-color: rgba(11, 15, 52, 1);
-  .tab-bar-box {
+  .tab-bar-arrow {
     position: fixed;
     bottom: 0;
+    width: 100px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    left: 50%;
+    margin-left: -50px;
+    z-index: 1001;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #999;
+    color: rgba(147, 148, 155, 0.2);
+
+    transition: bottom 2s;
+    cursor: pointer;
+    &:hover {
+      color: #fff;
+    }
+    &.hide {
+      bottom: -100px;
+    }
+  }
+  .tab-bar-box {
+    position: fixed;
+    bottom: -89px;
     width: 714px;
-    height: 89px;
+    height: 70px;
     left: 50%;
     margin-left: -357px;
     z-index: 1001;
     background: url(/img/nav-bg.png) no-repeat;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-end;
     align-items: center;
-    .tab-bar {
-      min-width: 100px;
-      margin: 0 5px;
-      padding: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      // background-color: rgba(42, 52, 143, 0.1);
-      cursor: pointer;
-      color: #999;
-      -webkit-user-select: none;
-      -moz-user-select: none;
+    transition: bottom 2s;
+    // &:hover .menu {
+    //   color: #fff;
+    // }
+    .menu {
+      // border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: transparent;
+      color: rgba(147, 148, 155, 0.2);
 
-      &:active {
-        transform: translate(2px, 2px);
+      cursor: pointer;
+      &:hover {
+        color: #fff;
       }
-      &.active {
-        color: #4673e6;
-        // background-color: rgba(42, 52, 143, 0.8);
-        transform: translate(2px, 2px);
+    }
+    .tab-bars {
+      display: flex;
+      .tab-bar {
+        min-width: 100px;
+        margin: 0 5px;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        // background-color: rgba(42, 52, 143, 0.1);
+        cursor: pointer;
+        color: #999;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+
+        &:active {
+          transform: translate(2px, 2px);
+        }
+        &.active {
+          color: #4673e6;
+          // background-color: rgba(42, 52, 143, 0.8);
+          transform: translate(2px, 2px);
+        }
       }
+    }
+    &.active {
+      bottom: 0;
     }
   }
 }

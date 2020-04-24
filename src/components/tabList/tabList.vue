@@ -40,6 +40,7 @@
         :currentList="currentList"
         :tabList="tabList"
         :currentTab="currentTab"
+        :colList="currentList.colList"
         v-if="currentList.type === 'progress'"
       ></tabProgress>
     </div>

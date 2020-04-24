@@ -871,7 +871,8 @@ export default {
     }
     .chart-box {
       position: relative;
-      border: 1px solid rgba(67, 108, 218, 0.8);
+      // border: 1px solid rgba(67, 108, 218, 0.8);
+      padding: 5px;
       &::before {
         content: "";
         background: url(/img/left-top.svg) 0 0 no-repeat,

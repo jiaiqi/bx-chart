@@ -5,7 +5,11 @@
       v-for="(item, listIndex) in listData"
       :key="listIndex"
     >
-      <div class="label" v-if="fieldMap.first && item[fieldMap.first]">
+      <div
+        class="label"
+        v-if="fieldMap.first && item[fieldMap.first]"
+        :style="colList[0].style"
+      >
         {{ item[fieldMap.first] }}
       </div>
       <div
@@ -32,7 +36,7 @@
           ></div>
         </div>
       </div>
-      <div class="data">
+      <div class="data" :style="colList[1].style">
         {{ parseInt(item[fieldMap.end]) }}
       </div>
     </div>
@@ -64,6 +68,11 @@ export default {
       default: () => {
         return []
       }
+    },
+    colList: {
+      type: Array,
+      required: true,
+      default: null
     },
     currentTab: {
       type: Number || String,
@@ -105,21 +114,21 @@ export default {
     .label {
       min-width: 50px;
       width: 20%;
-      max-width: 80px;
     }
     .data {
-      max-width: 100px;
+      // max-width: 100px;
     }
   }
 }
 
 .progress-box {
-  width: 60%;
+  // width: 60%;
   height: 10px;
   margin: 0 20px;
   // border: 0.5px solid #fefefe;
   overflow: hidden;
   background-color: #fefefe;
+  flex: 1;
 
   &.radius {
     border-radius: 10px;

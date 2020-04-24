@@ -6,13 +6,14 @@
         :style="pictureStyle"
         :src="item.imagePath"
         alt=""
-        v-if="item.imagePath"
+        v-if="item.imagePath && config.picturePosition === 'left'"
       />
       <div class="column-box" :class="{ 'no-pic': !item.imagePath }">
         <div
           class="column-item"
           v-for="(column, colIndex) in col"
           :key="colIndex"
+          :style="item.style"
         >
           <div class="label " v-if="column.colName !== 'image'">
             {{ column.label }}：
@@ -22,6 +23,13 @@
           </div>
         </div>
       </div>
+      <img
+        class="img"
+        :style="pictureStyle"
+        :src="item.imagePath"
+        alt=""
+        v-if="item.imagePath && config.picturePosition === 'right'"
+      />
     </div>
   </div>
 </template>
@@ -104,12 +112,14 @@ export default {
     }
     .column-box {
       flex: 1;
+      display: flex;
+      flex-wrap: wrap;
       &.no-pic {
         margin-left: 20px;
       }
     }
     .column-item {
-      margin-right: 20px;
+      margin: 0 10px;
       line-height: 30px;
       float: left;
       min-width: 130px;
