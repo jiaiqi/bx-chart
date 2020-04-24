@@ -83,12 +83,21 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
+  overflow: hidden;
   .list-item {
     min-height: 50px;
     margin-top: 5px;
     padding: 5px;
-    border: 1px solid #00ffff;
+    border: 1px solid #213a7c;
+    // border-color: #213a7c;
+    // border-width: 0 1px 0 1px;
+    background: rgba(2, 12, 29, 0.8) url(/img/grid2.png) -1px 0;
     display: flex;
+    flex-wrap: wrap;
+    // flex-direction: column;
+    &.wrap-reverse {
+      flex-wrap: wrap-reverse;
+    }
     .img {
       // float: left;
       padding-right: 20px;
@@ -97,8 +106,6 @@ export default {
       flex: 1;
       &.no-pic {
         margin-left: 20px;
-        .column-item {
-        }
       }
     }
     .column-item {

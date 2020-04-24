@@ -11,6 +11,12 @@ const router = new Router({
       redirect: '/dataView'
     },
     {
+      path: '/home',
+      name: 'home',
+      component: () =>
+        import( /* webpackChunkName: "home" */ "./views/home/home.vue")
+    },
+    {
       path: '/dataView/:chart',
       name: 'dataView',
       component: () =>
@@ -44,7 +50,7 @@ const router = new Router({
       name: "dataChartPreview",
       component: () =>
         import(
-          /* webpackChunkName: "preview" */ "./views/dataAnalysis/dataChart/preview.vue"
+          /* webpackChunkName: "dataChartPreview" */ "./views/dataAnalysis/dataChart/preview.vue"
         )
     },
     {
@@ -52,7 +58,7 @@ const router = new Router({
       name: "dataChartEditor",
       component: () =>
         import(
-          /* webpackChunkName: "preview" */ "./views/dataAnalysis/dataChart/editor.vue"
+          /* webpackChunkName: "dataChartEditor" */ "./views/dataAnalysis/dataChart/editor.vue"
         )
     }
   ]

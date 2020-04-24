@@ -2,7 +2,6 @@
   <div
     class="tab-list"
     :style="{
-      width: chartWidth + 'px',
       height: chartHeight - 30 + 'px'
     }"
   >
@@ -133,6 +132,7 @@ export default {
 <style lang="scss" scoped>
 .tab-list {
   overflow: hidden;
+  position: relative;
   .tab-bar-box {
     display: flex;
     align-items: center;

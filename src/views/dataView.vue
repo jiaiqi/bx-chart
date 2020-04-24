@@ -97,7 +97,7 @@ export default {
         "background-image": this.contentData.dashboard_background_image,
         "background-size": this.contentData.background_size,
         "background-color": this.contentData.background_color,
-        overflow: "hidden"
+        // overflow: "hidden"
       };
       document.body.style.backgroundColor = this.contentData.background_color
       return style;
@@ -584,10 +584,19 @@ export default {
 
 <style lang="scss">
 .bx-data-view {
+  box-sizing: border-box;
   .data-view-header {
     text-align: center;
     position: relative;
     font-size: 1.6rem;
+    .title {
+      // background: url(/img/head-title-bg.png) no-repeat;
+      // background-size: 100%;
+      // line-height: 50px;
+      margin: 10px;
+      padding: 10px;
+      display: inline-block;
+    }
     .edit {
       position: absolute;
       top: 10px;

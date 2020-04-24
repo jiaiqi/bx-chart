@@ -331,9 +331,8 @@ export default {
 <style lang="scss" scoped>
 .bmap-wrap {
   // box-sizing: border-box;
-  margin-top: 20px;
   // background: url("../../assets/images/panel-l-b.png") 100% no-repeat;
-  border: 2px solid rgb(2, 94, 255);
+  // border: 2px solid rgb(2, 94, 255);
   overflow: hidden;
 }
 </style>

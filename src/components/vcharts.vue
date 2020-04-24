@@ -1,6 +1,12 @@
 <template>
   <div class="bx-chart-views">
-    <div class="chart-main" v-if="this.chartConfigs.chart_type === 'digital'">
+    <div
+      class="chart-main"
+      v-if="this.chartConfigs.chart_type === 'digital'"
+      :class="{
+        'show-border': showBorder
+      }"
+    >
       <div
         class="digital"
         :style="{ width: chartWidth + 'px', height: chartHeight + 'px' }"
@@ -32,11 +38,18 @@
         >保存</el-button
       >
     </div>
-    <div class="chart-main" :style="vchartStyle" v-else>
+    <div
+      class="chart-main"
+      :style="vchartStyle"
+      v-else
+      :class="{
+        'show-border': showBorder && this.chartConfigs.chart_type !== 'baidumap'
+      }"
+    >
       <div class="chart-title" :style="chartTitleStyle" v-if="titleText">
         {{ titleText }}
       </div>
-      <div>
+      <div class="chart-box">
         <eMap
           v-if="this.chartConfigs.chart_type === 'map'"
           :style="{ width: chartWidth + 'px', height: chartHeight - 30 + 'px' }"
@@ -170,6 +183,9 @@ export default {
     }
   },
   computed: {
+    showBorder () {
+      return true
+    },
     mapDatas () {
       return testData.mapData.rows;
     },
@@ -185,7 +201,7 @@ export default {
         "text-indent": ".5rem",
         color: "#fff"
       };
-      return style;
+      return {};
     },
     chartSettings () {
       let chartSetting = { type: this.chartConfigs.chart_type };
@@ -847,23 +863,76 @@ export default {
   height: 100%;
   .chart-main {
     .chart-title {
-      text-align: left;
-      font-size: 2rem;
-      border-left: 2px solid #fff;
-      text-indent: 0.2rem;
+      text-align: center;
+      line-height: 51px;
+      width: 180px;
+      height: 51px;
+      background: url(/img/title-bg.png) no-repeat;
+    }
+    .chart-box {
+      position: relative;
+      border: 1px solid rgba(67, 108, 218, 0.8);
+      &::before {
+        content: "";
+        background: url(/img/left-top.svg) 0 0 no-repeat,
+          url(/img/right-top.svg) right 0 no-repeat;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        width: 100%;
+        height: 13px;
+      }
+      &::after {
+        content: "";
+        background: url(/img/left-bottom.svg) 0 bottom no-repeat,
+          url(/img/right-bottom.svg) right bottom no-repeat;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        display: block;
+        width: 100%;
+        height: 13px;
+      }
+    }
+    &.show-border {
+      // border: 1px solid rgba(67, 108, 218, 0.8);
+      background-color: rgba(2, 12, 29, 0.2);
+      position: relative;
+      // &::before {
+      //   content: "";
+      //   background: url(/img/left-top.svg) 0 0 no-repeat,
+      //     url(/img/right-top.svg) right 0 no-repeat;
+      //   position: absolute;
+      //   top: 0;
+      //   left: 0;
+      //   display: block;
+      //   width: 100%;
+      //   height: 13px;
+      // }
+      // &::after {
+      //   content: "";
+      //   background: url(/img/left-bottom.svg) 0 bottom no-repeat,
+      //     url(/img/right-bottom.svg) right bottom no-repeat;
+      //   position: absolute;
+      //   bottom: 0;
+      //   left: 0;
+      //   display: block;
+      //   width: 100%;
+      //   height: 13px;
+      // }
     }
   }
   .digital {
     display: flex;
     height: 100%;
     flex-direction: column;
-
     .digital-title {
-      display: flex;
-      flex: 0.5;
-      align-items: center;
-      justify-content: flex-start;
-      line-height: 50px;
+      text-align: center;
+      line-height: 51px;
+      width: 180px;
+      height: 51px;
+      background: url(/img/title-bg.png) no-repeat;
       // text-indent: 0.5rem;
     }
     .digitalNumber {

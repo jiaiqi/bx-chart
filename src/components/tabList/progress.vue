@@ -96,7 +96,7 @@ export default {
 
 <style lang="scss" scoped>
 .progress {
-  width: 100%;
+  width: calc(100% - 20px);
   .list-item {
     display: flex;
     align-items: center;
