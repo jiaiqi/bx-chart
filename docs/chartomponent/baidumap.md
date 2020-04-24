@@ -1,4 +1,4 @@
-## 创建baidumap类型图表
+## baidumap
 
   ### 图表设置
 

@@ -1,7 +1,7 @@
 module.exports = {
   title: "bx-chart",
   description: "用于快速搭建数据可视化页面",
-  base: "/",
+  base: "/bx-chart/doc/",
   head: [
     ["link",{ rel: "icon",href: "/assets/logo.png" }]
   ],

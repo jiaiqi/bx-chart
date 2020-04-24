@@ -7,6 +7,6 @@ module.exports = [
   // Nav 2
   {
     text: "图表组件配置说明",
-    link: "/chartomponent/"
+    link: "/chartomponent/baidumap/"
   },
 ];
