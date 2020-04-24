@@ -867,7 +867,8 @@ export default {
       line-height: 51px;
       width: 180px;
       height: 51px;
-      background: url(/img/title-bg.png) no-repeat;
+      background: url("../../public/img/title-bg.png") no-repeat;
+      // background: url(/img/title-bg.png) no-repeat;
     }
     .chart-box {
       position: relative;
@@ -875,8 +876,10 @@ export default {
       padding: 5px;
       &::before {
         content: "";
-        background: url(/img/left-top.svg) 0 0 no-repeat,
-          url(/img/right-top.svg) right 0 no-repeat;
+        // background: url(/img/left-top.svg) 0 0 no-repeat,
+        //   url(/img/right-top.svg) right 0 no-repeat;
+        background: url("../../public/img/left-top.svg") 0 0 no-repeat,
+          url("../../public/img/right-top.svg") right 0 no-repeat;
         position: absolute;
         top: 0;
         left: 0;
@@ -886,8 +889,10 @@ export default {
       }
       &::after {
         content: "";
-        background: url(/img/left-bottom.svg) 0 bottom no-repeat,
-          url(/img/right-bottom.svg) right bottom no-repeat;
+        // background: url(/img/left-bottom.svg) 0 bottom no-repeat,
+        //   url(/img/right-bottom.svg) right bottom no-repeat;
+        background: url("../../public/img/left-bottom.svg") 0 bottom no-repeat,
+          url("../../public/img/right-bottom.svg") right bottom no-repeat;
         position: absolute;
         bottom: 0;
         left: 0;
@@ -933,7 +938,7 @@ export default {
       line-height: 51px;
       width: 180px;
       height: 51px;
-      background: url(/img/title-bg.png) no-repeat;
+      background: url("../../public/img/title-bg.png") no-repeat;
       // text-indent: 0.5rem;
     }
     .digitalNumber {

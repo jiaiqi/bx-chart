@@ -1,5 +1,15 @@
 module.exports = {
-  title: '数据可视化项目组件配置说明',
-  description: 'bx-chart项目数据可视化项目组件配置说明',
-  base:'/bx-chart/doc/'
-}
+  title: "bx-chart",
+  description: "用于快速搭建数据可视化页面",
+  base: "/",
+  head: [
+    ["link",{ rel: "icon",href: "/assets/logo.png" }]
+  ],
+  themeConfig: {
+    smoothScroll: true,
+    nav: require("./config/nav"),
+    sidebar: require("./config/sidebar"),
+    // repo: "https://github.com/zpfz/vuepress-creator",
+    editLinks: false,
+  },
+};

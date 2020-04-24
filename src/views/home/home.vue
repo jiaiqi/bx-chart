@@ -131,7 +131,6 @@ export default {
     background-color: rgba(0, 0, 0, 0.3);
     color: #999;
     color: rgba(147, 148, 155, 0.2);
-
     transition: bottom 2s;
     cursor: pointer;
     &:hover {
@@ -149,7 +148,7 @@ export default {
     left: 50%;
     margin-left: -357px;
     z-index: 1001;
-    background: url(/img/nav-bg.png) no-repeat;
+    background: url("../../../public/img/nav-bg.png") no-repeat;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;

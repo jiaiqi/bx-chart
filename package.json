@@ -38,6 +38,7 @@
     "node-sass": "^4.9.0",
     "sass-loader": "^7.3.1",
     "vue-template-compiler": "^2.6.10",
-    "vuepress": "^1.2.0"
+    "vuepress": "^1.2.0",
+    "vuepress-theme-antdocs": "^1.0.1"
   }
 }
