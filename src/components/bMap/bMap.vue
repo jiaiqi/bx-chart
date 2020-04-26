@@ -4,7 +4,7 @@
       id="bmap"
       :style="{
         width: chartWidth + 'px',
-        height: chartHeight - 50 + 'px'
+        height: chartHeight - 60 + 'px'
       }"
     ></div>
   </div>

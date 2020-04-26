@@ -2,7 +2,7 @@
   <div
     class="tab-list"
     :style="{
-      height: chartHeight - 30 + 'px'
+      height: chartHeight - 60 + 'px'
     }"
   >
     <div class="tab-bar-box">
