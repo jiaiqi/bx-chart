@@ -11,14 +11,17 @@
 							"width":"100px",
 							"heigth":"150px"
 						},//图片样式
-            "picturePosition": "left", //图片位置 position为left时,图片宽度设为100%,则图片会在上方,position为right时,图片宽度设为100%,则图片会在下方
+            "picturePosition": "left", //图片位置 top/left/bottom/right 注意:position为left时,图片宽度设为100%,则图片会在上方,position为right时,图片宽度设为100%,则图片会在下方
             "requestUrl":"", //请求url
             "requestParams":{},//请求参数
             "max":"",//若类型为progress,则必须配置最大值
             "colList": [ //要展示的字段及字段中文名
                 {
             		"colName": "name",
-            		"label": "姓名"
+            		"label": "姓名",
+								"style": {
+									"width": "40%" //单元格所占宽度
+								}
             	}, {
             		"colName": "report_time",
             		"label": "上报时间"

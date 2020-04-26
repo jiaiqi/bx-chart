@@ -1,19 +1,32 @@
 <template>
   <div class="card-list">
-    <div class="list-item" v-for="(item, listIndex) in list" :key="listIndex">
+    <div
+      class="list-item"
+      v-for="(item, listIndex) in list"
+      :key="listIndex"
+      :class="{
+        'direction-column':
+          config.picturePosition === 'top' ||
+          config.picturePosition === 'bottom'
+      }"
+    >
       <img
         class="img"
         :style="pictureStyle"
         :src="item.imagePath"
         alt=""
-        v-if="item.imagePath && config.picturePosition === 'left'"
+        v-if="
+          item.imagePath &&
+            (config.picturePosition === 'left' ||
+              config.picturePosition === 'top')
+        "
       />
       <div class="column-box" :class="{ 'no-pic': !item.imagePath }">
         <div
           class="column-item"
           v-for="(column, colIndex) in col"
           :key="colIndex"
-          :style="item.style"
+          :style="column.style"
         >
           <div class="label " v-if="column.colName !== 'image'">
             {{ column.label }}：
@@ -28,7 +41,11 @@
         :style="pictureStyle"
         :src="item.imagePath"
         alt=""
-        v-if="item.imagePath && config.picturePosition === 'right'"
+        v-if="
+          item.imagePath &&
+            (config.picturePosition === 'right' ||
+              config.picturePosition === 'bottom')
+        "
       />
     </div>
   </div>
@@ -102,9 +119,11 @@ export default {
     background: rgba(2, 12, 29, 0.8) url("../../../public/img/grid2.png") -1px 0;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     // flex-direction: column;
-    &.wrap-reverse {
-      flex-wrap: wrap-reverse;
+    &.direction-column {
+      flex-direction: column;
+      // flex-wrap: wrap-reverse;
     }
     .img {
       // float: left;

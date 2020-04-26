@@ -115,9 +115,6 @@ export default {
       min-width: 50px;
       width: 20%;
     }
-    .data {
-      // max-width: 100px;
-    }
   }
 }
 
