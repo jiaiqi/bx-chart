@@ -250,6 +250,7 @@ export default {
       let isLoad = false;
       let resData = null;
       // 获取主页面配置信息
+
       if (e) {
         let url = self.getServiceUrl(
           "select",
@@ -271,6 +272,7 @@ export default {
         self.axios.post(url, params)
           .then(res => {
             let data = res.data.data;
+
             if (data && data.length > 0) {
               let pageConfig = res.data.data[ 0 ];
               if (pageConfig.is_editor == "是") {

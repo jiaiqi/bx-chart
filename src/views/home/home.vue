@@ -43,6 +43,7 @@ export default {
   },
   data () {
     return {
+      homePageInfo: {},
       menuList: [],
       currentPage: {},
       currentTab: 0,
@@ -59,6 +60,25 @@ export default {
         this.dashboard_no = e.dashboard_no
       }
     },
+    async getHomePageInfo (no) {
+      console.log('home_page_no:\n', no, '\n')
+      const url = this.getIp() + '/dataanalyze/select/srvanalyze_home_page_select'
+      const req = {
+        "serviceName": "srvanalyze_home_page_select",
+        "colNames": [ "*" ],
+        "condition": [ { "colName": "no", "ruleType": "eq", "value": no } ]
+      }
+      const res = await this.$http.post(url, req)
+      if (res.data.state === "SUCCESS") {
+        console.log("resData:", res.data.data)
+        if (res.data.data.length > 0) {
+          this.homePageInfo = res.data.data[ 0 ]
+          if (this.homePageInfo.no) {
+            this.getMenuList(no)
+          }
+        }
+      }
+    },
     async getMenuList (no) {
       console.log('home_page_no:\n', no, '\n')
       const url = this.getIp() + '/dataanalyze/select/srvanalyze_home_page_menu_select'
@@ -71,7 +91,12 @@ export default {
       if (res.data.state === "SUCCESS") {
         console.log("resData:", res.data.data)
         this.menuList = res.data.data
-        this.currentPage = res.data.data[ this.currentTab ]
+        res.data.data.forEach((menu, index) => {
+          if (this.homePageInfo.default_menu === menu.no) {
+            this.currentPage = menu
+            this.currentTab = index
+          }
+        });
       }
     }
   },
@@ -91,7 +116,7 @@ export default {
     const no = this.$route.query.home_page_no ? this.$route.query.home_page_no : null
     // const no = this.$route.query.home_page_no ? this.$route.query.home_page_no : "HP202004220001"
     if (no) {
-      this.getMenuList(no)
+      this.getHomePageInfo(no)
     }
   },
   mounted () {
