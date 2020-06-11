@@ -4,7 +4,7 @@ moment.locale("zh-CN")
 import Vue from "vue";
 import _ from "lodash";
 
-function init_util() {
+function init_util () {
   const eventBus = new Vue()
   const common_page_path = {
     "detail": "/vpages/index.html#/detail",
@@ -53,7 +53,7 @@ function init_util() {
         app = this.$route.query.srvApp;
       } else {
         // try top level
-        let defaultApp = (window.frameElement && window.frameElement.dataset["app"]) || (top.window.pathConfig && top.window.pathConfig.application);
+        let defaultApp = (window.frameElement && window.frameElement.dataset[ "app" ]) || (top.window.pathConfig && top.window.pathConfig.application);
         app = defaultApp;
       }
     }
@@ -64,10 +64,10 @@ function init_util() {
   Vue.prototype.xssFilter = function (text) { //xss攻击特殊字符过滤
     if (text) {
       let arr = []
-      arr = ["alert", "eval", "<script>", "</script>", "onblur", "onload", "onfocus", "onerror", "onclick", "onMouseOver", "onMouseOut", "onSelect", "onChange", "onSubmit", "<iframe>", "</iframe>", "<img>", "</img>", "<video>", "</video>",
+      arr = [ "alert", "eval", "<script>", "</script>", "onblur", "onload", "onfocus", "onerror", "onclick", "onMouseOver", "onMouseOut", "onSelect", "onChange", "onSubmit", "<iframe>", "</iframe>", "<img>", "</img>", "<video>", "</video>",
         "<canvas>", "</canvas>", "document", "javascript", "sessionStorage", "localStorage", "cookie"
       ];
-      let isOk = ["location"]
+      let isOk = [ "location" ]
       let host = window.location.host
       let isLen = []
       arr.forEach(function (value, index) {
@@ -171,7 +171,7 @@ function init_util() {
     var url = this.getServiceUrl("export", service_name);
     var params = {
       "serviceName": service_name,
-      "colNames": ['*'],
+      "colNames": [ '*' ],
       "condition": condition || [],
       "listData": data
     };
@@ -189,16 +189,16 @@ function init_util() {
   Vue.prototype.selectFileList = function (file_no) {
     let serviceName = 'srvfile_attachment_select';
     var url = this.getServiceUrl("select", serviceName, "file");
-    let condition = [{
-        "colName": "file_no",
-        "value": file_no,
-        "ruleType": "eq"
-      },
-      {
-        "colName": "is_delete",
-        "value": "1",
-        "ruleType": "eq"
-      }
+    let condition = [ {
+      "colName": "file_no",
+      "value": file_no,
+      "ruleType": "eq"
+    },
+    {
+      "colName": "is_delete",
+      "value": "1",
+      "ruleType": "eq"
+    }
     ];
 
     return this.doSelect(url, serviceName, condition)
@@ -216,7 +216,7 @@ function init_util() {
   Vue.prototype.doSelect = function (url, service_name, condition, page, order, group, mapcondition) {
     var query = {
       "serviceName": service_name,
-      "colNames": ['*'],
+      "colNames": [ '*' ],
       "condition": condition || [],
       "page": page,
       "order": order
@@ -227,7 +227,7 @@ function init_util() {
     }
 
     if (mapcondition != undefined && mapcondition != '' && mapcondition != null) {
-      query["map_table_condtion"] = mapcondition;
+      query[ "map_table_condtion" ] = mapcondition;
     }
 
     url = url + "?" + service_name;
@@ -239,14 +239,14 @@ function init_util() {
     var url = this.getServiceUrl("select", service_name);
     var params = {
       "serviceName": service_name,
-      "colNames": ['*'],
+      "colNames": [ '*' ],
       "condition": condition,
       group: group,
       "page": page,
       "order": order
     };
     if (mapcondition != undefined && mapcondition != '' && mapcondition != null) {
-      params["map_table_condtion"] = mapcondition;
+      params[ "map_table_condtion" ] = mapcondition;
     }
     url = url + "?" + service_name;
     return this.$http.post(url, params);
@@ -260,7 +260,7 @@ function init_util() {
     var params = {
       "serviceName": service_name,
       "proc_data_type": proc_type,
-      "colNames": ['*'],
+      "colNames": [ '*' ],
       "condition": condition,
       "page": page,
       "order": order
@@ -275,7 +275,7 @@ function init_util() {
     var params = {
       "serviceName": service_name,
       "treeData": true,
-      "colNames": ['*'],
+      "colNames": [ '*' ],
       "condition": condition
     };
     url = url + "?" + service_name;
@@ -287,14 +287,14 @@ function init_util() {
     var url = this.getServiceUrl("select", service_name);
     var params = {
       "serviceName": service_name,
-      "colNames": ['*'],
+      "colNames": [ '*' ],
       "condition": condition
     };
     url = url + "?" + service_name;
     return this.$http.post(url, params)
       .then(response => {
         if (response.body.data && response.body.data.length > 0) {
-          response.body = response.body.data[0];
+          response.body = response.body.data[ 0 ];
         }
         return response;
       });
@@ -302,8 +302,8 @@ function init_util() {
 
   /**操作*/
   Vue.prototype.operate = function (requests) {
-    let service = requests.length > 0 ? requests[0].serviceName : "";
-    let srvApp = requests[0].srvApp;
+    let service = requests.length > 0 ? requests[ 0 ].serviceName : "";
+    let srvApp = requests[ 0 ].srvApp;
     var url = this.getServiceUrl("operate", service, srvApp);
     return this.$http.post(url, requests);
   };
@@ -321,7 +321,7 @@ function init_util() {
    * @returns {*}
    */
   Vue.prototype.getCommonPagePath = function (type) {
-    return common_page_path[type];
+    return common_page_path[ type ];
   }
 
   /**操作*/
@@ -334,7 +334,7 @@ function init_util() {
     if (versionNo != "" && ("procdetail" == type || "start-proc" == type)) {
       type = type + "_" + versionNo;
     }
-    let url = common_page_path[type] + urlParams;
+    let url = common_page_path[ type ] + urlParams;
     if (window.top.tab) {
       let page = {
         title: tab_title,
@@ -391,7 +391,7 @@ function init_util() {
 
     let page = {
       title: tab_title,
-      url: common_page_path[type] + urlParams,
+      url: common_page_path[ type ] + urlParams,
       icon: ""
     };
 
@@ -407,7 +407,7 @@ function init_util() {
 
   //直接启动流程
   Vue.prototype.startProc = function (requests) {
-    let service = requests.length > 0 ? requests[0].serviceName : "";
+    let service = requests.length > 0 ? requests[ 0 ].serviceName : "";
     var url = this.getServiceUrl("apply", service);
     url = url + "?" + service;
     return this.$http.post(url, requests);
@@ -415,7 +415,7 @@ function init_util() {
 
   //保存草稿
   Vue.prototype.saveDraft = function (requests) {
-    let service = requests.length > 0 ? requests[0].serviceName : "";
+    let service = requests.length > 0 ? requests[ 0 ].serviceName : "";
     var url = this.getServiceUrl("apply", service);
     url = url + "?" + service;
     for (var item of requests) {
@@ -427,7 +427,7 @@ function init_util() {
   //开启已有数据流程
   Vue.prototype.startDataProc = function (requests) {
 
-    let service = requests.length > 0 ? requests[0].serviceName : "";
+    let service = requests.length > 0 ? requests[ 0 ].serviceName : "";
     var url = this.getServiceUrl("apply", service);
     url = url + "?" + service;
     for (var item of requests) {
@@ -441,7 +441,7 @@ function init_util() {
     if (obj == null) return null;
     let newObj = obj instanceof Array ? [] : {};
     for (var i in obj) {
-      newObj[i] = typeof obj[i] === "object" ? this.bxDeepClone(obj[i]) : obj[i];
+      newObj[ i ] = typeof obj[ i ] === "object" ? this.bxDeepClone(obj[ i ]) : obj[ i ];
     }
     return newObj;
   }
@@ -469,7 +469,7 @@ function init_util() {
 
   Vue.prototype.popupDialog = function (params) {
 
-    var btninfo = params["btninfo"]
+    var btninfo = params[ "btninfo" ]
 
     if (params.formType.startsWith("simple-")) {
       params.formType = params.formType.substring("simple-".length);
@@ -543,7 +543,7 @@ function init_util() {
   }
 
   Vue.prototype.guid = function () {
-    function s4() {
+    function s4 () {
       return Math.floor((1 + Math.random()) * 0x10000)
         .toString(16)
         .substring(1);
@@ -562,7 +562,7 @@ function init_util() {
     if (condition.ruleType == 'isnull' || condition.ruleType == "notnull") {
       return false;
     } else if (condition.ruleType == "between") {
-      return jQuery.isEmptyObject(value) || (value[0] == null && value[1] == null);
+      return jQuery.isEmptyObject(value) || (value[ 0 ] == null && value[ 1 ] == null);
     } else {
       if (typeof value == "object") {
         return jQuery.isEmptyObject(value);
@@ -593,7 +593,7 @@ function init_util() {
       }
     }
 
-    return isInDialog ? node : this.$root.$children[0].$children[0];
+    return isInDialog ? node : this.$root.$children[ 0 ].$children[ 0 ];
   }
 
   Vue.prototype.getOperateParams = function () {
@@ -604,8 +604,8 @@ function init_util() {
   }
 
   Vue.prototype.getVueUrlParams = function (paraName) {
-    if (this.$route && this.$route.query && this.$route.query[paraName]) {
-      return this.$route.query[paraName];
+    if (this.$route && this.$route.query && this.$route.query[ paraName ]) {
+      return this.$route.query[ paraName ];
     }
     return false
   }
@@ -721,7 +721,7 @@ function init_util() {
     // precondition: path already
     let node = this;
     while (node) {
-      let isMarker = node.isMarker || (this.$attrs && this.$attrs["is-mark"] === "true");
+      let isMarker = node.isMarker || (this.$attrs && this.$attrs[ "is-mark" ] === "true");
       if (isMarker || (node.getName && _.isFunction(node.getName) && node === this)) {
         let name = node.getName();
         tokens.splice(0, 0, name);
@@ -736,7 +736,7 @@ function init_util() {
   Vue.prototype.findNodeByPath = function (path) {
     // find leaf node type
     let tokens = path.split("/");
-    let leafNodeType = tokens[tokens.length - 1].split("#")[0];
+    let leafNodeType = tokens[ tokens.length - 1 ].split("#")[ 0 ];
 
     // filter by their path
     return this.$root.findAnyNodeByTypeAndPredict(leafNodeType, (node) => node.getNodePath() === path);
@@ -800,7 +800,7 @@ function init_util() {
     if (paths.length > 1) {
 
       var reg = /^v\d*$/;
-      var value = paths[1];
+      var value = paths[ 1 ];
       if (reg.test(value)) {
         version = value;
       }
@@ -811,7 +811,7 @@ function init_util() {
   Vue.prototype.removeByValue = function (datas, value) {
     var _index = -1;
     for (var i = 0; i < datas.length; i++) {
-      if (datas[i] == value) {
+      if (datas[ i ] == value) {
         _index = i;
         break;
       }
@@ -951,28 +951,106 @@ Vue.prototype.round = function (number, precision) {
   // round(1.005, 2);    //1.01
 }
 
-Vue.prototype.getPictureUrl = async function(file_no) {
+Vue.prototype.getPictureUrl = async function (file_no) {
   const serviceName = 'srvfile_attachment_select';
   const url = this.getServiceUrl('select', serviceName, 'file');
   const req = {
     serviceName: serviceName,
-    colNames: ['*'],
-    condition: [{ colName: 'file_no', value: file_no, ruleType: 'eq' }]
+    colNames: [ '*' ],
+    condition: [ { colName: 'file_no', value: file_no, ruleType: 'eq' } ]
   };
   if (file_no !== null && file_no !== '' && file_no !== undefined) {
     let res = await this.$http.post(url, req);
     if (res.data.state === 'SUCCESS') {
-      const data = res.data.data[0];
+      const data = res.data.data[ 0 ];
       if (data) {
         const fileurl = top.backendIpAddr + '/file/download?filePath=' + data.fileurl;
         return fileurl;
-      }else{
+      } else {
         return false
       }
     }
-  }else{
+  } else {
     return false
   }
+}
+/**
+ * 深拷贝
+ */
+function typeOf (obj) {
+  const toString = Object.prototype.toString;
+  const map = {
+    '[object Boolean]': 'boolean',
+    '[object Number]': 'number',
+    '[object String]': 'string',
+    '[object Function]': 'function',
+    '[object Array]': 'array',
+    '[object Date]': 'date',
+    '[object RegExp]': 'regExp',
+    '[object Undefined]': 'undefined',
+    '[object Null]': 'null',
+    '[object Object]': 'object'
+  };
+  return map[ toString.call(obj) ];
+}
+Vue.prototype.deepCopy = function (data) {
+  const t = typeOf(data);
+  let o;
+  if (t === 'array') {
+    o = [];
+  } else if (t === 'object') {
+    o = {};
+  } else {
+    return data;
+  }
+
+  if (t === 'array') {
+    for (let i = 0; i < data.length; i++) {
+      o.push(Vue.prototype.deepCopy(data[ i ]));
+    }
+  } else if (t === 'object') {
+    for (let i in data) {
+      o[ i ] = Vue.prototype.deepCopy(data[ i ]);
+    }
+  }
+  return o;
+}
+/**
+    * 判断是否是微信环境
+    */
+Vue.prototype.isWxClient = function () {
+  var ua = navigator.userAgent.toLowerCase();
+  if (ua.match(/MicroMessenger/i) == "micromessenger") {
+    return true;
+  }
+  return false;
+};
+
+Vue.prototype.getAuthorized = function () {
+  let self = Vue;
+  // 公众号环境获取回调地址(在回调地址中获取code)
+  let url = self.getServiceUrl('operate', 'srvwx_public_page_authorization', 'wx');
+  let req = [
+    {
+      data: [
+        {
+          app_no: 'APPNO20200107181133',
+          redirect_uri: self.$api.frontEndAddress
+        }
+      ],
+      serviceName: 'srvwx_public_page_authorization'
+    }
+  ];
+  this.$http.post(url, req).then(response => {
+    if (response.data.response[ 0 ].response.authUrl) {
+      window.location.href = response.data.response[ 0 ].response.authUrl;
+    } else {
+      uni.showToast({
+        title: response.data.resultMessage,
+        icon: 'none'
+      });
+    }
+  });
 }
 
 export default init_util;

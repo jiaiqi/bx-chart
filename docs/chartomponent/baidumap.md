@@ -6,6 +6,7 @@
     "zoomLevel":17,//缩放级别
     "rotationAngle":60,//旋转角度
     "tiltAngle":60,//倾斜角度
+    "theme":"dark", //默认light，
     "pointLine": {
       "labelColumn":["name"], //label对应字段,多个字段的话可以写在一个数组中,如:["name","track_type","track_time"],单个字段可以直接写一个字符串
       "lineStyle": {

@@ -3,7 +3,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const env = process.env.NODE_ENV
 
 configureWebpack: (config) => {
-  if (env !== 'development' || env !== 'test'||env === 'development') {
+  if (env !== 'development' || env !== 'test' || env === 'development') {
     config.plugins.push(
       new UglifyJsPlugin({
         uglifyOptions: {
@@ -26,7 +26,7 @@ module.exports = {
   //   : '/',
 
   // build 输出文件目录
-  outputDir: "../build/bx-chart",
+  outputDir: "../../bxdev/MS/opt_front/build/bx-chart",
   // 主目录
   publicPath: '/bx-chart/',
 

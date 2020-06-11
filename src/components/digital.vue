@@ -45,7 +45,7 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
 .wrap-container {
   display: flex;
   justify-content: flex-start;

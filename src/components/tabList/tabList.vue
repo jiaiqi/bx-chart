@@ -140,7 +140,7 @@ export default {
     height: 50px;
     .tab-bar {
       line-height: 30px;
-      max-width: 100px;
+      // max-width: 100px;
       padding: 0 5px;
       color: #999;
       text-align: center;

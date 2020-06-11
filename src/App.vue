@@ -19,7 +19,6 @@ export default {
 @media screen and (max-width: 1366px) {
   html {
     font-size: 12px;
-
     overflow: hidden;
   }
 }

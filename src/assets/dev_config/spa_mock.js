@@ -9,7 +9,7 @@ let dummy = {
 		// back_server_port: '8101'
 		//  开发server_cfg
 	},
-	dummy: function() {
+	dummy: function () {
 		if (!top.pathConfig) {
 			top.pathConfig = {}
 			top.pathConfig.application = 'datacenter' //  开发app
@@ -60,7 +60,7 @@ let dummy = {
 			}
 			sessionStorage.setItem(
 				'bx_auth_ticket',
-				'xabxdzkj-2adba909-7dc0-4f33-b34e-5459964e2615'
+				'xabxdzkj-8af62019-83b9-4110-9457-b36c03d6cc5f'
 			) //  开发bx_auth_ticket 更新后需清除浏览器缓存
 			// sessionStorage.setItem("current_login_user", JSON.stringify(top.user)); //  开发bx_auth_ticket
 		}

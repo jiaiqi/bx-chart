@@ -1,0 +1,597 @@
+
+<template>
+  <div class="sur-wrap">
+    <div class="sur-video-box" :class="{ fullScreen: isFullscreen }">
+      <div class="sur-video" v-for="(item, index) in videoBoxList" :key="index">
+        <videoPlayer
+          class="vjs-custom-skin videoPlayer"
+          v-if="item && item.sources && !isFullscreen"
+          :options="item"
+          :style="{
+            width: 1200 / screenAmount + 'px',
+            height: 700 / screenAmount + 'px'
+          }"
+        ></videoPlayer>
+        <videoPlayer
+          class="vjs-custom-skin videoPlayer"
+          v-if="item && item.sources && isFullscreen"
+          :options="item"
+          :style="{
+            width: fullarea.width / screenAmount - 10 + 'px',
+            height: fullarea.height / screenAmount - 10 + 'px'
+          }"
+        ></videoPlayer>
+        <div
+          class="video-box"
+          :style="{
+            width: isFullscreen
+              ? fullarea.width / screenAmount - 10 + 'px'
+              : 1200 / screenAmount + 'px',
+            height: isFullscreen
+              ? fullarea.height / screenAmount - 10 + 'px'
+              : 700 / screenAmount + 'px'
+          }"
+          v-if="!item || !item.sources"
+        >
+          无信号
+        </div>
+        <div class="menu" @click="checkSource(item, index)">
+          {{ !item || !item.sources ? "选择信号源" : "关闭" }}
+        </div>
+      </div>
+    </div>
+    <div class="control-box">
+      <el-row>
+        <el-button
+          @click="changeScreenAmount(1)"
+          :type="screenAmount === 1 ? 'primary' : ''"
+          >单屏</el-button
+        >
+        <el-button
+          @click="changeScreenAmount(2)"
+          :type="screenAmount === 2 ? 'primary' : ''"
+          >2*2</el-button
+        >
+        <el-button
+          @click="changeScreenAmount(3)"
+          :type="screenAmount === 3 ? 'primary' : ''"
+          >3*3</el-button
+        >
+        <el-button
+          @click="changeScreenAmount(4)"
+          :type="screenAmount === 4 ? 'primary' : ''"
+          >4*4</el-button
+        >
+        <el-button @click="fullscreen()">全屏</el-button>
+      </el-row>
+    </div>
+    <el-dialog
+      title="请选择信号源"
+      :visible.sync="showSelectDialog"
+      width="70%"
+      center
+    >
+      <!-- <div style="text-align:center;line-height:50px">请选择信号源</div> -->
+      <el-table
+        :data="sourcesArray"
+        style="width: 100%;margin-bottom: 20px;"
+        row-key="id"
+        border
+        @row-click="rowClick"
+      >
+        <el-table-column prop="id" label="编号" sortable width="180">
+        </el-table-column>
+        <el-table-column prop="name" label="名称" sortable width="180">
+        </el-table-column>
+        <el-table-column prop="src" label="地址"> </el-table-column>
+      </el-table>
+      <el-pagination
+        background
+        style="text-align:center"
+        layout="prev, pager, next"
+        @current-change="handleCurrentChange"
+        :total="pageInfo.total"
+      >
+      </el-pagination>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="showSelectDialog = false">取 消</el-button>
+        <!-- <el-button type="primary" @click="showSelectDialog = false"
+          >确 定</el-button
+        > -->
+      </span>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { videoPlayer } from "vue-video-player";
+import "videojs-contrib-hls";
+export default {
+  components: {
+    videoPlayer
+  },
+  data () {
+    return {
+      showSelectDialog: false,
+      isFullscreen: false, //是否全屏
+      fullarea: {
+        width: 1200,
+        height: 700,
+      },
+      currentSelect: 0,
+      videoBoxList: [
+        {
+          height: '700',
+          // sources: [
+          //   {
+          //     // type: "rtmp/mp4",
+          //     type: "application/x-mpegURL",
+          //     // type: "rtsp/mov",
+          //     // src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+          //     src: "rtmp://127.0.0.1:1935/live/" //ok
+          //     // src: "http://ivi.bupt.edu.cn/hls/cctv1.m3u8"
+          //   }
+          // ],
+          techOrder: [ "flash", "html5" ],
+          autoplay: true,
+          width: '1200',
+          controls: true
+        }
+      ],
+      pageInfo: {
+        total: 0,
+        pageNo: 1,
+        rownumber: 10
+      },
+      viewHistory: [],
+      sourcesArray: [
+        {
+          id: '001',
+          name: '摄像头1',
+          type: "application/x-mpegURL",
+          src: "http://ivi.bupt.edu.cn/hls/cctv1.m3u8" //ok
+        },
+        {
+          id: '002',
+          name: '摄像头2',
+          type: "application/x-mpegURL",
+          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        },
+        {
+          id: '003',
+          name: '摄像头3',
+          type: "application/x-mpegURL",
+          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        },
+        {
+          id: '004',
+          name: '摄像头4',
+          type: "application/x-mpegURL",
+          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        },
+        {
+          id: '005',
+          name: '摄像头5',
+          type: "application/x-mpegURL",
+          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        },
+        {
+          id: '006',
+          name: '摄像头6',
+          type: "application/x-mpegURL",
+          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        },
+        {
+          id: '007',
+          name: '摄像头7',
+          type: "application/x-mpegURL",
+          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        },
+        {
+          id: '008',
+          name: '摄像头8',
+          type: "application/x-mpegURL",
+          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        },
+        {
+          id: '009',
+          name: '摄像头9',
+          type: "application/x-mpegURL",
+          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        },
+        {
+          id: '0010',
+          name: '摄像头10',
+          type: "application/x-mpegURL",
+          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        },
+        {
+          id: '0011',
+          name: '摄像头11',
+          type: "application/x-mpegURL",
+          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        },
+        {
+          id: '0012',
+          name: '摄像头12',
+          type: "application/x-mpegURL",
+          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        }
+      ],
+      sourceList: [
+        {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://127.0.0.1:1935/live/" //ok
+            }
+          ],
+        },
+        {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+            }
+          ],
+        },
+        {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://127.0.0.1:1935/live/" //ok
+            }
+          ],
+        },
+        {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+            }
+          ],
+        }, {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+            }
+          ],
+        }, {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+            }
+          ],
+        }, {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+            }
+          ],
+        }, {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+            }
+          ],
+        }, {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+            }
+          ],
+        }, {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+            }
+          ],
+        }, {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+            }
+          ],
+        }, {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+            }
+          ],
+        }, {
+          sources: [
+            {
+              type: "application/x-mpegURL",
+              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+            }
+          ],
+        }
+      ],
+      screenAmount: 1
+    }
+  },
+  methods: {
+    handleCurrentChange (e) {
+      this.pageInfo.pageNo = e
+      this.getSourceList();
+
+    },
+    async getSourceList () {
+      const url = this.getServiceUrl('select', 'srvvideom_video_channel_cfg_select', 'videomonitor')
+      let req = {
+        "serviceName": "srvvideom_video_channel_cfg_select",
+        "colNames": [ "*" ],
+        "condition": [],
+        "page": { "pageNo": this.pageInfo.pageNo, "rownumber": this.pageInfo.rownumber },
+        "order": []
+      }
+      let data = await this.$http.post(url, req)
+      let sourcesArray = []
+      if (data && Array.isArray(data) && data.length > 0) {
+        data.forEach(item => {
+          item.src = item.video_url
+          // item.src = 'rtmp://127.0.0.1:1935/live/livel'
+          item.type = "application/x-mpegURL"
+          sourcesArray.push(item)
+          this.sourcesArray = sourcesArray
+        })
+      }
+    },
+    async getViewHistory () {
+      const url = this.getServiceUrl('select', 'srvvideom_user_monitor_view_select', 'videomonitor')
+      let req = {
+        "serviceName": "srvvideom_user_monitor_view_select",
+        "colNames": [ "*" ],
+        "condition": [],
+        "page": { "pageNo": 1, "rownumber": 10 },
+        "order": []
+      }
+      let data = await this.$http.post(url, req)
+      let sourcesArray = []
+      data.forEach(item => {
+        item.src = item.video_url
+        item.type = "application/x-mpegURL"
+        sourcesArray.push(item)
+      })
+      this.sourcesArray = sourcesArray
+    },
+    rowClick (row) {
+      console.log(row)
+      let obj = {
+        width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 10 : (this.fullarea.width / this.screenAmount),
+        height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 10 : (this.fullarea.height / this.screenAmount),
+        sources: null,
+        techOrder: [ "flash", "html5" ],
+        autoplay: true,
+        controls: true
+      }
+      obj.sources = [
+        {
+          type: "application/x-mpegURL",
+          src: row.src
+        }
+      ]
+      this.$set(this.videoBoxList, this.currentSelect, obj)
+      this.showSelectDialog = false
+    },
+    changeScreenAmount (val) {
+      this.screenAmount = Number(val)
+    },
+    fullscreen () {
+      let fullarea = document.getElementsByClassName('sur-video-box')[ 0 ]
+      this.requestFullScreen(fullarea)
+
+    },
+    checkSource (item, index) {
+      this.currentSelect = index
+      if (!item || !item.sources) {
+
+        this.showSelectDialog = true
+
+      } else {
+
+        let obj = {
+          width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 10 : (this.fullarea.width / this.screenAmount),
+          height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 10 : (this.fullarea.height / this.screenAmount),
+          sources: null,
+          techOrder: [ "flash", "html5" ],
+          autoplay: true,
+          controls: true
+        }
+        this.$set(this.videoBoxList, index, obj)
+
+      }
+      // // return
+      // let obj = {
+      //   width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 10 : (this.fullarea.width / this.screenAmount),
+      //   height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 10 : (this.fullarea.height / this.screenAmount),
+      //   sources: [],
+      //   techOrder: [ "flash", "html5" ],
+      //   autoplay: true,
+      //   controls: true
+      // }
+      // if (item && item.sources) {
+      //   obj.sources = []
+      // } else {
+      //   // obj.sources = this.sourceList[ index ][ 'sources' ]
+      // }
+      // this.$set(this.videoBoxList, index, obj)
+
+    },
+    requestFullScreen (element) {
+      //进入全屏状态 判断各种浏览器，找到正确的方法
+      if (!element) {
+        element = document.body
+      }
+      var requestMethod = element.requestFullScreen || //W3C
+        element.webkitRequestFullScreen || //FireFox
+        element.mozRequestFullScreen || //Chrome等
+        element.msRequestFullScreen; //IE11
+      if (requestMethod) {
+        requestMethod.call(element);
+      } else if (typeof window.ActiveXObject !== "undefined") { //for Internet Explorer
+        var wscript = new ActiveXObject("WScript.Shell");
+        if (wscript !== null) {
+          wscript.SendKeys("{F11}");
+        }
+      }
+    },
+    exitFull () {
+      // 退出全屏状态 判断各种浏览器，找到正确的方法
+      var exitMethod = document.exitFullscreen || //W3C
+        document.mozCancelFullScreen || //FireFox
+        document.webkitExitFullscreen || //Chrome等
+        document.webkitExitFullscreen; //IE11
+      if (exitMethod) {
+        exitMethod.call(document);
+      } else if (typeof window.ActiveXObject !== "undefined") { //for Internet Explorer
+        var wscript = new ActiveXObject("WScript.Shell");
+        if (wscript !== null) {
+          wscript.SendKeys("{F11}");
+        }
+      }
+    },
+  },
+  mounted () {
+    let self = this
+    let element = document.getElementsByClassName('sur-video-box')[ 0 ]
+    window.onresize = function () {
+      if (!document.fullscreenElement) {
+        console.log('退出全屏')
+        self.fullarea.width = element.clientWidth
+        self.fullarea.height = element.clientHeight
+        self.isFullscreen = false
+        self.fullarea = {
+          width: 1200,
+          height: 700,
+        }
+        let videoBoxList = self.deepCopy(self.videoBoxList)
+        self.videoBoxList = []
+        videoBoxList.forEach(item => {
+          if (item) {
+            item.width = (1200 / self.screenAmount) - 10
+            item.height = (700 / self.screenAmount) - 10
+            console.log(`width:${item.width},height:${item.height}`)
+          }
+        });
+        self.videoBoxList = videoBoxList
+      } else {
+        self.isFullscreen = true
+        console.log("进入全屏")
+        self.fullarea.width = element.clientWidth
+        self.fullarea.height = element.clientHeight
+        let videoBoxList = self.deepCopy(self.videoBoxList)
+        self.videoBoxList = []
+        videoBoxList.forEach(item => {
+          if (item) {
+            item.width = (element.clientWidth / self.screenAmount) - 10
+            item.height = (element.clientHeight / self.screenAmount) - 10
+            console.log(`width:${item.width},height:${item.height}`)
+          }
+        });
+        self.videoBoxList = videoBoxList
+      }
+    }
+  },
+  created () {
+    this.getSourceList();
+  },
+  watch: {
+    screenAmount (newValue, oldValue) {
+      if (newValue) {
+        let videoBoxList = []
+        this.videoBoxList = []
+        let length = Math.pow(newValue, 2)
+        for (let i = 0; i < length; i++) {
+          let obj = {
+            width: this.fullarea.width / newValue,
+            height: this.fullarea.height / newValue,
+            sources: [
+              {
+                type: "application/x-mpegURL",
+                src: "rtmp://127.0.0.1:1935/live/"
+              }
+            ],
+            techOrder: [ "flash", "html5" ],
+            autoplay: true,
+            controls: true
+          }
+          if (i === 0) {
+
+          } else {
+            obj = {}
+          }
+          obj = {}
+
+          videoBoxList.push(obj)
+          this.videoBoxList.push(obj)
+        }
+      }
+    }
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.sur-video-box {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px auto;
+  max-width: 1250px;
+  background-color: #fff;
+  &.fullScreen {
+    width: 100%;
+    max-width: 100vw;
+    // height: calc(100% - 50px);
+    height: 100vh;
+    margin: 0;
+  }
+  .sur-video {
+    position: relative;
+
+    display: flex;
+    flex-wrap: wrap;
+    margin: 2px;
+    .menu {
+      display: none;
+      background-color: #333;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 2px;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+    .video-box {
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+    &:hover {
+      .menu {
+        display: block;
+      }
+    }
+  }
+}
+.control-box {
+  display: flex;
+  width: 500px;
+
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+</style>

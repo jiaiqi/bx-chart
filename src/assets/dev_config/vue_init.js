@@ -2,8 +2,9 @@
 import Vue from 'vue'
 import axios from 'axios'
 import devSrv from './spa_mock'
+import router from '../../router'
 
-function init() {
+function init () {
 	let backendIpAddr = null
 	if (window.top.pathConfig && window.top.pathConfig.gateway) {
 		// 如果外层有就用外层的路径配置
@@ -29,7 +30,7 @@ function init() {
 	top.window.backendIpAddr = backendIpAddr
 
 	let defaultApp =
-		(window.frameElement && window.frameElement.dataset['app']) ||
+		(window.frameElement && window.frameElement.dataset[ 'app' ]) ||
 		(top.window.pathConfig && top.window.pathConfig.application)
 
 	var service_api = {
@@ -64,7 +65,7 @@ function init() {
 			// 在发送请求之前做些什么
 			let bx_auth_ticket = sessionStorage.getItem('bx_auth_ticket')
 			if (bx_auth_ticket) {
-				config.headers['bx_auth_ticket'] = bx_auth_ticket
+				config.headers[ 'bx_auth_ticket' ] = bx_auth_ticket
 			}
 			return config
 		},
@@ -84,6 +85,8 @@ function init() {
 					if (sessionStorage.getItem('need_login_flag') != 'need_login') {
 						sessionStorage.setItem('need_login_flag', 'need_login')
 					}
+					alert("未登录，即将跳转到登录页面")
+					router.push({ name: "login" })
 				} else if (response.data.resultCode == '0000') {
 					if (sessionStorage.getItem('need_login_flag') != 'need_login') {
 						alert(response.data.resultMessage)
@@ -120,36 +123,35 @@ function init() {
 			//重试次数自增
 			config.__retryCount += 1
 			//延时处理
-			var backoff = new Promise(function(resolve) {
-				setTimeout(function() {
+			var backoff = new Promise(function (resolve) {
+				setTimeout(function () {
 					resolve()
 				}, config.retryDelay || 1)
 			})
 			//重新发起axios请求
-			return backoff.then(function() {
+			return backoff.then(function () {
 				return axios(config)
 			})
 		}
 	)
-
 	/**
 	 * 定时重复发送请求
 	 * @params t: 时间间隔
 	 * @params out: 倒计时
 	 * @params fun:请求数据的函数，必须是一个返回true/false的函数
 	 */
-	Vue.prototype.timeOut = function(t, out, efun) {
+	Vue.prototype.timeOut = function (t, out, efun) {
 		// this.time  = t
 		this.time = t // 定时间隔 秒
 		this.nTime = out // 计时 秒
 		this.isLoad = false // 请求是否成功有效
 		this.eNum = 0 // 请求失败次数
 		this.rFun = efun
-		this.reqFun = async function() {
+		this.reqFun = async function () {
 			let _this = this
 			let reqPromise = await _this.rFun()
 			// reqPromise.then((res)=>{
-			if (reqPromise&&reqPromise.isRes) {
+			if (reqPromise && reqPromise.isRes) {
 				this.isLoad = true
 				this.nTime = 0
 				this.eNum = 0
@@ -168,7 +170,7 @@ function init() {
 			// fun() 请求方法 处理数据和业务逻辑
 			// $http 处理 发请求机制，多久发，
 		}
-		this.startTime = function() {
+		this.startTime = function () {
 			if (this.eNum < 3 && this.nTime === this.time) {
 				this.reqFun(this.nTime)
 			} else if (this.eNum === 3) {

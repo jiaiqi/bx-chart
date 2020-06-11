@@ -170,14 +170,20 @@ export default {
                 top.user = current_login_user;
                 if (self.$route.query.length > 0) {
                   const path = self.$route.query.from;
-                  self.$router.push({ name: path });
-                } else {
-                  if (param) {
-                    let chartId = localStorage.getItem("chartId")
-                    self.$router.push({ name: "dataView", params: { chart: chartId } });
+                  if (path) {
+                    self.$router.push({ name: path });
                   } else {
-                    self.$router.push({ name: "dataView" });
+                    self.$router.go(-1)
                   }
+                } else {
+                  self.$router.go(-1)
+
+                  // if (param) {
+                  //   let chartId = localStorage.getItem("chartId")
+                  //   self.$router.push({ name: "dataView", params: { chart: chartId } });
+                  // } else {
+                  //   self.$router.push({ name: "dataView" });
+                  // }
                 }
               }
             })
@@ -194,6 +200,7 @@ export default {
       }
 
       crosAjax(path, "POST", bxReqs, callBack);
+
       if (this.saveAccount == true) {
         let account = {
           userName: this.userName,

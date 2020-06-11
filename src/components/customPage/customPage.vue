@@ -1,6 +1,16 @@
 <template>
   <div>
+    <img
+      :src="src"
+      alt=""
+      v-if="chartConfigs.chart_settings.type === 'image'"
+      :style="{
+        width: chartWidth + 'px',
+        height: chartHeight - 30 + 'px'
+      }"
+    />
     <iframe
+      v-else
       :src="src"
       frameborder="0"
       :style="{
@@ -35,5 +45,9 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+img {
+  width: 100%;
+  height: 100%;
+}
 </style>

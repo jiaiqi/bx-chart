@@ -19,39 +19,39 @@ export class vChartInfo {
             let colsData = {}
             let arr = []
             for (let i = 0; i < dimName.length; i++) {
-                let col = dimName[i]
+                let col = dimName[ i ]
                 let dimNameArr = data.map((item) => {
-                    return item[col]
+                    return item[ col ]
                 })
                 dimNameArr = Array.from(new Set(dimNameArr))
-                colsData[dimName[i]] = dimNameArr
+                colsData[ dimName[ i ] ] = dimNameArr
             }
             if (dataType) {
                 let dataTypeVal = data.map((item) => {
-                    return item[dataType]
+                    return item[ dataType ]
                 })
                 dataTypeVal = Array.from(new Set(dataTypeVal))
-                colsData[dataType] = dataTypeVal
+                colsData[ dataType ] = dataTypeVal
             }
-            arr.push(dimName[0])
-            arr = arr.concat(colsData[dimName[dimName.length - 1]])
+            arr.push(dimName[ 0 ])
+            arr = arr.concat(colsData[ dimName[ dimName.length - 1 ] ])
             //   返回 维度和指标的集合
             this.columns = {}
-            this.columns['arrs'] = colsData
-            this.columns['columns'] = arr
-            if (chartType === 'pie') { // 增加饼图处理 2019年9月27日
-                this.columns['columns'] = dimName
+            this.columns[ 'arrs' ] = colsData
+            this.columns[ 'columns' ] = arr
+            if (chartType === 'pie' || chartType === 'ring') { // 增加饼图处理 2019年9月27日
+                this.columns[ 'columns' ] = dimName
             }
             if (chartType === 'radar' && isMultiseriate) {
-                this.columns['columns'] = dimName
+                this.columns[ 'columns' ] = dimName
             }
             return this.columns
         }
         this.getChart = (dimcols, countCol, chartType, norm, dataTypeCol, isMultiseriate) => {
             // dimcols : 指标维度合集 countCol: 值对应字段, chartType：图标type, dataType : data分图标统计字段,isMultiseriate数据是否是多列中取得
             let datas = this.resData
-            let timeArr = dimcols[0]
-            let timeArrKey = this.columns.arrs[timeArr]
+            let timeArr = dimcols[ 0 ]
+            let timeArrKey = this.columns.arrs[ timeArr ]
             let dataMap = []
             let dataMapkey = []
             if (dimcols.length > 1) {
@@ -67,23 +67,23 @@ export class vChartInfo {
                 this.isDataType = false
             }
             let datasType = dataTypeCol ? datas.map((item) => {
-                return item[dataTypeCol]
-            }) : ['all']
+                return item[ dataTypeCol ]
+            }) : [ 'all' ]
             datasType = Array.from(new Set(datasType))
             this.datasType = {}
-            this.datasType[dataTypeCol] = datasType
+            this.datasType[ dataTypeCol ] = datasType
             let vChartType = chartType || 'line'
             let arr = []
             let allChartData = {
 
             }
             // if (vChartType === 'line' || vChartType === 'histogram' || vChartType === 'pie' ) {
-            if (vChartType === 'line' || vChartType === "histogram" || vChartType === 'pie' || vChartType === "radar") {
+            if (vChartType === 'line' || vChartType === "histogram" || vChartType === 'pie' || vChartType === 'ring' || vChartType === "radar") {
                 for (let i = 0; i < datasType.length; i++) {
-                    allChartData[datasType[i]] = {}
+                    allChartData[ datasType[ i ] ] = {}
                     // allChartData[datasType[i]].columns = ['时间', "门诊", "住院"]
-                    allChartData[datasType[i]].columns = this.columns.columns
-                    allChartData[datasType[i]].rows = []
+                    allChartData[ datasType[ i ] ].columns = this.columns.columns
+                    allChartData[ datasType[ i ] ].rows = []
                     for (let j = 0; j < timeArrKey.length; j++) {
                         let itemData = {}
                         let itemCol = {}
@@ -91,46 +91,46 @@ export class vChartInfo {
                         for (let n = 0; n < dataMapkey.length; n++) {
                             // itemColArr.push(dataTypeCol)
                             // itemColArr.push(timeArr)
-                            itemCol['dataTypeCol'] = {
+                            itemCol[ 'dataTypeCol' ] = {
                                 "key": dataTypeCol,
-                                "value": datasType[i]
+                                "value": datasType[ i ]
                             }
-                            itemCol['timeArr'] = {
+                            itemCol[ 'timeArr' ] = {
                                 "key": timeArr,
-                                "value": timeArrKey[j]
+                                "value": timeArrKey[ j ]
                             }
-                            itemCol['dataMap'] = {
-                                "key": dataMap[0],
-                                "value": dataMapkey[n]
+                            itemCol[ 'dataMap' ] = {
+                                "key": dataMap[ 0 ],
+                                "value": dataMapkey[ n ]
                             }
-                            itemData[dataMapkey[n]] = this.getDataCount(itemCol, datas, vChartType, countCol)
+                            itemData[ dataMapkey[ n ] ] = this.getDataCount(itemCol, datas, vChartType, countCol)
                             // itemData['时间'] = timeArrKey[j] + "点"
-                            itemData[timeArr] = timeArrKey[j].toString()
+                            itemData[ timeArr ] = timeArrKey[ j ].toString()
                         }
                         if (vChartType === "gauge") {
-                            allChartData[datasType[i]].rows = [itemData]
+                            allChartData[ datasType[ i ] ].rows = [ itemData ]
                         }
-                        allChartData[datasType[i]].rows.push(itemData)
+                        allChartData[ datasType[ i ] ].rows.push(itemData)
                     }
                 }
             } else if (vChartType === 'map') {
                 let MapAll = []
                 let target = norm.metrics
                 let labelNorm = norm.labelMap
-                let names = norm.dimension[0]
+                let names = norm.dimension[ 0 ]
                 for (let a = 0; a < datas.length; a++) {
                     let MapItem = {}
-                    MapItem['value'] = []
-                    MapItem['name'] = datas[a][names]
+                    MapItem[ 'value' ] = []
+                    MapItem[ 'name' ] = datas[ a ][ names ]
                     for (let b = 0; b < target.length; b++) {
                         let valueItem = {}
                         for (let c in labelNorm) {
-                            if (target[b] === c) {
-                                valueItem['name'] = labelNorm[c]
-                                valueItem['value'] = datas[a][target[b]]
+                            if (target[ b ] === c) {
+                                valueItem[ 'name' ] = labelNorm[ c ]
+                                valueItem[ 'value' ] = datas[ a ][ target[ b ] ]
                             }
                         }
-                        MapItem['value'].push(valueItem)
+                        MapItem[ 'value' ].push(valueItem)
                     }
                     MapAll.push(MapItem)
                 }
@@ -143,21 +143,21 @@ export class vChartInfo {
                         name: '',
                         value: ''
                     }
-                    obj.name = datas[dimcols[0]]
-                    obj.value = datas[dimcols[1]]
+                    obj.name = datas[ dimcols[ 0 ] ]
+                    obj.value = datas[ dimcols[ 1 ] ]
                     arr.push(obj)
                 })
                 allChartData.all = {}
-                allChartData.all['data'] = arr
+                allChartData.all[ 'data' ] = arr
             } else if (vChartType === 'gauge') {
                 let data = this.resData
                 if (data && data.length > 0) {
                     let chartData = {
-                        columns: ['type', 'value'],
-                        rows: [{
+                        columns: [ 'type', 'value' ],
+                        rows: [ {
                             type: 'name',
-                            value: data[0][dimcols[1]]
-                        }]
+                            value: data[ 0 ][ dimcols[ 1 ] ]
+                        } ]
                     }
                     allChartData.all = chartData
                 }
@@ -165,20 +165,20 @@ export class vChartInfo {
                 let max = norm.max
                 let data1 = this.resData
                 if (data1 && data1.length > 0) {
-                    for (let d in data1[0]) {
-                        let num = data1[0][dimcols[1]]
+                    for (let d in data1[ 0 ]) {
+                        let num = data1[ 0 ][ dimcols[ 1 ] ]
                         if (num > 1 && num <= max) { // 原始数据是一个数值，max必须大于1
                             num = num / max
                         } else if (num <= 1 && num >= 0 & max == 1) { // 原始数据是百分比，max必须设置为1即100%
                             num = num
                         }
-                        if (typeof (data1[0][d]) !== 'number') {
+                        if (typeof (data1[ 0 ][ d ]) !== 'number') {
                             let chartData = {
-                                columns: ['type', 'value'],
-                                rows: [{
-                                    type: data1[0][d],
+                                columns: [ 'type', 'value' ],
+                                rows: [ {
+                                    type: data1[ 0 ][ d ],
                                     value: num
-                                }]
+                                } ]
                             }
                             allChartData.all = chartData
                         }
@@ -186,23 +186,23 @@ export class vChartInfo {
                 }
             } else if (vChartType === 'digital') {
                 let data = this.resData
-                let num = data[0][dimcols]
+                let num = data[ 0 ][ dimcols ]
                 allChartData.all = {}
-                allChartData.all["num"] = num
+                allChartData.all[ "num" ] = num
             }
             if (vChartType === "radar" && isMultiseriate) {
                 let data = this.resData
-                allChartData.all['columns'] = dimcols
-                allChartData.all['rows'] = data
+                allChartData.all[ 'columns' ] = dimcols
+                allChartData.all[ 'rows' ] = data
             }
-            if(vChartType === 'heatmap'){
-                let data =  this.resData
-                allChartData.all={
-                    columns:[],
-                    rows:[]
+            if (vChartType === 'heatmap') {
+                let data = this.resData
+                allChartData.all = {
+                    columns: [],
+                    rows: []
                 }
-                allChartData.all['columns'] = dimcols
-                allChartData.all['rows'] = data
+                allChartData.all[ 'columns' ] = dimcols
+                allChartData.all[ 'rows' ] = data
             }
             return allChartData
         }
@@ -210,16 +210,16 @@ export class vChartInfo {
             // itemcol：条件的key 和 value 必须 ， data  原始data 必须；chartType：图标类型 必须；countcol： count 字段 || 选填
             let count = 0
             let colkeys = Object.keys(itemCol)
-            if (chartType === 'line' || chartType === 'histogram' || chartType === 'radar'|| chartType==='heatmap') {
+            if (chartType === 'line' || chartType === 'histogram' || chartType === 'radar' || chartType === 'heatmap') {
                 for (let i = 0; i < data.length; i++) {
-                    if ((itemCol.dataTypeCol.value !== 'all' ? (data[i][itemCol.dataTypeCol.key] === itemCol.dataTypeCol.value) : true) && data[i][itemCol.timeArr.key] == itemCol.timeArr.value && data[i][itemCol.dataMap.key] === itemCol.dataMap.value)
-                        count += data[i][countCol]
+                    if ((itemCol.dataTypeCol.value !== 'all' ? (data[ i ][ itemCol.dataTypeCol.key ] === itemCol.dataTypeCol.value) : true) && data[ i ][ itemCol.timeArr.key ] == itemCol.timeArr.value && data[ i ][ itemCol.dataMap.key ] === itemCol.dataMap.value)
+                        count += data[ i ][ countCol ]
                 }
-            } else if (chartType === 'pie' || chartType === 'gauge') { // 增加饼图处理 2019年9月27日
+            } else if (chartType === 'pie' || chartType === 'gauge' || chartType === 'ring') { // 增加饼图处理 2019年9月27日
                 for (let i = 0; i < data.length; i++) {
-                    if ((itemCol.dataTypeCol.value !== 'all' ? (data[i][itemCol.dataTypeCol.key] === itemCol.dataTypeCol
-                            .value) : true) && data[i][itemCol.timeArr.key] == itemCol.timeArr.value)
-                        count += data[i][countCol]
+                    if ((itemCol.dataTypeCol.value !== 'all' ? (data[ i ][ itemCol.dataTypeCol.key ] === itemCol.dataTypeCol
+                        .value) : true) && data[ i ][ itemCol.timeArr.key ] == itemCol.timeArr.value)
+                        count += data[ i ][ countCol ]
                 }
             }
             return count
