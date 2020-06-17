@@ -1,21 +1,19 @@
 <template>
   <div class="floor-wrap" @click.stop.prevent>
     <div class="floor-box">
-      <!-- <div class="floor-unit-box">
-        <div
-          class="floor-unit current-unit"
-          v-for="(item, index) in floorUnitList"
-          :key="index"
-          :class="{ 'current-unit': currentUnit === index }"
-        >
-          {{ item }}
+      <div class="block" v-if="floorUnitList && floorUnitList.length > 0">
+        <div class="block-name">
+          {{ blockName }}
         </div>
-      </div> -->
+      </div>
       <div
         class="floor-level-box"
         v-if="floorUnitList && floorUnitList.length > 0"
       >
         <div class="floor-level-list">
+          <div class="floor-level-item floor-level-top">
+            楼层
+          </div>
           <div
             class="floor-level-item"
             v-for="(item, index) in floorLevelList"
@@ -52,25 +50,24 @@
                   v-if="f.dy_name === unit && Number(f.floor_level) === item"
                   @click="toDetail(f)"
                 >
-                  {{ f.name }}
+                  <div class="house_name">{{ f.name }}</div>
+                  <div class="house_status">
+                    <div class="label">
+                      {{ f.house_status }}
+                    </div>
+                    <div class="status1"></div>
+                    <div class="status2"></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="block">{{ blockName }}</div>
-      <!-- <div class="floor-unit" v-for="item in dyList" :key="item">
-        {{ item }}
+
+      <div class="no-data" v-if="!floorUnitList || floorUnitList.length === 0">
+        暂无数据
       </div>
-      <div>
-        <div class="floor-level" v-for="item in lcList" :key="item"></div>
-        <div
-          class="floor-item"
-          v-for="item in getFloorList"
-          :key="item.id"
-        ></div>
-      </div> -->
     </div>
   </div>
 </template>
@@ -144,9 +141,16 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #fff;
   color: #333;
   padding: 30px;
+  .no-data {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+  }
   .current-unit {
     background-color: #333;
     color: #fff;
@@ -174,15 +178,18 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
-        margin-right: 10px;
+        // margin-right: 10px;
         flex: 1;
+        &:last-child {
+          margin-right: 0;
+        }
         .floors-item {
           display: flex;
           flex-direction: column;
           height: 100%;
         }
         .unit-title {
-          background-color: #333;
+          background-color: #bb3f40;
           color: #fff;
           line-height: 30px;
           text-align: center;
@@ -191,23 +198,44 @@ export default {
       .floor-level-list {
         display: flex;
         flex-direction: column;
-        height: calc(100% - 30px);
+        // height: calc(100% - 30px);
+        height: calc(100%);
+        box-sizing: border-box;
+
         .floor-level-item {
           display: flex;
           justify-content: center;
           align-items: center;
           min-height: 50px;
-
-          margin: 10px;
           flex: 1;
           font-size: 20px;
+          color: #fff;
+          padding: 0 20px;
+          font-weight: 800;
+          transform: translateY(10deg);
+          color: #0ccfcf;
+          border-left: 1px solid #0ccfcf;
+          &:last-child {
+            border-bottom: 1px solid #0ccfcf;
+          }
+          &.floor-level-top {
+            // border-bottom: 1px solid #0ccfcf;
+            min-height: 30px;
+            max-height: 30px;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            background-color: #bb3f40;
+            border: none;
+          }
         }
       }
     }
     .floor-level {
       display: flex;
       &.border {
-        border: 1px solid #efefef;
+        border: 1px solid #0ccfcf;
+        // border-left: none;
         border-top: none;
         flex: 1;
       }
@@ -217,27 +245,82 @@ export default {
           height: 100%;
           .floor-item {
             color: #fff;
-            background-color: skyblue;
+            border-left: 1px solid #0ccfcf;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            width: calc(100% - 20px);
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            // width: calc(100% - 20px);
             min-height: 50px;
-            height: calc(100% - 20px);
-            margin: 10px;
+            // height: calc(100% - 20px);
+            // margin: 10px;
             cursor: pointer;
+            .house_name {
+              z-index: 10;
+            }
+            .house_status {
+              .label {
+                position: absolute;
+                bottom: 0;
+                right: 10px;
+                color: #fff;
+                z-index: 10;
+                width: 40px;
+                line-height: 40px;
+
+                text-align: center;
+                bottom: calc(50% - 45px);
+                right: calc(50% - 20px);
+              }
+              .status1 {
+                border: 40px solid transparent;
+                border-bottom: 30px solid rgba($color: #0ccfcf, $alpha: 0.6);
+                position: absolute;
+                // bottom: 20px;
+                bottom: calc(50% - 10px);
+                right: calc(50% - 40px);
+              }
+              .status2 {
+                width: 50px;
+                height: 30px;
+                background-color: rgba($color: #0ccfcf, $alpha: 0.6);
+                overflow: hidden;
+                position: absolute;
+                bottom: calc(50% - 40px);
+                right: calc(50% - 25px);
+              }
+            }
           }
         }
       }
     }
   }
   .block {
-    line-height: 50px;
+    border-bottom: 30px solid #dd4749;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    height: 0;
+    // width: 100px;
+    // line-height: 50px;
     text-align: center;
     margin-top: 10px;
-    background-color: #333;
+    // background-color: #dd4749;
     color: #fff;
-    font-size: 20px;
+    font-size: 30px;
+    position: relative;
+    transform: rotateX(60deg);
+    position: relative;
+    bottom: -8px;
+    .block-name {
+      position: absolute;
+      transform: rotateY(60deg);
+      right: calc(50% - 60px);
+      top: -50px;
+      font-size: 60px;
+    }
   }
 }
 </style>

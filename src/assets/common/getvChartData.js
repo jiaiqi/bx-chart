@@ -18,13 +18,15 @@ export class vChartInfo {
             this.resData = data
             let colsData = {}
             let arr = []
-            for (let i = 0; i < dimName.length; i++) {
-                let col = dimName[ i ]
-                let dimNameArr = data.map((item) => {
-                    return item[ col ]
-                })
-                dimNameArr = Array.from(new Set(dimNameArr))
-                colsData[ dimName[ i ] ] = dimNameArr
+            if (dimName) {
+                for (let i = 0; i < dimName.length; i++) {
+                    let col = dimName[ i ]
+                    let dimNameArr = data.map((item) => {
+                        return item[ col ]
+                    })
+                    dimNameArr = Array.from(new Set(dimNameArr))
+                    colsData[ dimName[ i ] ] = dimNameArr
+                }
             }
             if (dataType) {
                 let dataTypeVal = data.map((item) => {
@@ -33,8 +35,11 @@ export class vChartInfo {
                 dataTypeVal = Array.from(new Set(dataTypeVal))
                 colsData[ dataType ] = dataTypeVal
             }
-            arr.push(dimName[ 0 ])
-            arr = arr.concat(colsData[ dimName[ dimName.length - 1 ] ])
+            if (dimName && Array.isArray(dimName) && dimName.length > 0) {
+                arr.push(dimName[ 0 ])
+                arr = arr.concat(colsData[ dimName[ dimName.length - 1 ] ])
+
+            }
             //   返回 维度和指标的集合
             this.columns = {}
             this.columns[ 'arrs' ] = colsData
@@ -50,11 +55,14 @@ export class vChartInfo {
         this.getChart = (dimcols, countCol, chartType, norm, dataTypeCol, isMultiseriate) => {
             // dimcols : 指标维度合集 countCol: 值对应字段, chartType：图标type, dataType : data分图标统计字段,isMultiseriate数据是否是多列中取得
             let datas = this.resData
-            let timeArr = dimcols[ 0 ]
+            let timeArr = []
+            if (dimcols && Array.isArray(dimcols) && dimcols.length > 0) {
+                timeArr = dimcols[ 0 ]
+            }
             let timeArrKey = this.columns.arrs[ timeArr ]
             let dataMap = []
             let dataMapkey = []
-            if (dimcols.length > 1) {
+            if (dimcols && Array.isArray(dimcols) && dimcols.length > 1) {
                 dataMap = dimcols.slice(1, dimcols.length)
                 dataMapkey = this.columns.columns.slice(1, this.columns.columns.length)
             } else {
@@ -162,6 +170,7 @@ export class vChartInfo {
                     allChartData.all = chartData
                 }
             } else if (vChartType === 'liquidfill') {
+
                 let max = norm.max
                 let data1 = this.resData
                 if (data1 && data1.length > 0) {

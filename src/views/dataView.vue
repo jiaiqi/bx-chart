@@ -1,7 +1,20 @@
 <template>
   <div class="bx-data-view" :style="setViewStyle">
     <div class="data-view-header" :style="setHeaderStyle">
-      <div class="title">{{ title }}</div>
+      <div class="fullscreen" @click="openFullscreen">
+        {{ isFullScreen ? "退出全屏" : "全屏" }}
+      </div>
+      <div
+        class="title"
+        :style="{
+          color:
+            contentData.gis_info_cfg && contentData.gis_info_cfg.titleColor
+              ? contentData.gis_info_cfg.titleColor
+              : ''
+        }"
+      >
+        {{ title }}
+      </div>
       <div class="edit" @click="changeEditable" v-if="viewIsDraggable">
         {{ editable ? "完成" : "编辑" }}
       </div>
@@ -139,6 +152,7 @@ export default {
       share: null,
       editable: false,
       units: 'px', //px/%
+      isFullScreen: false
     };
   },
   watch: {
@@ -151,7 +165,7 @@ export default {
   },
   methods: {
     clickChart (e, config) {
-      console.log({ chartData: e, chartConfig: config })
+      console.log(config)
       // if (e.chart_settings.linkUrl) {
       //   window.location.href = e.chart_settings.linkUrl
       // }
@@ -163,7 +177,7 @@ export default {
       } else if (e.chart_type === 'obj' && e?.objType === "camera") {
         // this.$router.push({ name: "floor", query: { lybm: e.lybm } })
         // window.location.href = '/bx-chart/#/dataView/DS202006110018?lybm=' + e.lybm
-        top.window.open('/bx-chart/#/sur?' + e[ 'idCol' ] + '=' + e[ e[ 'idCol' ] ])
+        top.window.open('/bx-chart/#/monitoringScreen?' + e[ 'idCol' ] + '=' + e[ e[ 'idCol' ] ])
         // window.location.reload()
       }
     },
@@ -321,15 +335,16 @@ export default {
               self.contentData.background_color = pageConfig.background_color
               let file_no = pageConfig.dashboard_background;
               self.getDashBackground(file_no);
+              try {
+                pageConfig.gis_info_cfg = JSON.parse(pageConfig.gis_info_cfg)
+                self.contentData[ 'gis_info_cfg' ] = pageConfig.gis_info_cfg
+              } catch (error) {
+                console.log(error)
+              }
               if (pageConfig.if_gis_map === '是') {
                 //关联地图
                 self.getAreaMapConfig(pageConfig.dashboard_no)
-                try {
-                  pageConfig.gis_info_cfg = JSON.parse(pageConfig.gis_info_cfg)
-                  self.contentData[ 'gis_info_cfg' ] = pageConfig.gis_info_cfg
-                } catch (error) {
-                  console.log(error)
-                }
+
               } else {
                 self.getChartConfig(pageConfig.dashboard_no);
               }
@@ -351,7 +366,8 @@ export default {
       );
       let params = {
         serviceName: "srvanalyze_chart_select",
-        colNames: [ "dashboard_no", "dashboard_name", "data_label_visible", "legend_visible", "subdata", "use_flag", "z_order", "chart_height", "chart_left", "chart_top", "chart_width", "chart_name", "chart_no", "chart_request_payload", "chart_request_url", "chart_settings", "chart_type" ],
+        colNames: [ "*" ],
+        // colNames: [ "dashboard_no", "dashboard_name", "data_label_visible", "data_source", "legend_visible", "chart_columns", "subdata", "use_flag", "z_order", "chart_height", "chart_left", "chart_top", "chart_width", "chart_name", "chart_no", "chart_request_payload", "chart_request_url", "chart_settings", "chart_type" ],
         condition: [
           {
             colName: "dashboard_no",
@@ -437,6 +453,7 @@ export default {
               }
             })
           } else {
+            // item = item
           }
         });
       }
@@ -471,7 +488,7 @@ export default {
             dashboard_background = path + data[ 0 ].fileurl;
           } else {
             dashboard_background =
-              "url(" + require("@/assets/images/wrapper-bg.png") + ")";
+              "url(" + require("@/assets/images/home.png") + ")";
           }
           const bx_auth_ticket = sessionStorage.getItem('bx_auth_ticket')
           this.contentData.dashboard_background_image = `url(${dashboard_background}&bx_auth_ticket=${bx_auth_ticket})`;
@@ -521,59 +538,59 @@ export default {
     },
     resize () {
       // 自适应缩放
-      let resizeWidth = () => {
-        let ratio = $(window).width() / (window.screen.width || $('body').width())
-        let contentData = this.contentData
-        let dashboard_width = Number(contentData.dashboard_width)
-        if (window.screen.width / dashboard_width < 1) {
-          ratio = ratio * window.screen.width / dashboard_width
-        }
-        $('body').css({
-          transform: 'scale(' + ratio + ')',
-          transformOrigin: 'left top',
-          backgroundSize: '100%'
-        })
-      }
-      let resizeCenter = () => {
-        if (!window.screen.height || !window.screen.width) return resizeCenterBak()
-        let ratio = $(window).height() / window.screen.height
-        let dashboard_width = Number(contentData.dashboard_width)
-        if (window.screen.width / dashboard_width < 1) {
-          ratio = ratio * window.screen.width / dashboard_width
-        }
-        $('body').css({
-          transform: 'scale(' + ratio + ')',
-          transformOrigin: 'left top',
-          backgroundSize:
-            100 * ((window.screen.width / $(window).width()) * ratio) +
-            '%' +
-            ' 100%',
-          backgroundPosition:
-            ($(window).width() - $('body').width() * ratio) / 2 + 'px top',
-          marginLeft: ($(window).width() - $('body').width() * ratio) / 2
-        })
-      }
-      let resizeHeight = () => {
-        if (!window.screen.height || !window.screen.width) return resizeCenterBak()
-        let ratio = $(window).height() / window.screen.height
-        let dashboard_width = Number(contentData.dashboard_width)
-        if (window.screen.width / dashboard_width < 1) {
-          ratio = ratio * window.screen.width / dashboard_width
-        }
-        $('body').css({
-          transform: 'scale(' + ratio + ')',
-          transformOrigin: 'left top',
-          backgroundSize:
-            100 * ((window.screen.width / $(window).width()) * ratio) +
-            '%' +
-            ' 100%',
-          backgroundPosition:
-            ($(window).width() - $('body').width() * ratio) / 2 + 'px top'
-        })
-        $('html').css({
-          overflowX: 'scroll'
-        })
-      }
+      // let resizeWidth = () => {
+      //   let ratio = $(window).width() / (window.screen.width || $('body').width())
+      //   let contentData = this.contentData
+      //   let dashboard_width = Number(contentData.dashboard_width)
+      //   if (window.screen.width / dashboard_width < 1) {
+      //     ratio = ratio * window.screen.width / dashboard_width
+      //   }
+      //   $('body').css({
+      //     transform: 'scale(' + ratio + ')',
+      //     transformOrigin: 'left top',
+      //     backgroundSize: '100%'
+      //   })
+      // }
+      // let resizeCenter = () => {
+      //   if (!window.screen.height || !window.screen.width) return resizeCenterBak()
+      //   let ratio = $(window).height() / window.screen.height
+      //   let dashboard_width = Number(contentData.dashboard_width)
+      //   if (window.screen.width / dashboard_width < 1) {
+      //     ratio = ratio * window.screen.width / dashboard_width
+      //   }
+      //   $('body').css({
+      //     transform: 'scale(' + ratio + ')',
+      //     transformOrigin: 'left top',
+      //     backgroundSize:
+      //       100 * ((window.screen.width / $(window).width()) * ratio) +
+      //       '%' +
+      //       ' 100%',
+      //     backgroundPosition:
+      //       ($(window).width() - $('body').width() * ratio) / 2 + 'px top',
+      //     marginLeft: ($(window).width() - $('body').width() * ratio) / 2
+      //   })
+      // }
+      // let resizeHeight = () => {
+      //   if (!window.screen.height || !window.screen.width) return resizeCenterBak()
+      //   let ratio = $(window).height() / window.screen.height
+      //   let dashboard_width = Number(contentData.dashboard_width)
+      //   if (window.screen.width / dashboard_width < 1) {
+      //     ratio = ratio * window.screen.width / dashboard_width
+      //   }
+      //   $('body').css({
+      //     transform: 'scale(' + ratio + ')',
+      //     transformOrigin: 'left top',
+      //     backgroundSize:
+      //       100 * ((window.screen.width / $(window).width()) * ratio) +
+      //       '%' +
+      //       ' 100%',
+      //     backgroundPosition:
+      //       ($(window).width() - $('body').width() * ratio) / 2 + 'px top'
+      //   })
+      //   $('html').css({
+      //     overflowX: 'scroll'
+      //   })
+      // }
       let resizeFull = () => {
         if (!window.screen.height || !window.screen.width) return resizeFullBak()
         let ratioX = $(window).width() / window.screen.width
@@ -583,10 +600,10 @@ export default {
         let dashboard_width = Number(contentData.dashboard_width)
         let dashboard_height = Number(contentData.dashboard_height)
         if (window.screen.width / dashboard_width < 1) {
-          ratiox = ratio * window.screen.width / dashboard_width
+          ratioX = ratioX * window.screen.width / dashboard_width
         }
         if (window.screen.height / dashboard_height < 1) {
-          ratiox = ratio * window.screen.height / dashboard_height
+          ratioY = ratioY * window.screen.height / dashboard_height
         }
         $('body').css({
           transform: 'scale(' + ratioX + ', ' + ratioY + ')',
@@ -595,28 +612,28 @@ export default {
         })
 
       }
-      let resizeCenterBak = () => {
-        let ratioX = $(window).width() / $('body').width()
-        let ratioY = $(window).height() / $('body').height()
-        let dashboard_width = Number(contentData.dashboard_width)
-        let dashboard_height = Number(contentData.dashboard_height)
-        if (window.screen.width / dashboard_width < 1) {
-          ratiox = ratio * window.screen.width / dashboard_width
-        }
-        if (window.screen.height / dashboard_height < 1) {
-          ratiox = ratio * window.screen.height / dashboard_height
-        }
-        let ratio = Math.min(ratioX, ratioY)
+      // let resizeCenterBak = () => {
+      //   let ratioX = $(window).width() / $('body').width()
+      //   let ratioY = $(window).height() / $('body').height()
+      //   let dashboard_width = Number(contentData.dashboard_width)
+      //   let dashboard_height = Number(contentData.dashboard_height)
+      //   if (window.screen.width / dashboard_width < 1) {
+      //     ratiox = ratio * window.screen.width / dashboard_width
+      //   }
+      //   if (window.screen.height / dashboard_height < 1) {
+      //     ratiox = ratio * window.screen.height / dashboard_height
+      //   }
+      //   let ratio = Math.min(ratioX, ratioY)
 
-        $('body').css({
-          transform: 'scale(' + ratio + ')',
-          transformOrigin: 'left top',
-          backgroundSize: (1 / ratioX) * 100 * ratio + '%',
-          backgroundPosition:
-            ($(window).width() - $('body').width() * ratio) / 2 + 'px top',
-          marginLeft: ($(window).width() - $('body').width() * ratio) / 2
-        })
-      }
+      //   $('body').css({
+      //     transform: 'scale(' + ratio + ')',
+      //     transformOrigin: 'left top',
+      //     backgroundSize: (1 / ratioX) * 100 * ratio + '%',
+      //     backgroundPosition:
+      //       ($(window).width() - $('body').width() * ratio) / 2 + 'px top',
+      //     marginLeft: ($(window).width() - $('body').width() * ratio) / 2
+      //   })
+      // }
       let resizeFullBak = () => {
         let ratioX = $(window).width() / $('body').width()
         let ratioY = $(window).height() / $('body').height()
@@ -634,21 +651,22 @@ export default {
           backgroundSize: '100% ' + ratioY * 100 + '%'
         })
       }
-      if (window.screen.display == 2) {
-        // 等比缩放高度铺满
-        resizeCenter()
-      } else if (window.screen.display == 3) {
-        //全屏铺满
-        resizeFull()
-      } else if (window.screen.display == 4) {
-        //等比缩放高度铺满并且可以左右移动
-        resizeHeight()
-      } else {
-        // 等比缩放宽度铺满
-        resizeFull()
+      resizeFull()
+      // if (window.screen.display == 2) {
+      //   // 等比缩放高度铺满
+      //   resizeCenter()
+      // } else if (window.screen.display == 3) {
+      //   //全屏铺满
+      //   resizeFull()
+      // } else if (window.screen.display == 4) {
+      //   //等比缩放高度铺满并且可以左右移动
+      //   resizeHeight()
+      // } else {
+      //   // 等比缩放宽度铺满
+      //   resizeFull()
 
-        // resizeWidth()
-      }
+      //   // resizeWidth()
+      // }
     },
 
     onSubmint (e) {
@@ -842,7 +860,45 @@ export default {
       // let self = this
       this.testVal = e || null;
       return false;
-    }
+    },
+    openFullscreen () {
+      let fullarea = document.getElementsByClassName('bx-data-view')[ 0 ]
+      this.isFullScreen = !this.isFullScreen
+      this.isFullScreen === false ? this.exitFull() : this.requestFullScreen(fullarea);
+    },
+    requestFullScreen (element) {
+      //进入全屏状态 判断各种浏览器，找到正确的方法
+      if (!element) {
+        element = document.body
+      }
+      var requestMethod = element.requestFullScreen || //W3C
+        element.webkitRequestFullScreen || //FireFox
+        element.mozRequestFullScreen || //Chrome等
+        element.msRequestFullScreen; //IE11
+      if (requestMethod) {
+        requestMethod.call(element);
+      } else if (typeof window.ActiveXObject !== "undefined") { //for Internet Explorer
+        var wscript = new ActiveXObject("WScript.Shell");
+        if (wscript !== null) {
+          wscript.SendKeys("{F11}");
+        }
+      }
+    },
+    exitFull () {
+      // 退出全屏状态 判断各种浏览器，找到正确的方法
+      var exitMethod = document.exitFullscreen || //W3C
+        document.mozCancelFullScreen || //FireFox
+        document.webkitExitFullscreen || //Chrome等
+        document.webkitExitFullscreen; //IE11
+      if (exitMethod && document.fullscreenElement) {
+        exitMethod.call(document);
+      } else if (typeof window.ActiveXObject !== "undefined") { //for Internet Explorer
+        var wscript = new ActiveXObject("WScript.Shell");
+        if (wscript !== null) {
+          wscript.SendKeys("{F11}");
+        }
+      }
+    },
   },
   created () {
     // this.$route.params.chart = "DS201909240001";
@@ -854,6 +910,14 @@ export default {
   mounted () {
     let self = this;
     self.getPageConfig()
+    window.onresize = function () {
+      if (!document.fullscreenElement) {
+        self.isFullScreen = false
+        console.log('非全屏')
+      } else {
+        console.log('进入全屏')
+      }
+    }
     try {
       let chartId = this.$route.params.chart
       if (chartId) {
@@ -894,6 +958,11 @@ export default {
       position: absolute;
       top: 10px;
       right: 30px;
+    }
+    .fullscreen {
+      position: absolute;
+      top: 10px;
+      left: 30px;
     }
   }
   .data-view-main {

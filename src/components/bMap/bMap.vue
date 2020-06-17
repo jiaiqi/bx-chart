@@ -310,7 +310,7 @@ export default {
       handler (newValue, oldValue) {
         if (newValue.chart_width && newValue.chart_height) {
           try {
-            this.mapSettings = JSON.parse(decodeURIComponent(newValue.chart_settings))
+            this.mapSettings = newValue.chart_settings && typeof newValue.chart_settings === 'string' ? JSON.parse(decodeURIComponent(newValue.chart_settings)) : newValue.chart_settings
           } catch (error) {
             console.log(error, '\n', newValue);
           }

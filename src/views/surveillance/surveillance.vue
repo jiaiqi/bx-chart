@@ -1,38 +1,39 @@
 
 <template>
-  <div class="sur-wrap">
-    <div class="sur-video-box" :class="{ fullScreen: isFullscreen }">
-      <div class="sur-video" v-for="(item, index) in videoBoxList" :key="index">
+  <div
+    class="sur-wrap"
+    :style="{
+      height: chartConfigs.chart_height,
+      width: chartConfigs.chart_width
+    }"
+  >
+    <div
+      class="sur-video-box"
+      :class="{
+        fullScreen: isFullscreen,
+        notComponent: surConfig.type !== 'component'
+      }"
+    >
+      <div
+        class="sur-video"
+        v-for="(item, index) in videoBoxList"
+        :key="index"
+        :style="{
+          width: fullarea.width / screenAmount - 5 + 'px',
+          height: fullarea.height / screenAmount - 5 + 'px'
+        }"
+      >
         <videoPlayer
           class="vjs-custom-skin videoPlayer"
           v-if="item && item.sources && !isFullscreen"
           :options="item"
-          :style="{
-            width: 1200 / screenAmount + 'px',
-            height: 700 / screenAmount + 'px'
-          }"
         ></videoPlayer>
         <videoPlayer
           class="vjs-custom-skin videoPlayer"
           v-if="item && item.sources && isFullscreen"
           :options="item"
-          :style="{
-            width: fullarea.width / screenAmount - 10 + 'px',
-            height: fullarea.height / screenAmount - 10 + 'px'
-          }"
         ></videoPlayer>
-        <div
-          class="video-box"
-          :style="{
-            width: isFullscreen
-              ? fullarea.width / screenAmount - 10 + 'px'
-              : 1200 / screenAmount + 'px',
-            height: isFullscreen
-              ? fullarea.height / screenAmount - 10 + 'px'
-              : 700 / screenAmount + 'px'
-          }"
-          v-if="!item || !item.sources"
-        >
+        <div class="video-box" v-if="!item || !item.sources">
           无信号
         </div>
         <div class="menu" @click="checkSource(item, index)">
@@ -40,7 +41,7 @@
         </div>
       </div>
     </div>
-    <div class="control-box">
+    <div class="control-box" v-if="!surConfig.type">
       <el-row>
         <el-button
           @click="changeScreenAmount(1)"
@@ -69,7 +70,9 @@
       title="请选择信号源"
       :visible.sync="showSelectDialog"
       width="70%"
+      :append-to-body="true"
       center
+      :destroy-on-close="true"
     >
       <!-- <div style="text-align:center;line-height:50px">请选择信号源</div> -->
       <el-table
@@ -135,7 +138,7 @@ export default {
           techOrder: [ "flash", "html5" ],
           autoplay: true,
           width: '1200',
-          controls: true
+          controls: false
         }
       ],
       pageInfo: {
@@ -318,6 +321,16 @@ export default {
       screenAmount: 1
     }
   },
+  props: {
+    surConfig: {
+      type: Object || Array,
+      default: () => { }
+    },
+    chartConfigs: {
+      type: Object || Array,
+      default: () => { }
+    },
+  },
   methods: {
     handleCurrentChange (e) {
       this.pageInfo.pageNo = e
@@ -325,25 +338,41 @@ export default {
 
     },
     async getSourceList () {
-      const url = this.getServiceUrl('select', 'srvvideom_video_channel_cfg_select', 'videomonitor')
-      let req = {
-        "serviceName": "srvvideom_video_channel_cfg_select",
-        "colNames": [ "*" ],
-        "condition": [],
-        "page": { "pageNo": this.pageInfo.pageNo, "rownumber": this.pageInfo.rownumber },
-        "order": []
+      if (this.chartConfigs.data_source === 'mock') {
+        let sourcesArray = []
+        let data = typeof this.chartConfigs.mock_data === 'string' ? JSON.parse(this.chartConfigs.mock_data) : []
+        if (data && Array.isArray(data)) {
+          data.forEach(item => {
+            item.src = item.video_url ? item.video_url : item.src ? item.src : null
+            // item.src = 'rtmp://127.0.0.1:1935/live/livel'
+            item.type = "application/x-mpegURL"
+            sourcesArray.push(item)
+            this.sourcesArray = sourcesArray
+          })
+        }
+      } else {
+        const url = this.getServiceUrl('select', 'srvvideom_video_channel_cfg_select', 'videomonitor')
+        let req = {
+          "serviceName": "srvvideom_video_channel_cfg_select",
+          "colNames": [ "*" ],
+          "condition": [],
+          "page": { "pageNo": this.pageInfo.pageNo, "rownumber": this.pageInfo.rownumber },
+          "order": []
+        }
+        let res = await this.$http.post(url, req)
+        let data = res.data.data
+        let sourcesArray = []
+        if (data && Array.isArray(data) && data.length > 0) {
+          data.forEach(item => {
+            item.src = item.video_url
+            // item.src = 'rtmp://127.0.0.1:1935/live/livel'
+            item.type = "application/x-mpegURL"
+            sourcesArray.push(item)
+            this.sourcesArray = sourcesArray
+          })
+        }
       }
-      let data = await this.$http.post(url, req)
-      let sourcesArray = []
-      if (data && Array.isArray(data) && data.length > 0) {
-        data.forEach(item => {
-          item.src = item.video_url
-          // item.src = 'rtmp://127.0.0.1:1935/live/livel'
-          item.type = "application/x-mpegURL"
-          sourcesArray.push(item)
-          this.sourcesArray = sourcesArray
-        })
-      }
+
     },
     async getViewHistory () {
       const url = this.getServiceUrl('select', 'srvvideom_user_monitor_view_select', 'videomonitor')
@@ -366,12 +395,12 @@ export default {
     rowClick (row) {
       console.log(row)
       let obj = {
-        width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 10 : (this.fullarea.width / this.screenAmount),
-        height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 10 : (this.fullarea.height / this.screenAmount),
+        width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 5 : (this.fullarea.width / this.screenAmount) - 5,
+        height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 5 : (this.fullarea.height / this.screenAmount) - 5,
         sources: null,
         techOrder: [ "flash", "html5" ],
         autoplay: true,
-        controls: true
+        controls: false
       }
       obj.sources = [
         {
@@ -379,6 +408,7 @@ export default {
           src: row.src
         }
       ]
+      console.log(obj.width, obj.height)
       this.$set(this.videoBoxList, this.currentSelect, obj)
       this.showSelectDialog = false
     },
@@ -388,7 +418,6 @@ export default {
     fullscreen () {
       let fullarea = document.getElementsByClassName('sur-video-box')[ 0 ]
       this.requestFullScreen(fullarea)
-
     },
     checkSource (item, index) {
       this.currentSelect = index
@@ -399,32 +428,18 @@ export default {
       } else {
 
         let obj = {
-          width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 10 : (this.fullarea.width / this.screenAmount),
-          height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 10 : (this.fullarea.height / this.screenAmount),
+          width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 5 : (this.fullarea.width / this.screenAmount) - 5,
+          height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 5 : (this.fullarea.height / this.screenAmount) - 5,
           sources: null,
-          techOrder: [ "flash", "html5" ],
+          techOrder: [ "html5" ],
+          // techOrder: [ "flash", "html5" ],
           autoplay: true,
-          controls: true
+          controls: false
         }
+        console.log(obj.width, obj.height)
         this.$set(this.videoBoxList, index, obj)
 
       }
-      // // return
-      // let obj = {
-      //   width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 10 : (this.fullarea.width / this.screenAmount),
-      //   height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 10 : (this.fullarea.height / this.screenAmount),
-      //   sources: [],
-      //   techOrder: [ "flash", "html5" ],
-      //   autoplay: true,
-      //   controls: true
-      // }
-      // if (item && item.sources) {
-      //   obj.sources = []
-      // } else {
-      //   // obj.sources = this.sourceList[ index ][ 'sources' ]
-      // }
-      // this.$set(this.videoBoxList, index, obj)
-
     },
     requestFullScreen (element) {
       //进入全屏状态 判断各种浏览器，找到正确的方法
@@ -463,41 +478,45 @@ export default {
   mounted () {
     let self = this
     let element = document.getElementsByClassName('sur-video-box')[ 0 ]
-    window.onresize = function () {
-      if (!document.fullscreenElement) {
-        console.log('退出全屏')
-        self.fullarea.width = element.clientWidth
-        self.fullarea.height = element.clientHeight
-        self.isFullscreen = false
-        self.fullarea = {
-          width: 1200,
-          height: 700,
+    if (!this.surConfig || !this.surConfig.type) {
+      window.onresize = function () {
+        if (!document.fullscreenElement) {
+          console.log('退出全屏')
+          self.fullarea.width = element.clientWidth
+          self.fullarea.height = element.clientHeight
+          self.isFullscreen = false
+          if (!self.surConfig.type) {
+            self.fullarea = {
+              width: 1200,
+              height: 700,
+            }
+          }
+          let videoBoxList = self.deepCopy(self.videoBoxList)
+          self.videoBoxList = []
+          videoBoxList.forEach(item => {
+            if (item) {
+              item.width = (self.fullarea.width / self.screenAmount) - 5
+              item.height = (self.fullarea.height / self.screenAmount) - 5
+              console.log(`width:${item.width},height:${item.height}`)
+            }
+          });
+          self.videoBoxList = videoBoxList
+        } else {
+          self.isFullscreen = true
+          console.log("进入全屏")
+          self.fullarea.width = element.clientWidth
+          self.fullarea.height = element.clientHeight
+          let videoBoxList = self.deepCopy(self.videoBoxList)
+          self.videoBoxList = []
+          videoBoxList.forEach(item => {
+            if (item) {
+              item.width = (element.clientWidth / self.screenAmount) - 5
+              item.height = (element.clientHeight / self.screenAmount) - 5
+              console.log(`width:${item.width},height:${item.height}`)
+            }
+          });
+          self.videoBoxList = videoBoxList
         }
-        let videoBoxList = self.deepCopy(self.videoBoxList)
-        self.videoBoxList = []
-        videoBoxList.forEach(item => {
-          if (item) {
-            item.width = (1200 / self.screenAmount) - 10
-            item.height = (700 / self.screenAmount) - 10
-            console.log(`width:${item.width},height:${item.height}`)
-          }
-        });
-        self.videoBoxList = videoBoxList
-      } else {
-        self.isFullscreen = true
-        console.log("进入全屏")
-        self.fullarea.width = element.clientWidth
-        self.fullarea.height = element.clientHeight
-        let videoBoxList = self.deepCopy(self.videoBoxList)
-        self.videoBoxList = []
-        videoBoxList.forEach(item => {
-          if (item) {
-            item.width = (element.clientWidth / self.screenAmount) - 10
-            item.height = (element.clientHeight / self.screenAmount) - 10
-            console.log(`width:${item.width},height:${item.height}`)
-          }
-        });
-        self.videoBoxList = videoBoxList
       }
     }
   },
@@ -505,48 +524,87 @@ export default {
     this.getSourceList();
   },
   watch: {
-    screenAmount (newValue, oldValue) {
-      if (newValue) {
-        let videoBoxList = []
-        this.videoBoxList = []
-        let length = Math.pow(newValue, 2)
-        for (let i = 0; i < length; i++) {
-          let obj = {
-            width: this.fullarea.width / newValue,
-            height: this.fullarea.height / newValue,
-            sources: [
-              {
-                type: "application/x-mpegURL",
-                src: "rtmp://127.0.0.1:1935/live/"
-              }
-            ],
-            techOrder: [ "flash", "html5" ],
-            autoplay: true,
-            controls: true
-          }
-          if (i === 0) {
-
-          } else {
-            obj = {}
-          }
-          obj = {}
-
-          videoBoxList.push(obj)
-          this.videoBoxList.push(obj)
+    surConfig: {
+      deep: true,
+      immediate: true,
+      handler (newvalue, oldvalue) {
+        if (newvalue && newvalue.type === 'component' && newvalue.rownumber) {
+          this.screenAmount = Number(newvalue.rownumber)
         }
       }
+    },
+    chartConfigs: {
+      deep: true,
+      immediate: true,
+      handler (newvalue, oldvalue) {
+        if (this.surConfig && this.surConfig.type && newvalue && newvalue.chart_height && newvalue.chart_width) {
+          this.fullarea = {
+            width: newvalue.chart_width,
+            height: newvalue.chart_height
+          }
+        }
+      }
+    },
+    screenAmount: {
+      immediate: true,
+      handler (newValue, oldValue) {
+        if (newValue) {
+          let videoBoxList = []
+          this.videoBoxList = []
+          let length = Math.pow(newValue, 2)
+          for (let i = 0; i < length; i++) {
+            let obj = {
+              width: this.fullarea.width / newValue,
+              height: this.fullarea.height / newValue,
+              sources: [
+                {
+                  type: "application/x-mpegURL",
+                  src: "rtmp://127.0.0.1:1935/live/"
+                }
+              ],
+              techOrder: [ "flash", "html5" ],
+              autoplay: true,
+              controls: false
+            }
+            if (i === 0) {
+
+            } else {
+              obj = {}
+            }
+            obj = {}
+            videoBoxList.push(obj)
+            this.videoBoxList.push(obj)
+          }
+        }
+      }
+
     }
   },
 }
 </script>
 
 <style lang="scss" scoped>
+.sur-wrap {
+  width: calc(100%);
+  height: calc(100% - 20px);
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  overflow: hidden;
+}
 .sur-video-box {
   display: flex;
   flex-wrap: wrap;
-  margin: 20px auto;
-  max-width: 1250px;
-  background-color: #fff;
+  margin: 0 auto;
+  // background-color: #fff;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  &.notComponent {
+    max-width: 1200px;
+    max-height: 700px;
+  }
   &.fullScreen {
     width: 100%;
     max-width: 100vw;
@@ -556,10 +614,12 @@ export default {
   }
   .sur-video {
     position: relative;
-
     display: flex;
     flex-wrap: wrap;
-    margin: 2px;
+    .vjs-custom-skin {
+      width: 100%;
+      height: 100%;
+    }
     .menu {
       display: none;
       background-color: #333;
@@ -578,6 +638,8 @@ export default {
       justify-content: center;
       align-items: center;
       color: #fff;
+      width: 100%;
+      height: 100%;
     }
     &:hover {
       .menu {

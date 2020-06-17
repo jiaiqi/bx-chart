@@ -1,10 +1,6 @@
 <template>
     <div class="wrapbox">
       <el-card class="box-card">
-        <div slot="header" class="clearfix">
-            <span>{{title}}</span>
-            <el-button style="float: right; padding: 3px 0" type="text">操作</el-button>
-        </div>
         <div v-for="(item,index) in family" :key="index" class="text item">
             <div class="message">
                 <div>{{item.type}}</div>
@@ -36,12 +32,15 @@
     }
 </script>
 <style lang="scss">
+.wrapbox{
+    width: 100%;
+}
    .text {
     font-size: 14px;
   }
 
   .item {
-    margin-bottom: 18px;
+    margin-bottom: 8px;
     .message{
         display: flex;
         justify-content: space-between;
@@ -58,7 +57,7 @@
   }
 
   .box-card {
-    width: 250px;
+    width: 100%;
   }
 
 

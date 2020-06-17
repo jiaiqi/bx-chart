@@ -1,5 +1,9 @@
 <template>
-  <div ref="number" class="wrap-container"></div>
+  <div
+    ref="number"
+    class="wrap-container"
+    :style="{ 'font-size': chartSetting.fontSize ? chartSetting.fontSize : '' }"
+  ></div>
 </template>
 <script>
 export default {
@@ -15,7 +19,7 @@ export default {
     init () {
       let html = ""
       this.value.toString().split('').forEach(v => {
-        html += '<div class="wrap"><ul class="list scroll' + v + '">'
+        html += '<div class="digit-wrap"><ul class="list scroll' + v + '">'
         for (let i = 0; i <= 9; i++) {
           html += '<li>' + i + '</li>'
         }
@@ -31,6 +35,10 @@ export default {
     number: {
       type: Object,
       default: () => { { num: 0 } }
+    },
+    chartSetting: {
+      type: Object,
+      default: () => { }
     }
   },
   watch: {
@@ -45,18 +53,18 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style>
 .wrap-container {
   display: flex;
   justify-content: flex-start;
 }
-.wrap {
-  width: 30px;
+.digit-wrap {
+  width: 20px;
   height: 50px;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  font-size: 50px;
+  /* font-size: 50px; */
 }
 .list {
   position: absolute;
@@ -69,7 +77,7 @@ export default {
 }
 .list li {
   list-style: none;
-  width: 30px;
+  width: 20px;
   height: 50px;
   line-height: 50px;
   color: rgb(226, 243, 71);
