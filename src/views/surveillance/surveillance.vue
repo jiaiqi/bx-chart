@@ -478,7 +478,7 @@ export default {
   mounted () {
     let self = this
     let element = document.getElementsByClassName('sur-video-box')[ 0 ]
-    if (!this.surConfig || !this.surConfig.type) {
+    if ((!this.surConfig || !this.surConfig.type) && element) {
       window.onresize = function () {
         if (!document.fullscreenElement) {
           console.log('退出全屏')

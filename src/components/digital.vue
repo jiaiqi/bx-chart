@@ -17,15 +17,17 @@ export default {
   },
   methods: {
     init () {
-      let html = ""
-      this.value.toString().split('').forEach(v => {
-        html += '<div class="digit-wrap"><ul class="list scroll' + v + '">'
-        for (let i = 0; i <= 9; i++) {
-          html += '<li>' + i + '</li>'
-        }
-        html += '</ul></div>'
-      })
-      this.$refs.number.innerHTML = html
+      if (this.value) {
+        let html = ""
+        this.value.toString().split('').forEach(v => {
+          html += '<div class="digit-wrap"><ul class="list scroll' + v + '">'
+          for (let i = 0; i <= 9; i++) {
+            html += '<li>' + i + '</li>'
+          }
+          html += '</ul></div>'
+        })
+        this.$refs.number.innerHTML = html
+      }
     }
   },
   updated () {

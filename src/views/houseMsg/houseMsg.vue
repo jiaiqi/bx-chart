@@ -1,108 +1,300 @@
 <template>
-  <div class="wrap">
-    <h1 class="title">盘锦小区1号楼1单元401室</h1>
+<!-- FW20200611160079 -->
+  <div class="wrapboxContent">
+    <div class="title" >{{homeMsg?homeMsg:"未知房间"}}</div>
     <div class="tableHeader">
-      <div class="homeContent">
-        <div class="content-left">
-          <img class="imgcover" src="http://www.eleve.cn/houminhua/fwxx.jpg" />
+         <div class="homeContent">
+            <div class="content-left"><img class="imgcover" src="http://www.eleve.cn/houminhua/fwxx.jpg"/></div>
+            <div class="content-right">
+              <p class="label">房屋基本信息</p>
+              <span></span>
+            <div>
+                <Card :family="doublecar"></Card>
+            </div>
+            </div>
         </div>
-        <div class="content-right">
-          <p class="label">房屋基本信息</p>
-          <span></span>
-          <div>
-            <Card :family="doublecar"></Card>
-          </div>
+        <div class="homeContent">
+            <div class="content-left"><img class="imgcover" src="http://www.eleve.cn/houminhua/fz.jpg"/></div>
+            <div class="content-right">
+              <p class="label">房主基本信息</p>
+              <span></span>
+            <div>
+                <Card :family="houseOwner"></Card>
+            </div>
+            </div>
         </div>
-      </div>
-      <div class="homeContent">
-        <div class="content-left">
-          <img class="imgcover" src="http://www.eleve.cn/houminhua/fz.jpg" />
-        </div>
-        <div class="content-right">
-          <p class="label">房主基本信息</p>
-          <span></span>
-          <div>
-            <Card :family="houseOwner"></Card>
-          </div>
-        </div>
-      </div>
     </div>
-    <div>
-      <div>
-        <div class="herderTit">车辆信息</div>
-        <el-table
-          :data="tableDataCar"
-          stripe
-          :cell-style="{ background: '#1c6f77c2' }"
-          :header-cell-style="{ background: '#17646e', color: '#e9eaea' }"
-          style="width: 100%;color:#f1f1f1;"
-        >
-          <el-table-column property="path" label="车辆照片" align="center">
-            <template slot-scope="scope">
-              <el-image
-                style="width: 100px; height: 50px;"
-                :src="scope.row.path"
-                :preview-src-list="scope.row.list"
-              >
-              </el-image>
-            </template>
-          </el-table-column>
-          <el-table-column prop="name" label="关联人员" width="150">
-          </el-table-column>
-
-          <el-table-column prop="licePlateNum" label="车牌号码" width="150">
-          </el-table-column>
-
-          <el-table-column prop="admotorcyclType" label="车辆类型">
-          </el-table-column>
-          <el-table-column prop="carColor" label="车身颜色" width="180">
-          </el-table-column>
-
-          <el-table-column prop="brand" label="车辆品牌"> </el-table-column>
-
-          <el-table-column prop="subBrand" label="车辆子品牌">
-          </el-table-column>
-        </el-table>
-      </div>
-    </div>
-
     <div class="detailedList">
-      <div class="listTable">
-        <div class="herderTit">住户信息</div>
-        <el-table
-          :cell-style="{ background: '#1c6f77c2' }"
-          :header-cell-style="{ background: '#17646e', color: '#e9eaea' }"
-          :data="tableData"
-          style="width: 100%;color:#f1f1f1;"
-        >
-          <el-table-column prop="date" label="入住日期" width="100">
-          </el-table-column>
-          <el-table-column prop="name" label="住户姓名" width="100">
-          </el-table-column>
-          <el-table-column prop="type" label="租住关系" width="100">
-          </el-table-column>
+        
+        <div class="listTable">
+            <div class="herderTit">住户信息</div>
+            <el-table
+           height="350"
+                  :cell-style="{background:'#1c6f77c2'}"
+                  :header-cell-style="{background:'#17646e',color:'#e9eaea'}"
+                :data="tableData"
+               style="width: 100%;color:#f1f1f1;"
+                >
+                <el-table-column
+                prop="xm"
+                label="姓名"
+                width="80"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="sex"
+                label="性别"
+                width="50"
+                :formatter="formatDate" 
+                >
+                </el-table-column>
+                  <el-table-column
+                    prop="lxfs"
+                    label="电话"
+                     >
+                    </el-table-column>
+                
+                <el-table-column
+                prop="is_huzhu"
+                label="是否户主"
+                 width="80"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="rylx"
+                label="人员类别"
+                 width="80"
+                >
+                </el-table-column>
+            </el-table>
+           
+        </div>
+        <div class="listTable">
+            <div class="herderTit">访客信息</div>
+            <el-table
+            height="324"
+                :data="tabfkData"
+                style="width: 100%;color:#f1f1f1;"
+                 :cell-style="{background:'#1c6f77c2'}"
+                :header-cell-style="{background:'#17646e',color:'#e9eaea'}"
+                >
+                <el-table-column
+                prop="fwrq"
+                label="访问日期"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="lkrq"
+                label="离开日期"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="xm"
+                label="姓名"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="lxdh"
+                label="电话">
+                </el-table-column>
+                 <el-table-column
+                prop="remark"
+                label="访问缘由">
+                </el-table-column>
+            </el-table>
+            <div class="pages">
+              <el-pagination
+              small
+              layout="prev, pager, next"
+              :total="1">
+            </el-pagination>
+           </div>
+        </div>
+        <div class="listTable">
+              <div class="herderTit">车辆信息</div>
+               <el-table
+               height="350"
+                :data="carData"
+                stripe
 
-          <el-table-column prop="address" label="住户地址"> </el-table-column>
-        </el-table>
-      </div>
-      <div class="listTable">
-        <div class="herderTit">访客信息</div>
-        <el-table
-          :data="tableData"
-          style="width: 100%;color:#f1f1f1;"
-          :cell-style="{ background: '#1c6f77c2' }"
-          :header-cell-style="{ background: '#17646e', color: '#e9eaea' }"
-        >
-          <el-table-column prop="date" label="访问日期" width="100">
-          </el-table-column>
-          <el-table-column prop="name" label="访客姓名" width="80">
-          </el-table-column>
-          <el-table-column prop="phone" label="访客电话" width="120">
-          </el-table-column>
-          <el-table-column prop="address" label="访客地址"> </el-table-column>
-        </el-table>
-      </div>
+                 :cell-style="{background:'#1c6f77c2'}"
+                 :header-cell-style="{background:'#17646e',color:'#e9eaea'}"
+                style="width: 100%;color:#f1f1f1;">
+                <!-- <el-table-column property="path" label="车辆照片" align="center">
+                    <template slot-scope="scope">
+                    <el-image
+                        style="width: 100px; height: 50px;"
+                        :src="scope.row.path"
+                        :preview-src-list="scope.row.list" 
+                        >
+                    </el-image>
+                    </template>
+                 </el-table-column> -->
+                <el-table-column
+                prop="cphm"
+                label="车牌号码"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="glry"
+                label="关联人员"
+                >
+                </el-table-column>
+
+                <el-table-column
+                prop="cllx"
+                label="车辆类型">
+                </el-table-column>
+                 <el-table-column
+                prop="csys"
+                label="车身颜色"
+                >
+                </el-table-column>
+
+                <el-table-column
+                prop="clpp"
+                label="车辆品牌">
+                </el-table-column>
+            </el-table>
+        </div>
     </div>
+
+
+
+  <div class="detailedList">
+    <div class="listTable">
+            <div class="herderTit">人员出入记录</div>
+            <el-table
+            height="350"
+                  :cell-style="{background:'#1c6f77c2'}"
+:header-cell-style="{background:'#17646e',color:'#e9eaea'}"
+                :data="AccessRecords"
+               style="width: 100%;color:#f1f1f1;"
+                >
+                <el-table-column
+                prop="crsj"
+                label="出入时间"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="crlb"
+                label="出入类别"
+                 width="80"
+                >
+                </el-table-column>
+                  <el-table-column
+                    prop="xm"
+                    label="姓名"
+                width="80"
+
+                     >
+                    </el-table-column>
+                
+                <el-table-column
+                prop="gmsfhm"
+                label="身份证号码">
+                </el-table-column>
+            </el-table>
+            <div class="pages">
+              <el-pagination
+              small
+              layout="prev, pager, next"
+               @current-change="changePage"
+              :current-page="page.pageNo"
+              :page-size="page.rownumber"
+              :total="page.total"
+              >
+            </el-pagination>
+           </div>
+        </div>
+        <div class="listTable">
+            <div class="herderTit">访客出入记录</div>
+            <el-table
+            height="350"
+                :data="fangkejl"
+                style="width: 100%;color:#f1f1f1;"
+                 :cell-style="{background:'#1c6f77c2'}"
+                :header-cell-style="{background:'#17646e',color:'#e9eaea'}"
+                >
+                <el-table-column
+                prop="date"
+                label="访问日期"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="name"
+                label="访客姓名"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="phone"
+                label="访客电话"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="address"
+                label="访客地址">
+                </el-table-column>
+            </el-table>
+            <div class="pages">
+              <el-pagination
+              small
+              layout="prev, pager, next"
+              :total="1">
+            </el-pagination>
+           </div>
+        </div>
+        <div class="listTable">
+            <div class="herderTit">车辆出入记录</div>
+            <el-table
+            height="350"
+                :data="carcrjl"
+                style="width: 100%;color:#f1f1f1;"
+                 :cell-style="{background:'#1c6f77c2'}"
+                :header-cell-style="{background:'#17646e',color:'#e9eaea'}"
+                >
+                <el-table-column
+                prop="cphm"
+                label="车牌号码"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="gcsj"
+                label="过车时间"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="gclx"
+                label="过车类型"
+                  width="80"
+                >
+                </el-table-column>
+                <el-table-column
+                prop="tccbh"
+                label="停车场编号"
+                >
+                </el-table-column>
+            </el-table>
+            <div class="pages">
+              <el-pagination
+              small
+              layout="prev, pager, next"
+               @current-change="changePagetwo"
+              :current-page="pagetwo.pageNo"
+              :page-size="pagetwo.rownumber"
+              :total="pagetwo.total"
+              >
+            </el-pagination>
+           </div>
+        </div>
+
+  </div>
+
+
+
+  <div style="height:50px;width:100%"></div>
+
+
   </div>
 </template>
 
@@ -110,255 +302,345 @@
 import Card from "@/components/houseCard/houseCard.vue";
 export default {
   components: { Card },
-  data () {
+  data() {
     return {
-      doublecar: [
-        { type: "房屋面积", name: "100m²" },
-        { type: "房屋户型", name: "一室一厅一卫" },
-        { type: "装修状况", name: "精装修" },
-        { type: "产权年限", name: "70年" },
+      doublecar:[
+            { type: "房屋面积", name: "暂无" },
+            { type: "房屋户型", name: "暂无" },
+            { type: "房屋用途", name: "暂无" },
       ],
+      page: { //人员出入
+        total: 0,
+        pageNo: 1,
+        rownumber: 4
+      },
+      pagetwo: { //车辆出入
+        total: 0,
+        pageNo: 1,
+        rownumber: 4
+      },
       houseOwner: [
-        { type: "工作单位", name: "西安动网科技" },
-        { type: "年龄", name: "38" },
-        { type: "婚姻状况", name: "未婚" },
-        { type: "文化程度", name: "研究生" },
-        { type: "联系方式", name: "15829283636" },
-        { type: "住址", name: "陕西省西安市莲湖区" }
+        { type: "户主姓名", name: "暂无" },
+        { type: "户主电话", name: "暂无" },
+        { type: "户主身份证号", name: "暂无" },
       ],
-      tableData: [ {
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        type: "租赁关系",
-        phone: "18788858585"
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        type: "租赁关系",
-        phone: "18788858585"
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        type: "租赁关系",
-        phone: "18788858585"
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        type: "租赁关系",
-        phone: "18788858585"
-      } ],
-      tableDataCar: [ {
-        name: '贾宝玉',
-        licePlateNum: '陕A12345',
-        admotorcyclType: '小型汽车',
-        carColor: "黑色",
-        brand: '大众',
-        subBrand: "帕萨特",
-        path: "https://pic.rmb.bdstatic.com/b013db899ba9ce505d3c35dd08aea476.jpeg@wm_2,t_55m+5a625Y+3L+S6muWMl+i9pueUn+a0uw==,fc_ffffff,ff_U2ltSGVp,sz_23,x_15,y_15"
-      },
-      {
-        name: '贾宝玉',
-        licePlateNum: '陕A12345',
-        admotorcyclType: '小型汽车',
-        carColor: "黑色",
-        brand: '大众',
-        subBrand: "帕萨特",
-        path: "http://img1.imgtn.bdimg.com/it/u=3979847156,1686840729&fm=26&gp=0.jpg"
-      },
-      {
-        name: '贾宝玉',
-        licePlateNum: '陕A12345',
-        admotorcyclType: '小型汽车',
-        carColor: "黑色",
-        brand: '大众',
-        subBrand: "帕萨特",
-        path: "http://img3.imgtn.bdimg.com/it/u=1530602906,3535651673&fm=26&gp=0.jpg"
-      } ]
+      oneCon:'',
+      twoCon:'',
+      houseType:{},
+      AccessRecords:[],//人员出入记录
+      homeMsg:"",
+      tabfkData:[],
+      fangkejl:[], //访客出入记录
+      carcrjl:[], //车辆出入记录
+       tableData: [],
+        carData: []
     };
   },
-  methods: {
+  methods:{
+    formatDate(cellValu){
+      if(cellValu.sex=='1'){
+          return "男"
+      }else{
+         return "女"
+      }
+      
+    },
+     async gethouseMsg(fwbm){ //住户信息srvzhxq_guest_mgmt_select
+        let url = this.getServiceUrl("select", "srvzhxq_syrk_select", "zhxq");
+        let req = { "serviceName": "srvzhxq_syrk_select", "colNames": [ "*" ], "condition": [
+          {colName: "fwbm", ruleType: "eq", value: fwbm},
+          // {colName: "proc_status", ruleType: "eq", value: '完成'},
+        ], order: [  ] }
+        let res = await this.$http.post(url, req)
+        if (res.data.state === 'SUCCESS') {
+          this.tableData = (res.data.data)
+        }
+        let databoole = res.data.data
+        let con =''
+        for( let i in databoole){
+          con+=(databoole[i].gmsfhm+',')
+        }
+        con = con.substring(0, con.lastIndexOf(','));
+        this.oneCon = con
+       this.peopleComein(con)
+       
+     },
+    async peopleComein(val){ //人员出入记录
+       let url2 = this.getServiceUrl("select", "srvxqaf_rycrxx_select", "xqaf");
+        let req2 = { "serviceName": "srvxqaf_rycrxx_select", "colNames": [ "*" ], "condition": [
+            {colName: "gmsfhm", ruleType: "in", value: val}
+        ], order: [  ],page:this.page }
+        let rese = await this.$http.post(url2, req2)
+        if (rese.data.state === 'SUCCESS') {
+            this.AccessRecords = (rese.data.data)
+            this.page = rese.data.page
+        }
+    },
 
+   changePage(val) { //人员出入
+      this.page.pageNo = val;
+      this.peopleComein(this.oneCon);
+    },
+    changePagetwo(val) { //车辆出入
+      this.pagetwo.pageNo = val;
+      this.carComein(this.twoCon);
+    },
+
+      async getfkMsg(fwbm){ //访客信息
+        let url = this.getServiceUrl("select", "srvzhxq_guest_mgmt_select", "zhxq");
+        let req = { "serviceName": "srvzhxq_guest_mgmt_select", "colNames": [ "*" ], "condition": [
+          {colName: "fwbm", ruleType: "eq", value:fwbm },
+          // {colName: "proc_status", ruleType: "eq", value: '完成'},
+        ], order: [  ] }
+        let res = await this.$http.post(url, req)
+        if (res.data.state === 'SUCCESS') {
+          this.tabfkData = (res.data.data)
+        }
+     },
+
+
+       async gethomeMsg(fwbm){ //房屋基本信息
+        let url = this.getServiceUrl("select", "srvzhxq_buiding_house_select", "zhxq");
+        let req = { "serviceName": "srvzhxq_buiding_house_select", "colNames": [ "*" ], "condition": [
+          {colName: "fwbm", ruleType: "eq", value: fwbm},
+          // {colName: "proc_status", ruleType: "eq", value: '完成'},
+        ], order: [  ] }
+        let res = await this.$http.post(url, req)
+        if (res.data.state === 'SUCCESS') {
+          if(res.data.data[0]){
+              this.houseOwner[0].name =res.data.data[0].huzhu_name?res.data.data[0].huzhu_name:"暂无"
+            this.houseOwner[1].name =res.data.data[0].huzhu_tel?res.data.data[0].huzhu_tel:"暂无"
+            this.houseOwner[2].name =res.data.data[0].huzhu_picp?res.data.data[0].huzhu_picp:"暂无"
+            this.doublecar[2].name =res.data.data[0]._building_yongtu_disp?res.data.data[0]._building_yongtu_disp:"暂无"
+            this.homeMsg = res.data.data[0].ly_name+res.data.data[0].dy_name+res.data.data[0].name
+          }
+            let url2 = this.getServiceUrl("select", "srvzhxq_buiding_unit_type_select", "zhxq"); //房屋户型
+            let req2 = { "serviceName": "srvzhxq_buiding_unit_type_select", "colNames": [ "*" ], "condition": [
+            {colName: "type_num", ruleType: "eq", value: res.data.data[0].hxbm},
+            ], order: [  ] }
+            let rese = await this.$http.post(url2, req2)
+            let houseType = (rese.data.data[0])
+            if(houseType){
+                this.doublecar[0].name = houseType.mianji? (houseType.mianji+ 'm²'):"暂无" 
+             this.doublecar[1].name = houseType.huxing ?houseType.huxing:"暂无"
+            }
+            
+        }
+     },
+
+  async getcarMsg(fwbm){ //车辆信息srvzhxq_guest_mgmt_select
+        let url = this.getServiceUrl("select", "srvzhxq_clgl_select", "zhxq");
+        let req = { "serviceName": "srvzhxq_clgl_select", "colNames": [ "*" ], "condition": [
+          {colName: "fwbm", ruleType: "eq", value: fwbm},
+          // {colName: "proc_status", ruleType: "eq", value: '完成'},
+        ], order: [  ] }
+        let res = await this.$http.post(url, req)
+        if (res.data.state === 'SUCCESS') {
+           this.carData = res.data.data
+        }
+         let databoole = res.data.data
+          let con =''
+          for( let i in databoole){
+            con+=(databoole[i].cphm+',')
+          }
+          con = con.substring(0, con.lastIndexOf(','));
+          this.twoCon = con
+        this.carComein(con)
+     },
+
+  async carComein(val){ //车辆出入记录
+       let url2 = this.getServiceUrl("select", "srvxqaf_clcrxx_select", "xqaf");
+        let req2 = { "serviceName": "srvxqaf_clcrxx_select", "colNames": [ "*" ], "condition": [
+            {colName: "cphm", ruleType: "in", value: val}
+        ], order: [  ],page:this.pagetwo}
+        let rese = await this.$http.post(url2, req2)
+        if (rese.data.state === 'SUCCESS') {
+            this.carcrjl = rese.data.data
+            this.pagetwo = rese.data.page
+        }
+    },
+
+
+
+  },
+  created(){
+    let fwbm = this.$route.query.fwbm
+    // 
+    this.gethomeMsg(fwbm)
+    this.gethouseMsg(fwbm)
+    this.getfkMsg(fwbm)
+    this.getcarMsg(fwbm)
   }
 };
 </script>
 
 
-<style lang="scss" scoped>
-body {
-  background-image: url("http://www.eleve.cn/houminhua/newbg.jpg");
-  // background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg fill-opacity='0.07'%3E%3Cpath fill='%233a5789' d='M486 705.8c-109.3-21.8-223.4-32.2-335.3-19.4C99.5 692.1 49 703 0 719.8V800h843.8c-115.9-33.2-230.8-68.1-347.6-92.2C492.8 707.1 489.4 706.5 486 705.8z'/%3E%3Cpath fill='%23446da2' d='M1600 0H0v719.8c49-16.8 99.5-27.8 150.7-33.5c111.9-12.7 226-2.4 335.3 19.4c3.4 0.7 6.8 1.4 10.2 2c116.8 24 231.7 59 347.6 92.2H1600V0z'/%3E%3Cpath fill='%235386b6' d='M478.4 581c3.2 0.8 6.4 1.7 9.5 2.5c196.2 52.5 388.7 133.5 593.5 176.6c174.2 36.6 349.5 29.2 518.6-10.2V0H0v574.9c52.3-17.6 106.5-27.7 161.1-30.9C268.4 537.4 375.7 554.2 478.4 581z'/%3E%3Cpath fill='%236c9ec0' d='M0 0v429.4c55.6-18.4 113.5-27.3 171.4-27.7c102.8-0.8 203.2 22.7 299.3 54.5c3 1 5.9 2 8.9 3c183.6 62 365.7 146.1 562.4 192.1c186.7 43.7 376.3 34.4 557.9-12.6V0H0z'/%3E%3Cpath fill='%2385b3ca' d='M181.8 259.4c98.2 6 191.9 35.2 281.3 72.1c2.8 1.1 5.5 2.3 8.3 3.4c171 71.6 342.7 158.5 531.3 207.7c198.8 51.8 403.4 40.8 597.3-14.8V0H0v283.2C59 263.6 120.6 255.7 181.8 259.4z'/%3E%3Cpath fill='%237da8c4' d='M1600 0H0v136.3c62.3-20.9 127.7-27.5 192.2-19.2c93.6 12.1 180.5 47.7 263.3 89.6c2.6 1.3 5.1 2.6 7.7 3.9c158.4 81.1 319.7 170.9 500.3 223.2c210.5 61 430.8 49 636.6-16.6V0z'/%3E%3Cpath fill='%23759cbe' d='M454.9 86.3C600.7 177 751.6 269.3 924.1 325c208.6 67.4 431.3 60.8 637.9-5.3c12.8-4.1 25.4-8.4 38.1-12.9V0H288.1c56 21.3 108.7 50.6 159.7 82C450.2 83.4 452.5 84.9 454.9 86.3z'/%3E%3Cpath fill='%236d90b7' d='M1600 0H498c118.1 85.8 243.5 164.5 386.8 216.2c191.8 69.2 400 74.7 595 21.1c40.8-11.2 81.1-25.2 120.3-41.7V0z'/%3E%3Cpath fill='%236584b0' d='M1397.5 154.8c47.2-10.6 93.6-25.3 138.6-43.8c21.7-8.9 43-18.8 63.9-29.5V0H643.4c62.9 41.7 129.7 78.2 202.1 107.4C1020.4 178.1 1214.2 196.1 1397.5 154.8z'/%3E%3Cpath fill='%235e78a9' d='M1315.3 72.4c75.3-12.6 148.9-37.1 216.8-72.4h-723C966.8 71 1144.7 101 1315.3 72.4z'/%3E%3C/g%3E%3C/svg%3E");
-  background-attachment: fixed;
-  background-size: cover;
-  font-family: "Jost", Arial, sans-serif;
-  color: #fff;
-}
-.wrap {
-  width: 1200px;
-  margin: 0 auto;
-  .title {
-    text-align: center;
-    font-family: "Jost", Arial, sans-serif;
-    color: #fff;
-    line-height: 80px;
-  }
-}
-.msghouse {
-  width: 45%;
-  display: flex;
-  justify-content: space-between;
-}
-.box {
-  width: 357px;
-  height: 410px;
-  border: 1px solid #dedede;
-  padding: 30px 36px 0 36px;
-  text-align: center;
-  transition: 0.3s;
-  background: rgb(65, 93, 136);
-  color: #939393;
-  box-sizing: border-box;
-  .label {
-    font-size: 21px;
-    font-weight: 600;
-    color: #fff;
-    margin: 35px 0;
-  }
-  img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-top: 35px;
-  }
-}
-.box:hover {
-  box-shadow: 0 0 3px 3px #eee;
-  transition: 0.3s;
-}
-.homeContent {
-  display: flex;
-  border: 1px solid #dedede;
-  width: 49%;
-  height: 310px;
-  color: #231e1e;
-  margin-bottom: 30px;
-  .content-left {
-    width: 50%;
-    overflow: hidden;
-  }
-  .content-right {
-    box-sizing: border-box;
-    background: #ffffff42;
-    padding: 10px 15px 0 15px;
-    width: 50%;
-    transition: 0.3s;
-    overflow: hidden;
-    .label {
-      font-size: 19px;
-      font-weight: 800;
-      color: #fff;
+<style lang="scss" >
+
+.wrapboxContent{
+    background-size: 100% 100%;
+    background-image:url('http://www.eleve.cn/houminhua/newbg.jpg');
+    padding:0 50px;
+    min-height: 100vh;
+    .title {
+        text-align: center;
+        font-family: "Jost", Arial, sans-serif;
+        color: #fff;
+        line-height: 80px;
+        font-size: 20px;
+        font-weight: 600;
     }
-  }
-  span {
-    display: block;
-    width: 50px;
-    height: 2px;
-    background: #2cb6a1;
-    margin-bottom: 23px;
-  }
-  .messages {
-    color: #adadad;
-  }
 }
-.imgcover {
-  overflow: hidden;
-  height: 100%;
-  width: 100%;
+.msghouse{
+    width: 45%;
+    display: flex;
+    justify-content: space-between;
 }
-.essentialInformation,
-.tableHeader {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+.box{
+    width: 357px;
+    height: 410px;
+    border: 1px solid #DEDEDE;
+    padding: 30px 36px 0 36px;
+    text-align: center;
+    transition: 0.3s;
+    background: rgb(65, 93, 136);;
+    color: #939393;
+    box-sizing: border-box;
+    .label{
+        font-size: 21px;
+        font-weight: 600;
+        color: #fff;
+        margin: 35px 0;
+    }
+    img{
+        width: 80px;
+        height: 80px;
+        border-radius:50% ;
+        margin-top: 35px ;
+    }
 }
-.detailedList {
-  margin-top: 30px;
-  display: flex;
-  justify-content: space-between;
-  .listTable {
-    width: 49%;
+  .box:hover{
+      box-shadow: 0 0 3px 3px #EEE;
+      transition: 0.3s;
   }
+    .homeContent{
+        display: flex;
+        border: 1px solid #DEDEDE;
+        width: 49%;
+        height:310px ;
+        color: #231e1e;
+        margin-bottom:30px ;
+        .content-left{
+            width: 50%;
+            overflow: hidden;
+        }
+        .content-right{
+            box-sizing: border-box;
+            background: #ffffff42;
+            padding: 10px 15px 0 15px;
+            width: 50%;
+            transition: 0.3s;
+            overflow: hidden;
+            .label{
+                font-size: 19px;
+                font-weight: 800;
+                color: #fff;
+            }
+        }
+        span{
+            display: block;
+            width: 50px;
+            height: 2px;
+            background: #2cb6a1;
+            margin-bottom: 23px;
+        }
+        .messages{
+        color: #adadad;
+    }
+    }
+    .imgcover{
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+    }
+.essentialInformation,.tableHeader{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.detailedList{
+    margin-top:30px;
+    display: flex;
+    // flex-wrap: wrap;
+    justify-content: space-between;
+    .listTable{
+        width: 32%;
+        // margin-bottom:30px ;
+        // margin-right:30px;
+    }
 }
 
-/deep/ .el-image,
-.el-image__inner {
-  width: 150px !important;
-  height: 100px !important;
+ /deep/ .el-image,.el-image__inner{
+    width: 150px !important;
+    height: 100px !important;
 }
 
-.herderTit {
-  font-weight: 600;
-  font-size: 18px;
-  color: #e9eaea;
-  line-height: 45px;
-  background: #206675d4;
-  padding-left: 10px;
+.herderTit{
+    font-weight: 600;
+    font-size: 18px;
+    color: #e9eaea;
+    line-height: 45px;
+    background: #206675d4;
+    padding-left: 10px;
 }
-/deep/ .el-table tr {
-  background-color: #1c6f77c2 !important;
+/deep/ .el-table tr{
+    background-color: #1c6f77c2 !important;
 }
-/deep/ .el-table,
-.el-table__expanded-cell {
-  background-color: #fff0 !important;
+/deep/ .el-table, .el-table__expanded-cell{
+     background-color: #fff0 !important;
 }
-/deep/ .el-table__body-wrapper {
+/deep/ .el-table__body-wrapper{
   background: #fff0 !important;
 }
-/deep/ .el-table {
-  color: #f1f1f1 !important;
+/deep/ .el-table{
+ color: #f1f1f1 !important;
 }
-.has-gutter .tr {
-  background: rgba(28, 111, 119, 0.76);
+ .has-gutter .tr{
+  background: rgba(28, 111, 119, 0.76);;
 }
-.el-table tbody tr:hover > td {
-  background-color: #206675d4 !important;
+.el-table tbody tr:hover>td { 
+    background-color:#206675d4!important
 }
-// .houseCenter {
-//   text-align: center;
-//   width: 20%;
-// }
-// .content {
-//   display: flex;
-//   margin-top: 30px;
-
-// }
-// .houseCenter img {
-//   height: 700px;
-//   width: 600px;
-// }
-// .wrap {
-//   padding: 15px;
-
-// }
-// .title {
-//   font-size: 28px;
-//   font-weight: 600;
-//   text-align: center;
-//   color: #000;
-// }
-
-// .left {
-//   display: flex;
-//   flex-wrap: wrap;
-// }
-// .el-table .warning-row {
-//     background: oldlace;
-//   }
-
-//   .el-table .success-row {
-//     background: #f0f9eb;
-//   }
+.el-dialog, .el-pager li {
+    background: #529198;
+}
+.el-pagination button:disabled {
+    color: #18656f;
+    background-color: #529198;
+    cursor: not-allowed;
+}
+.el-pagination .btn-next, .el-pagination .btn-prev {
+    background: center center no-repeat #529198;
+    background-size: 16px;
+    cursor: pointer;
+    margin: 0;
+    color: #07313d;
+}
+.el-pager li.active {
+    color: #fff;
+    cursor: default;
+}
+.pages{
+    background: #529198;
+    text-align: center;
+}
+.el-pagination {
+    white-space: nowrap;
+    padding: 2px 5px;
+    color: #1d5e6c;
+    font-weight: 700;
+}
+.el-table, .el-table__expanded-cell {
+    background-color: #1d616f;
+}
 </style>

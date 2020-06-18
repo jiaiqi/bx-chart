@@ -47,12 +47,30 @@
               >
                 <div
                   class="floor-item"
+                  :style="{
+                    color:
+                      f.house_status === '自住'
+                        ? 'yellow'
+                        : f.house_status === '租用'
+                        ? 'blue'
+                        : '#fff'
+                  }"
                   v-if="f.dy_name === unit && Number(f.floor_level) === item"
                   @click="toDetail(f)"
                 >
                   <div class="house_name">{{ f.name }}</div>
                   <div class="house_status">
-                    <div class="label">
+                    <div
+                      class="label"
+                      :style="{
+                        color:
+                          f.house_status === '自住'
+                            ? 'yellow'
+                            : f.house_status === '租用'
+                            ? 'blue'
+                            : '#fff'
+                      }"
+                    >
                       {{ f.house_status }}
                     </div>
                     <div class="status1"></div>
@@ -81,6 +99,7 @@ export default {
       finalData: {},
       dyList: [],
       lcList: [],
+      optionList: []
     }
   },
   computed: {
@@ -100,7 +119,17 @@ export default {
     }
   },
   methods: {
-    async getFloorList (lybm) {
+    async getOptionList () {
+      let url = this.getServiceUrl('select', 'srvsys_service_columnex_v2_select', 'zhxq')
+      let req = { "serviceName": "srvsys_service_columnex_v2_select", "colNames": [ "*" ], "condition": [ { "colName": "service_name", "value": "srvzhxq_buiding_house_select", "ruleType": "eq" }, { "colName": "use_type", "value": "list", "ruleType": "eq" } ], "order": [ { "colName": "seq", "orderType": "asc" } ] }
+      let res = await this.$http.post(url, req)
+      if (res.data.state === 'SUCCESS') {
+        this.optionList = res.data.data
+        return res.data.data.srv_cols
+      }
+    },
+
+    async getFloorList (lybm, cols) {
       let url = this.getServiceUrl("select", "srvzhxq_buiding_house_select", "zhxq");
       let req = { "serviceName": "srvzhxq_buiding_house_select", "colNames": [ "*" ], "condition": [], order: [ { colName: "name", orderType: "asc" } ] }
       if (lybm) {
@@ -108,9 +137,28 @@ export default {
       }
       let res = await this.$http.post(url, req)
       if (res.data.state === 'SUCCESS') {
+        if (cols && Array.isArray(cols)) {
+          res.data.data.forEach(data => {
+            cols.forEach(col => {
+              if (col.col_type === 'Dict') {
+                col.option_list_v2.forEach(item => {
+                  if (data[ col.columns ] == item.value) {
+                    data[ col.columns ] = item.label
+                  }
+                })
+                // data[col['columns']]
+              }
+            })
+          });
+        }
+
         this.floorList = res.data.data
       }
     },
+    getHousePersonInfo () {
+
+    },
+    getHouseCarInfo () { },
     toDetail (e) {
       if (e && e.fwbm) {
         top.window.open('/bx-chart/#/houseMsg?fwbm=' + e.fwbm)
@@ -126,7 +174,9 @@ export default {
       } catch (error) {
         console.log(error)
       }
-      this.getFloorList(lybm)
+      this.getOptionList().then(cols => {
+        this.getFloorList(lybm, cols)
+      })
 
     }
   },
@@ -260,6 +310,7 @@ export default {
             cursor: pointer;
             .house_name {
               z-index: 10;
+              font-size: 12px;
             }
             .house_status {
               .label {
@@ -272,12 +323,12 @@ export default {
                 line-height: 40px;
 
                 text-align: center;
-                bottom: calc(50% - 45px);
+                bottom: calc(50% - 50px);
                 right: calc(50% - 20px);
               }
               .status1 {
                 border: 40px solid transparent;
-                border-bottom: 30px solid rgba($color: #0ccfcf, $alpha: 0.6);
+                border-bottom: 40px solid rgba($color: #0ccfcf, $alpha: 0.6);
                 position: absolute;
                 // bottom: 20px;
                 bottom: calc(50% - 10px);
@@ -285,11 +336,11 @@ export default {
               }
               .status2 {
                 width: 50px;
-                height: 30px;
+                height: 40px;
                 background-color: rgba($color: #0ccfcf, $alpha: 0.6);
                 overflow: hidden;
                 position: absolute;
-                bottom: calc(50% - 40px);
+                bottom: calc(50% - 50px);
                 right: calc(50% - 25px);
               }
             }
@@ -318,7 +369,7 @@ export default {
       position: absolute;
       transform: rotateY(60deg);
       right: calc(50% - 60px);
-      top: -50px;
+      top: -70px;
       font-size: 60px;
     }
   }

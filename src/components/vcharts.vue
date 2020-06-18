@@ -157,7 +157,7 @@
               background: 'transparent',
               color: 'white'
             }"
-            :data="chartDatas.data"
+            :data="chartDatas ? chartDatas.data : []"
             style="width: 100%"
           >
             <el-table-column
@@ -980,10 +980,9 @@ export default {
             console.log(error)
           }
         } else {
-          debugger
           res = await this.axios.post(DataUrl, DataReq); // 请求异步，同步处理
         }
-        let datas = information.data_source === 'mock' ? res : res.data.data;
+        let datas = information.data_source === 'mock' ? res : res.data.state === 'SUCCESS' ? res.data.data : [];
         if (datas.length > 0) {
           let resData = vChartInfo.getChartColumns(
             datas,
@@ -1006,6 +1005,7 @@ export default {
           this.chartDatas = resData.all;
           this.type = information.chart_type;
           if (chartType === "ring") {
+
           }
           if (chartType === "map") {
             this.chartDatas = resData;
@@ -1050,7 +1050,7 @@ export default {
             console.log(error)
           }
         }
-        if (newValue.chart_type === "ranking") {
+        if (newValue.chart_type === "ranking" && this.chartDatas) {
           this.chartDatas[ "waitTime" ] = 9999999;
         }
         if (newValue.subdata === "是") {

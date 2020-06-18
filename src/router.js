@@ -65,26 +65,26 @@ const router = new Router({
     path: "/floor",
     name: "floor",
     component: () =>
-      import( /* webpackChunkName: "floor" */ "./views/community/floor.vue")
+      import( /* webpackChunkName: "dataView" */ "./views/community/floor.vue")
   },
   {
     path: "/houseMsg",
     name: "houseMsg",
     component: () =>
-      import( /* webpackChunkName: "dataView" */ "./views/houseMsg/houseMsg.vue")
+      import( /* webpackChunkName: "houseMsg" */ "./views/houseMsg/houseMsg.vue")
   },
     ,
   {
     path: "/sur",
     name: "surveillance",
     component: () =>
-      import( /* webpackChunkName: "dataView" */ "./views/surveillance/surveillance.vue")
+      import( /* webpackChunkName: "surveillance" */ "./views/surveillance/surveillance.vue")
   },
   {
     path: "/monitoringScreen",
     name: "monitoringScreen",
     component: () =>
-      import( /* webpackChunkName: "floor" */ "./views/monitoringScreen/monitoringScreen.vue")
+      import( /* webpackChunkName: "houseMsg" */ "./views/monitoringScreen/monitoringScreen.vue")
   }
   ]
 });

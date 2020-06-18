@@ -1,9 +1,6 @@
 <template>
   <div class="bx-data-view" :style="setViewStyle">
     <div class="data-view-header" :style="setHeaderStyle">
-      <div class="fullscreen" @click="openFullscreen">
-        {{ isFullScreen ? "退出全屏" : "全屏" }}
-      </div>
       <div
         class="title"
         :style="{
@@ -16,7 +13,36 @@
         {{ title }}
       </div>
       <div class="edit" @click="changeEditable" v-if="viewIsDraggable">
-        {{ editable ? "完成" : "编辑" }}
+        <img
+          class="img-btn"
+          src="../assets/images/edit.png"
+          alt=""
+          title="编辑"
+          v-if="!editable"
+        />
+        <img
+          src="../assets/images/save.png"
+          class="img-btn"
+          alt=""
+          title="保存"
+          v-if="editable"
+        />
+        <!-- {{ editable ? "完成" : "编辑" }} -->
+      </div>
+      <div class="fullscreen" @click="openFullscreen">
+        <img
+          src="../assets/images/fullscreen.png"
+          alt=""
+          v-if="!isFullScreen"
+          title="全屏"
+        />
+        <img
+          v-if="isFullScreen"
+          src="../assets/images/scale.png"
+          alt=""
+          title="退出全屏"
+        />
+        <!-- {{ isFullScreen ? "退出全屏" : "全屏" }} -->
       </div>
     </div>
     <div class="data-view-main" :style="setMainStyle" v-if="editable">
@@ -29,8 +55,8 @@
         :class="chartCol._isActive ? 'dr-active-style' : ''"
         @resizestop="resizestopEnd"
         @dragstop="dragstopEnd"
-        :w="chartCol.chart_width"
-        :h="chartCol.chart_height"
+        :w="chartCol.chart_width ? chartCol.chart_width : null"
+        :h="chartCol.chart_height ? chartCol.chart_height : null"
         :x="chartCol.chart_left"
         :y="chartCol.chart_top"
         :z="chartCol.z_order"
@@ -67,7 +93,10 @@
         }"
       >
         <v-charts
-          v-if="chartCol !== undefined && chartCol.use_flag !== '否'"
+          v-if="
+            chartCol !== undefined &&
+              (!chartCol.use_flag || chartCol.use_flag !== '否')
+          "
           :chartConfigs="chartCol"
           :chartHeight="chartCol.chart_height"
           :chartWidth="chartCol.chart_width"
@@ -109,10 +138,12 @@ export default {
       return style;
     },
     setViewStyle () {
+      let bx_auth_ticket = sessionStorage.getItem('bx_auth_ticket')
+
       let style = {
         height: this.contentData.dashboard_height ? this.contentData.dashboard_height + "px" : '',//如果配置了页面高度就用配的，否则高度为视口高度
         width: this.contentData.dashboard_width ? this.contentData.dashboard_width + "px" : '',//如果配置了页面宽度就用配的，否则宽度为视口宽度
-        "background-image": this.contentData.dashboard_background_image,
+        "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200616/20200603191436310100/20200616095520691100.png&bx_auth_ticket=${bx_auth_ticket}")`,
         "background-size": this.contentData.background_size,
         "background-color": this.contentData.background_color,
         'background-position': 'center center',
@@ -411,6 +442,8 @@ export default {
                     d.chart_top = 0
                   }
                   d.use_flag = item.use_flag
+                  if (d.use_flag === '否') {
+                  }
                   d.z_order = item.z_order
                   d.objType = item.chart_settings.type
                   d.chart_type = item.chart_type
@@ -424,7 +457,20 @@ export default {
                   if (d.idCol && d[ d.idCol ]) {
                     d.id = d[ d.idCol ]
                   }
-                  d.imgUrl = item.chart_settings.imgUrl + '&bx_auth_ticket=' + sessionStorage.getItem('bx_auth_ticket')
+                  if (item.chart_settings.imgUrl && item.chart_settings.imgUrl.indexOf('&bx_auth_ticket') === -1) {
+                    d.imgUrl = item.chart_settings.imgUrl + '&bx_auth_ticket=' + sessionStorage.getItem('bx_auth_ticket')
+                  } else if (item.chart_settings.imgUrl && item.chart_settings.imgUrl.indexOf('&bx_auth_ticket') !== -1) {
+                    let params = item.chart_settings.imgUrl.split('&bx_auth_ticket')
+                    params = params.length > 1 ? params[ 1 ] : ''
+                    if (params) {
+                      params = params.split('&')
+                      params = params.length > 0 ? params[ 0 ] : ''
+                      if (params) {
+                        item.chart_settings.imgUrl = item.chart_settings.imgUrl.replace(params, sessionStorage.getItem('bx_auth_ticket'))
+                      }
+                    }
+                    d.imgUrl = item.chart_settings.imgUrl + '&bx_auth_ticket=' + sessionStorage.getItem('bx_auth_ticket')
+                  }
                   d.linkUrl = item.chart_settings.linkUrl
                   d.chart_request_payload = item.chart_request_payload
                   if (item.chart_settings.type === "tower") {
@@ -437,11 +483,6 @@ export default {
                     d.chart_top = Math.abs((parseFloat(d.lat) - (parseFloat(gis_info_cfg.center_lat) + parseFloat(gis_info_cfg.height_lat) / 2)) / parseFloat(gis_info_cfg.height_lat) * parseFloat(self.contentData.dashboard_height))
                     d.chart_left = Math.abs((parseFloat(d.lon) - (parseFloat(gis_info_cfg.center_lon) - parseFloat(gis_info_cfg.width_lon) / 2)) / parseFloat(gis_info_cfg.width_lon) * parseFloat(self.contentData.dashboard_width))
                   }
-                  // debugger
-                  // if (self.chartConfig[ index ].chart_no) {
-                  //   self.chartConfig.splice(index, 1)
-                  // }
-                  // self.chartConfig.push(d)
                   return d
                 })
                 if (self.chartConfig[ index ] && self.chartConfig[ index ].chart_no) {
@@ -872,8 +913,8 @@ export default {
         element = document.body
       }
       var requestMethod = element.requestFullScreen || //W3C
-        element.webkitRequestFullScreen || //FireFox
-        element.mozRequestFullScreen || //Chrome等
+        element.webkitRequestFullScreen || //Chrome等
+        element.mozRequestFullScreen || //FireFox
         element.msRequestFullScreen; //IE11
       if (requestMethod) {
         requestMethod.call(element);
@@ -956,13 +997,24 @@ export default {
     }
     .edit {
       position: absolute;
-      top: 10px;
-      right: 30px;
+      top: 20px;
+      right: 60px;
+      width: 30px;
+      height: 30px;
     }
+    // .fullscreen {
+    //   position: absolute;
+    //   top: 10px;
+    //   left: 30px;
+    //   width: 30px;
+    //   height: 30px;
+    // }
     .fullscreen {
       position: absolute;
-      top: 10px;
-      left: 30px;
+      top: 20px;
+      right: 20px;
+      width: 30px;
+      height: 30px;
     }
   }
   .data-view-main {
@@ -980,5 +1032,8 @@ export default {
 .dr-active-style {
   background-color: #00edff4a;
   cursor: crosshair;
+}
+.img-btn {
+  cursor: pointer;
 }
 </style>

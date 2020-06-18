@@ -65,7 +65,7 @@ export default {
 <style lang="scss">
    .wraps{
     margin: 0 auto;
-    padding: 0 7vw;
+    padding: 0 50px;
     .back{
         background: #416296;
             margin-bottom: 50px;
@@ -93,7 +93,7 @@ export default {
         left: -43px;
     }
     div{
-        font-size: 30px;
+        font-size: 20px;
         font-weight:600 ;
         line-height: 100px;
         margin-left: 100px;
@@ -125,17 +125,10 @@ export default {
         width: 100% !important;
     }
     .boxPho{
-        width:10vw !important;
+        width:8.8vw !important;
     }
 }
-@media screen and (max-width:817px) {
-    .boxImg{
-        width: 100% !important;
-    }
-    .boxPho{
-        width:9vw !important;
-    }
-}
+
  .videoImg{
         width: 35%;
     }
@@ -143,7 +136,6 @@ export default {
     width: 35%;
     img{
        width: 95%;
-       height: 195px;
     }
 }
 .frames{
