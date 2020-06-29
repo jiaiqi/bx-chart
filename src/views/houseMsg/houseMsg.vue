@@ -106,7 +106,11 @@
               <el-pagination
               small
               layout="prev, pager, next"
-              :total="1">
+               @current-change="changePagefk"
+              :current-page="pagefk.pageNo"
+              :page-size="pagefk.rownumber"
+              :total="pagefk.total"
+              >
             </el-pagination>
            </div>
         </div>
@@ -146,7 +150,7 @@
                 label="车辆类型">
                 </el-table-column>
                  <el-table-column
-                prop="csys"
+                prop="_csys_disp"
                 label="车身颜色"
                 >
                 </el-table-column>
@@ -312,12 +316,17 @@ export default {
       page: { //人员出入
         total: 0,
         pageNo: 1,
-        rownumber: 4
+        rownumber: 6
       },
       pagetwo: { //车辆出入
         total: 0,
         pageNo: 1,
-        rownumber: 4
+        rownumber: 6
+      },
+      pagefk: { //访客信息
+        total: 0,
+        pageNo: 1,
+        rownumber: 6
       },
       houseOwner: [
         { type: "户主姓名", name: "暂无" },
@@ -363,7 +372,6 @@ export default {
         con = con.substring(0, con.lastIndexOf(','));
         this.oneCon = con
        this.peopleComein(con)
-       
      },
     async peopleComein(val){ //人员出入记录
        let url2 = this.getServiceUrl("select", "srvxqaf_rycrxx_select", "xqaf");
@@ -376,7 +384,6 @@ export default {
             this.page = rese.data.page
         }
     },
-
    changePage(val) { //人员出入
       this.page.pageNo = val;
       this.peopleComein(this.oneCon);
@@ -385,20 +392,22 @@ export default {
       this.pagetwo.pageNo = val;
       this.carComein(this.twoCon);
     },
-
+    changePagefk(val) { //车辆出入
+      this.pagefk.pageNo = val;
+      this.getfkMsg(this.fwbm);
+    },
       async getfkMsg(fwbm){ //访客信息
         let url = this.getServiceUrl("select", "srvzhxq_guest_mgmt_select", "zhxq");
         let req = { "serviceName": "srvzhxq_guest_mgmt_select", "colNames": [ "*" ], "condition": [
-          {colName: "fwbm", ruleType: "eq", value:fwbm },
+          {colName: "fwbm", ruleType: "eq", value:fwbm},
           // {colName: "proc_status", ruleType: "eq", value: '完成'},
-        ], order: [  ] }
+        ], order: [  ] ,page:this.pagefk}
         let res = await this.$http.post(url, req)
         if (res.data.state === 'SUCCESS') {
           this.tabfkData = (res.data.data)
+           this.pagefk = res.data.page
         }
      },
-
-
        async gethomeMsg(fwbm){ //房屋基本信息
         let url = this.getServiceUrl("select", "srvzhxq_buiding_house_select", "zhxq");
         let req = { "serviceName": "srvzhxq_buiding_house_select", "colNames": [ "*" ], "condition": [
@@ -464,7 +473,8 @@ export default {
 
   },
   created(){
-    let fwbm = this.$route.query.fwbm
+    let fwbm = 'HN1-1-1-东'
+    this.fwbm= fwbm
     // 
     this.gethomeMsg(fwbm)
     this.gethouseMsg(fwbm)
@@ -528,8 +538,8 @@ export default {
         border: 1px solid #DEDEDE;
         width: 49%;
         height:310px ;
+        overflow: hidden;
         color: #231e1e;
-        margin-bottom:30px ;
         .content-left{
             width: 50%;
             overflow: hidden;

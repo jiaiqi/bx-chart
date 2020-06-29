@@ -1,7 +1,7 @@
 <template>
   <div class="container_view">
     <div class="container">
-      <div class="title">登录账号</div>
+      <div class="title">登录</div>
       <div class="panel">
         <div class="content login">
           <div class="form">
@@ -40,9 +40,9 @@
               />
               <label for="ck_rmbUser">记住密码</label>
             </div>
-            <div class="login-box">
-              <button @click="toHome" class="client-login">登录</button>
-            </div>
+          </div>
+          <div class="login-box">
+            <button @click="toHome" class="client-login">登录</button>
           </div>
         </div>
       </div>
@@ -252,11 +252,11 @@ body {
   background-size: cover;
   .container {
     position: relative;
-    width: 800px;
-    height: 400px;
-    background: url("../assets/images/bg.jpg") no-repeat;
-    background-size: 60% 100%;
-    margin-right: 100px;
+    // width: 800px;
+    // height: 400px;
+    // background: url("../assets/images/bg.jpg") no-repeat;
+    // background-size: 60% 100%;
+    // margin-right: 100px;
     display: flex;
     justify-content: flex-end;
     .title {
@@ -268,34 +268,45 @@ body {
       top: -30%;
     }
     .panel {
-      width: 430px;
       background-color: rgba(255, 255, 255, 0.274);
       display: flex;
       justify-content: center;
       .content.login {
-        padding: 20px 0;
-        margin-left: 80px;
+        padding: 20px;
+        // margin-left: 80px;
         .remberPass {
           display: flex;
           align-items: center;
           color: #fff;
         }
-        .login-box {
-          display: flex;
-          width: 100%;
-          justify-content: space-between;
-          .client-login {
-            width: 40%;
-          }
-          .web-login {
-            width: 40%;
-          }
-        }
       }
     }
   }
 }
-
+.login-box {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 0;
+  .client-login {
+    width: 40%;
+  }
+  .web-login {
+    width: 40%;
+  }
+  button {
+    border: none;
+    outline: none;
+    width: 90%;
+    height: 50px;
+    border-radius: 40px;
+    background: #00c6ff; /* fallback for old browsers */
+    background: linear-gradient(to left, #1488cc, #0072ff);
+    cursor: pointer;
+    color: white;
+  }
+}
 .form {
   width: 230px;
   padding-left: 50px;

@@ -2,12 +2,15 @@
   <div
     ref="number"
     class="wrap-container"
-    :style="{ 'font-size': chartSetting.fontSize ? chartSetting.fontSize : '' }"
+    :style="{
+      'font-size': chartSetting.fontSize ? chartSetting.fontSize + 'px' : '',
+      width: wrapWidth ? wrapWidth : 'auto'
+    }"
   ></div>
 </template>
 <script>
 export default {
-  name: "num",
+  name: "digital",
   data () {
     return {
       value: this.number.num,
@@ -18,20 +21,32 @@ export default {
   methods: {
     init () {
       if (this.value) {
+        let self = this
         let html = ""
         this.value.toString().split('').forEach(v => {
-          html += '<div class="digit-wrap"><ul class="list scroll' + v + '">'
+          html += `<div class="digit-wrap"><ul class="list scroll${v}">`
           for (let i = 0; i <= 9; i++) {
             html += '<li>' + i + '</li>'
           }
           html += '</ul></div>'
         })
         this.$refs.number.innerHTML = html
+
       }
     }
   },
   updated () {
     this.init();
+  },
+  computed: {
+    wrapWidth () {
+      if (this.value) {
+        let length = this.value.toString().split('').length
+        let fontSize = Number(this.chartSetting.fontSize)
+        // return fontSize * length + 'px'
+        return null
+      }
+    }
   },
   props: {
     number: {

@@ -1026,6 +1026,22 @@ Vue.prototype.isWxClient = function () {
   return false;
 };
 
+/**
+ * 判断是否是pc端
+ */
+Vue.prototype.IsPC = function () {
+  var userAgentInfo = navigator.userAgent;
+  var Agents = [ "Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod" ];
+  var flag = true;
+  for (var v = 0; v < Agents.length; v++) {
+    if (userAgentInfo.indexOf(Agents[ v ]) > 0) {
+      flag = false;
+      break;
+    }
+  }
+  return flag;
+}
+
 Vue.prototype.getAuthorized = function () {
   let self = Vue;
   // 公众号环境获取回调地址(在回调地址中获取code)

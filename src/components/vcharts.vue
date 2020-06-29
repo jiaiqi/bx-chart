@@ -9,9 +9,17 @@
     >
       <div
         class="digital"
-        :style="{ width: chartWidth + 'px', height: chartHeight + 'px' }"
+        :style="{
+          width: chartWidth + 'px',
+          height:
+            showBorder && isPcEnv
+              ? chartHeight + 40 + 'px'
+              : !showBorder && isPcEnv
+              ? chartHeight + 'px'
+              : ''
+        }"
       >
-        <div class="digital-title" v-if="titleText">{{ titleText }}</div>
+        <div dv class="digital-title" v-if="titleText">{{ titleText }}</div>
         <div class="digitalNumber">
           <div
             class="units"
@@ -113,7 +121,7 @@
       >
         <eMap
           v-if="this.chartConfigs.chart_type === 'map'"
-          :style="{ width: chartWidth + 'px', height: chartHeight - 30 + 'px' }"
+          :style="{ width: chartWidth + 'px', height: chartHeight - 40 + 'px' }"
           :chartWidth="chartWidth"
           :chartHeight="chartHeight"
           :mapConfigs="chartDatas"
@@ -142,13 +150,17 @@
           :data="chartDatas"
           v-if="this.chartConfigs.chart_type === 'gauge'"
           :settings="chartConfigs.chart_settings"
-          :height="chartHeight - 30 + 'px'"
+          :height="chartHeight - 40 + 'px'"
           :width="chartWidth + 'px'"
           :extend="getChartExtend(this.chartConfigs.chart_type)"
         ></ve-gauge>
         <div
           class="parent"
-          :style="{ height: chartHeight - 30 + 'px' }"
+          :style="{
+            height: showBorder
+              ? chartHeight - 60 + 'px'
+              : chartHeight - 40 + 'px'
+          }"
           v-if="this.chartConfigs.chart_type === 'table'"
         >
           <el-table
@@ -156,6 +168,11 @@
             :header-cell-style="{
               background: 'transparent',
               color: 'white'
+            }"
+            :style="{
+              height: showBorder
+                ? chartHeight - 60 + 'px'
+                : chartHeight - 40 + 'px'
             }"
             :data="chartDatas ? chartDatas.data : []"
             style="width: 100%"
@@ -174,7 +191,7 @@
           v-if="this.chartConfigs.chart_type === 'liquidfill'"
           :data="chartDatas"
           :width="chartWidth + 'px'"
-          :height="chartHeight - 30 + 'px'"
+          :height="chartHeight - 40 + 'px'"
           :settings="chartSettings"
         ></ve-liquidfill>
         <ve-heatmap
@@ -182,7 +199,7 @@
           v-if="this.chartConfigs.chart_type === 'heatmap'"
           :width="chartWidth + 'px'"
           :settings="chartSettings"
-          :height="chartHeight - 30 + 'px'"
+          :height="chartHeight - 40 + 'px'"
           :extend="getChartExtend(this.chartConfigs.chart_type)"
         ></ve-heatmap>
         <customPage
@@ -206,12 +223,34 @@
             margin: '0 auto'
           }"
         />
-
         <surveillance
           v-if="this.chartConfigs.chart_type === 'surveillance'"
           :chartConfigs="chartConfigs"
           :surConfig="chartConfigs.chart_settings"
         ></surveillance>
+        <news-list
+          v-if="this.chartConfigs.chart_type === 'newslist'"
+          :dateCol="chartConfigs.chart_settings.dateColumn"
+          :textCol="chartConfigs.chart_settings.textColumn"
+          :list="chartDatas"
+          :style="{
+            width: chartWidth + 'px',
+            height: chartHeight + 'px',
+            margin: '0 auto',
+            overflow: 'hidden'
+          }"
+        ></news-list>
+        <number-list
+          :chartSettings="chartConfigs.chart_settings"
+          :chartDatas="chartDatas"
+          v-if="this.chartConfigs.chart_type === 'numberlist'"
+          :style="{
+            width: chartWidth + 'px',
+            height: chartHeight + 'px',
+            margin: '0 auto',
+            overflow: 'hidden'
+          }"
+        ></number-list>
         <ve-chart
           v-else-if="
             this.chartConfigs.chart_type !== 'custompage' &&
@@ -224,12 +263,20 @@
               this.chartConfigs.chart_type !== 'ranking' &&
               this.chartConfigs.chart_type !== 'digital' &&
               this.chartConfigs.chart_type !== 'liquidfill' &&
-              this.chartConfigs.chart_type !== 'surveillance'
+              this.chartConfigs.chart_type !== 'surveillance' &&
+              this.chartConfigs.chart_type !== 'newslist' &&
+              this.chartConfigs.chart_type !== 'numberlist'
           "
           :data="chartDatas"
           :settings="chartSettings"
-          :height="chartHeight - 30 + 'px'"
-          :width="chartWidth + 'px'"
+          :height="
+            chartHeight && showBorder
+              ? chartHeight - 60 + 'px'
+              : chartHeight && !showBorder
+              ? chartHeight - 30 + 'px'
+              : 'auto'
+          "
+          :width="chartWidth ? chartWidth + 'px' : '100%'"
           :extend="getChartExtend(this.chartConfigs.chart_type)"
         ></ve-chart>
       </div>
@@ -252,9 +299,11 @@ import TabList from '@/components/tabList/tabList.vue'
 import customPage from '@/components/customPage/customPage'
 import ImageBox from '@/components/pictureBox/pictureBox'
 import surveillance from '@/views/surveillance/surveillance'
+import newsList from '@/components/news-list/newsList'
+import NumberList from '@/components/numberlist/numberlist'
 export default {
   name: "bx-chart-views",
-  components: { eMap, digital, bMap, TabList, customPage, ImageBox, surveillance },
+  components: { eMap, digital, bMap, TabList, customPage, ImageBox, surveillance, newsList, NumberList },
   props: {
     chartConfigs: {
       type: Object,
@@ -360,6 +409,12 @@ export default {
           break;
         case '对象':
           chartSetting.type = 'obj'
+          break;
+        case '新闻列表':
+          chartSetting.type = 'newslist'
+          break;
+        case '数字列表':
+          chartSetting.type = 'numberlist'
           break;
       }
       if (this.chartConfigs.chart_type === "histogram" && this.isStack) {
@@ -551,8 +606,8 @@ export default {
         legend: legend,
         textStyle: textStyle,
         radar: {
-          radius: "75%",
-          center: [ "50%", "60%" ]
+          radius: "65%",
+          center: [ "50%", "55%" ]
         }
       };
       return chartSetting;
@@ -636,6 +691,7 @@ export default {
 
   data () {
     return {
+      isPcEnv: true,//是否是pc环境 默认true false则是移动端
       requestCycle: this.chartConfigs.request_cycle || 30,
       chartDatas: [],
       legend: {
@@ -921,6 +977,12 @@ export default {
           case '对象':
             chartType = 'obj'
             break;
+          case '新闻列表':
+            chartType = 'newslist'
+            break;
+          case '数字列表':
+            chartType = 'numberlist'
+            break;
         }
         if (chartType === "table") {
           try {
@@ -931,6 +993,7 @@ export default {
             console.log(error)
           }
         }
+
         this.chartConfigs.chart_type = chartType
         if (information.chart_settings && typeof information.chart_settings === 'string') {
           try {
@@ -941,14 +1004,10 @@ export default {
         }
         if (chartType === "line" || chartType === "histogram") {
           let chart_settings = information.chart_settings;
-          // if (chart_settings) {
-          //   chart_settings = JSON.parse(chart_settings);
-          // }
           this.isStack = chart_settings.isStack;
           this.rotate = chart_settings.rotate;
         }
         if (chartType === "map" || chartType === "liquidfill") {
-          // norm = JSON.parse(information.chart_settings);
           norm = information.chart_settings;
           if (chartType === "liquidfill") {
             this.liquid_max = norm.max;
@@ -982,7 +1041,9 @@ export default {
         } else {
           res = await this.axios.post(DataUrl, DataReq); // 请求异步，同步处理
         }
+
         let datas = information.data_source === 'mock' ? res : res.data.state === 'SUCCESS' ? res.data.data : [];
+
         if (datas.length > 0) {
           let resData = vChartInfo.getChartColumns(
             datas,
@@ -991,27 +1052,40 @@ export default {
             "",
             this.isMultiseriate
           );
-          resData = vChartInfo.getChart(
-            keys,
-            countColName,
-            chartType,
-            norm,
-            "",
-            this.isMultiseriate
-          );
+          let colList = null
+          // let colList = this.chartConfigs?.chart_settings?.columns
+          if (chartType !== 'table' || !colList) {
+            resData = vChartInfo.getChart(
+              keys,
+              countColName,
+              chartType,
+              norm,
+              "",
+              this.isMultiseriate
+            );
+          } else {
+            if (colList && Array.isArray(colList)) {
+              resData = vChartInfo.getChart(
+                keys,
+                countColName,
+                chartType,
+                norm,
+                "",
+                this.isMultiseriate,
+                colList
+              );
+            }
+          }
           if (this.isStack) {
             this.stackLabel = resData.all.columns;
           }
           this.chartDatas = resData.all;
           this.type = information.chart_type;
-          if (chartType === "ring") {
 
-          }
           if (chartType === "map") {
             this.chartDatas = resData;
           } else if (chartType === "liquidfill") {
             this.chartDatas = resData.all;
-          } else if (chartType === "table") {
           } else if (chartType === "ranking") {
             let settings = information.chart_settings
             this.chartDatas = {
@@ -1024,6 +1098,9 @@ export default {
               unit: settings.unit
             }
           }
+          if (chartType === 'newslist' || chartType === 'numberlist') {
+            this.chartDatas = datas
+          }
           return { isRes: true, res: res };
         } else {
           if (chartType === "map") {
@@ -1035,6 +1112,7 @@ export default {
     }
   },
   mounted () {
+    this.isPcEnv = this.IsPC()
     let TimeOut = new this.timeOut(this.requestCycle, 0, this.getCharts);
     TimeOut.reqFun();
     TimeOut.startTime();
@@ -1113,6 +1191,8 @@ export default {
       width: calc(100%);
       height: calc(100%);
       &.show-border {
+        background-color: rgba(2, 12, 29, 0.2);
+        position: relative;
         &::before {
           content: "";
           // background: url(/img/left-top.svg) 0 0 no-repeat,
@@ -1144,7 +1224,7 @@ export default {
 
     &.show-border {
       // border: 1px solid rgba(67, 108, 218, 0.8);
-      background-color: rgba(2, 12, 29, 0.2);
+      // background-color: rgba(2, 12, 29, 0.2);
       position: relative;
       // &::before {
       //   content: "";
@@ -1185,6 +1265,7 @@ export default {
     .digitalNumber {
       display: flex;
       justify-content: center;
+      align-items: center;
       .units {
         font-size: 16px;
         height: 100%;

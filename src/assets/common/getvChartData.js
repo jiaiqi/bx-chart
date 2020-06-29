@@ -52,7 +52,7 @@ export class vChartInfo {
             }
             return this.columns
         }
-        this.getChart = (dimcols, countCol, chartType, norm, dataTypeCol, isMultiseriate) => {
+        this.getChart = (dimcols, countCol, chartType, norm, dataTypeCol, isMultiseriate, colList) => {
             // dimcols : 指标维度合集 countCol: 值对应字段, chartType：图标type, dataType : data分图标统计字段,isMultiseriate数据是否是多列中取得
             let datas = this.resData
             let timeArr = []
@@ -146,15 +146,32 @@ export class vChartInfo {
             } else if (vChartType === 'table') {
                 let data = this.resData
                 let arr = []
-                data.map(datas => {
-                    let obj = {
-                        name: '',
-                        value: ''
-                    }
-                    obj.name = datas[ dimcols[ 0 ] ]
-                    obj.value = datas[ dimcols[ 1 ] ]
-                    arr.push(obj)
-                })
+                console.log(data, dimcols, countCol, chartType, norm, dataTypeCol, colList)
+                if (colList && Array.isArray(colList)) {
+                    debugger
+
+                    colList.forEach(cols => {
+                        debugger
+                        data.forEach(d => {
+
+                        })
+                        dimcols.forEach(col => {
+
+                        })
+
+                    })
+                } else {
+                    data.map(datas => {
+                        let obj = {
+                            name: '',
+                            value: ''
+                        }
+                        obj.name = datas[ dimcols[ 0 ] ]
+                        obj.value = datas[ dimcols[ 1 ] ]
+                        arr.push(obj)
+                    })
+                }
+
                 allChartData.all = {}
                 allChartData.all[ 'data' ] = arr
             } else if (vChartType === 'gauge') {

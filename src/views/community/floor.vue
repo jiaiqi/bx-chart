@@ -58,23 +58,81 @@
                   v-if="f.dy_name === unit && Number(f.floor_level) === item"
                   @click="toDetail(f)"
                 >
-                  <div class="house_name">{{ f.name }}</div>
+                  <div class="people-num">
+                    <div
+                      class="value"
+                      :style="{
+                        color:
+                          f.house_status === '自住'
+                            ? '#0ccfcf'
+                            : f.house_status === '租用'
+                            ? '#2ECC71'
+                            : '#F1C40F'
+                      }"
+                    >
+                      {{ f.people_number ? f.people_number : "0" }}
+                    </div>
+                    <div class="label">
+                      人数
+                    </div>
+                  </div>
+                  <div class="car-num">
+                    <div
+                      class="value"
+                      :style="{
+                        color:
+                          f.house_status === '自住'
+                            ? '#0ccfcf'
+                            : f.house_status === '租用'
+                            ? '#2ECC71'
+                            : '#F1C40F'
+                      }"
+                    >
+                      {{ f.car_number ? f.car_number : "0" }}
+                    </div>
+                    <div class="label">
+                      车辆数
+                    </div>
+                  </div>
+                  <div
+                    class="house_name"
+                    :style="{
+                      color: '#333'
+                    }"
+                  >
+                    {{ f.name }}
+                  </div>
                   <div class="house_status">
                     <div
                       class="label"
                       :style="{
-                        color:
-                          f.house_status === '自住'
-                            ? 'yellow'
-                            : f.house_status === '租用'
-                            ? 'blue'
-                            : '#fff'
+                        color: '#333'
                       }"
                     >
                       {{ f.house_status }}
                     </div>
-                    <div class="status1"></div>
-                    <div class="status2"></div>
+                    <div
+                      class="status1"
+                      :style="{
+                        'border-bottom-color':
+                          f.house_status === '自住'
+                            ? '#0ccfcf'
+                            : f.house_status === '租用'
+                            ? '#2ECC71'
+                            : '#F1C40F'
+                      }"
+                    ></div>
+                    <div
+                      class="status2"
+                      :style="{
+                        backgroundColor:
+                          f.house_status === '自住'
+                            ? '#0ccfcf'
+                            : f.house_status === '租用'
+                            ? '#2ECC71'
+                            : '#F1C40F'
+                      }"
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -233,6 +291,7 @@ export default {
         &:last-child {
           margin-right: 0;
         }
+
         .floors-item {
           display: flex;
           flex-direction: column;
@@ -251,7 +310,6 @@ export default {
         // height: calc(100% - 30px);
         height: calc(100%);
         box-sizing: border-box;
-
         .floor-level-item {
           display: flex;
           justify-content: center;
@@ -275,6 +333,7 @@ export default {
             margin: 0;
             padding: 0;
             color: #fff;
+            font-size: 16px;
             background-color: #bb3f40;
             border: none;
           }
@@ -311,6 +370,27 @@ export default {
             .house_name {
               z-index: 10;
               font-size: 12px;
+              position: absolute;
+              bottom: calc(50% - 25px);
+            }
+            .people-num,
+            .car-num {
+              position: absolute;
+              top: 20px;
+              color: #fff;
+              text-align: center;
+              .label,
+              .value {
+                font-size: 12px;
+                padding: 0 10px;
+                text-align: center;
+              }
+            }
+            .people-num {
+              left: 0;
+            }
+            .car-num {
+              right: 0;
             }
             .house_status {
               .label {
@@ -321,9 +401,8 @@ export default {
                 z-index: 10;
                 width: 40px;
                 line-height: 40px;
-
                 text-align: center;
-                bottom: calc(50% - 50px);
+                bottom: calc(50% - 70px);
                 right: calc(50% - 20px);
               }
               .status1 {
@@ -331,8 +410,10 @@ export default {
                 border-bottom: 40px solid rgba($color: #0ccfcf, $alpha: 0.6);
                 position: absolute;
                 // bottom: 20px;
-                bottom: calc(50% - 10px);
+                bottom: calc(50% - 30px);
                 right: calc(50% - 40px);
+                border-bottom-left-radius: 10px;
+                border-bottom-right-radius: 10px;
               }
               .status2 {
                 width: 50px;
@@ -340,8 +421,10 @@ export default {
                 background-color: rgba($color: #0ccfcf, $alpha: 0.6);
                 overflow: hidden;
                 position: absolute;
-                bottom: calc(50% - 50px);
+                bottom: calc(50% - 70px);
                 right: calc(50% - 25px);
+                border-bottom-left-radius: 10px;
+                border-bottom-right-radius: 10px;
               }
             }
           }

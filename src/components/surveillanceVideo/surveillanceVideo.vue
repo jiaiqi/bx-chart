@@ -13,11 +13,10 @@
                 <div class="titMsg">
                     <div class="videoImg">
                         <div>摄像机编号：{{item.CamerNumber}}</div>
-                        <div>摄像机位置：{{item.CameraPosition}}</div>
                     </div>
                     <div class="photoImg">
-                        <div>{{item.residentNum}}：{{item.residentFig}}</div>
-                        <div>{{item.vidilocation}}：{{item.vidilocationFig}}</div>
+                                                <div>摄像机位置：{{item.CameraPosition}}</div>
+
                     </div>
                 </div>
                 <div class="videototlr">
@@ -65,7 +64,6 @@ export default {
 <style lang="scss">
    .wraps{
     margin: 0 auto;
-    padding: 0 50px;
     .back{
         background: #416296;
             margin-bottom: 50px;
@@ -100,7 +98,7 @@ export default {
     }
 }
 .boxImg{
-    width: 48%; box-shadow: 0 0 3px 3px #EEE;
+    width: 100%; box-shadow: 0 0 3px 3px #EEE;
     margin-bottom: 20px;
     .titMsg{
         display: flex;
@@ -111,31 +109,18 @@ export default {
 }
 .doubles{
     display:flex; flex-wrap:wrap;
-    justify-content: space-between;
 }
 
-// @media screen and (max-width:1563px) {
-//     .boxPho{
-//         margin-right: 15px;
-//         width: 4vw !important;
-//     }
-// }
-@media screen and (max-width:1100px) {
-    .boxImg{
-        width: 100% !important;
-    }
-    .boxPho{
-        width:8.8vw !important;
-    }
-}
 
  .videoImg{
-        width: 35%;
+        width: 40%;
     }
 .surveillance{
-    width: 35%;
+    width: 40%;
     img{
        width: 95%;
+       height: 23rem;
+       object-fit: cover;
     }
 }
 .frames{
@@ -145,18 +130,20 @@ export default {
 .photos{
     display: flex;
     flex-wrap: wrap;
-    width: 65%;
+    width: 60%;
     img{
-        height: 58px;
+        height: 125px;
         width: 100%;
+       object-fit: cover;
+
     }
     .boxPho{
-        margin-right: 7px;
-        width: 4.6vw;
+        margin-right: 15px;
+        width: 10.1vw;
 
     }
     .fonts{
-        font-size: 11px;
+        font-size: 20px;
     }
 }
 .hovering:hover{
@@ -164,4 +151,62 @@ export default {
     transition: all 0.6s;
 }
 
+
+// @media screen and (max-width:1830px) {
+//     .boxPho{
+//         width:10vw !important;
+//     }
+// }
+@media screen and (max-width:1830px) {
+    .boxPho{
+        width:9.8vw !important;
+    }
+}
+@media screen and (max-width:1531px) {
+    .boxPho{
+        width:9.5vw !important;
+    }
+    .fonts{
+        font-size: 13px !important;
+    }
+    .surveillance img{
+        height: 18rem !important;
+    }
+    .photos img{
+        height: 107px !important;
+    }
+}
+@media screen and (max-width:1370px) {
+   .surveillance img{
+        height: 24rem !important;
+    }
+   .boxPho{
+        width:9.3vw !important;
+    }
+     .photos img{
+        height: 105px !important;
+    }
+}
+@media screen and (max-width:1251px) {
+   .surveillance img{
+        height: 19rem !important;
+    }
+   .boxPho{
+        width:8.8vw !important;
+    }
+     .photos img{
+        height: 77px !important;
+    }
+}
+@media screen and (max-width:1055px) {
+   .surveillance img{
+        height: 19rem !important;
+    }
+   .boxPho{
+        width:8.5vw !important;
+    }
+     .photos img{
+        height: 64px !important;
+    }
+}
 </style>

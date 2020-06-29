@@ -1,6 +1,6 @@
 <template>
   <div class="bx-data-view" :style="setViewStyle">
-    <div class="data-view-header" :style="setHeaderStyle">
+    <div class="data-view-header" :style="setHeaderStyle" v-if="isPcEnv">
       <div
         class="title"
         :style="{
@@ -11,6 +11,9 @@
         }"
       >
         {{ title }}
+      </div>
+      <div class="date-time">
+        <DateTime></DateTime>
       </div>
       <div class="edit" @click="changeEditable" v-if="viewIsDraggable">
         <img
@@ -79,7 +82,12 @@
         </v-charts>
       </vue-drag-resize>
     </div>
-    <div class="data-view-main" :style="setMainStyle" v-if="!editable">
+    <div
+      class="data-view-main"
+      :style="setMainStyle"
+      v-if="!editable && isPcEnv"
+    >
+      <!-- pc端 -->
       <div
         v-for="(chartCol, index) in chartConfig"
         :key="index"
@@ -106,6 +114,30 @@
         ></v-charts>
       </div>
     </div>
+    <div
+      class="data-view-main"
+      :style="setMainStyle"
+      v-if="!editable && !isPcEnv"
+    >
+      <!-- 移动端 -->
+      <div
+        v-for="(chartCol, index) in chartConfig"
+        :key="index"
+        class="mobile-box"
+      >
+        <v-charts
+          v-if="
+            chartCol !== undefined &&
+              (!chartCol.use_flag || chartCol.use_flag !== '否')
+          "
+          :chartConfigs="chartCol"
+          :chartHeight="300"
+          :chartLabel="label"
+          v-on:onSave="onSubmint"
+          @clickChart="clickChart($event, chartCol)"
+        ></v-charts>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -113,9 +145,9 @@
 let moment = require("moment");
 let $ = require('jquery')
 import vCharts from "@/components/vcharts";
-
+import DateTime from '@/components/date-time/dateTime'
 export default {
-  components: { vCharts },
+  components: { vCharts, DateTime },
   computed: {
     setHeaderStyle () {
       let style = {
@@ -131,25 +163,36 @@ export default {
       let style = {
         position: "relative",
         height:
-          this.contentData.dashboard_height - this.headerHeigth - 60 + "px",
-        width: this.contentData.dashboard_width - 60 + "px",
-        margin: "30px"
+          this.isPcEnv ? this.contentData.dashboard_height - this.headerHeigth - 60 + "px" : 'auto',
+        width: this.isPcEnv ? this.contentData.dashboard_width - 60 + "px" : '100vw',
+        margin: this.isPcEnv ? "30px" : '0'
       };
       return style;
     },
     setViewStyle () {
       let bx_auth_ticket = sessionStorage.getItem('bx_auth_ticket')
-
-      let style = {
-        height: this.contentData.dashboard_height ? this.contentData.dashboard_height + "px" : '',//如果配置了页面高度就用配的，否则高度为视口高度
-        width: this.contentData.dashboard_width ? this.contentData.dashboard_width + "px" : '',//如果配置了页面宽度就用配的，否则宽度为视口宽度
-        "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200616/20200603191436310100/20200616095520691100.png&bx_auth_ticket=${bx_auth_ticket}")`,
-        "background-size": this.contentData.background_size,
-        "background-color": this.contentData.background_color,
-        'background-position': 'center center',
-        'background-repeat': 'no-repeat'
-        // overflow: "hidden"
-      };
+      let style = {}
+      if (this.isPcEnv) {
+        // PC环境
+        style = {
+          height: this.contentData.dashboard_height ? this.contentData.dashboard_height + "px" : '',//如果配置了页面高度就用配的，否则高度为视口高度
+          width: this.contentData.dashboard_width ? this.contentData.dashboard_width + "px" : '',//如果配置了页面宽度就用配的，否则宽度为视口宽度
+          "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200622/20200603191436310100/20200622143008967100.png&bx_auth_ticket=${bx_auth_ticket}")`,
+          "background-size": this.contentData.background_size,
+          "background-color": this.contentData.background_color,
+          'background-position': 'center center',
+          'background-repeat': 'no-repeat'
+          // overflow: "hidden"
+        };
+      } else {
+        style = {
+          "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200622/20200603191436310100/20200622143008967100.png&bx_auth_ticket=${bx_auth_ticket}")`,
+          "background-size": '100% 100%',
+          "background-color": this.contentData.background_color,
+          'background-position': 'center center',
+          // overflow: "hidden"
+        };
+      }
       document.body.style.backgroundColor = this.contentData.background_color
       document.body.style.width = ''
       document.body.style.height = ''
@@ -183,7 +226,8 @@ export default {
       share: null,
       editable: false,
       units: 'px', //px/%
-      isFullScreen: false
+      isFullScreen: false,
+      isPcEnv: true
     };
   },
   watch: {
@@ -372,6 +416,7 @@ export default {
               } catch (error) {
                 console.log(error)
               }
+              // if (this.isPcEnv) {
               if (pageConfig.if_gis_map === '是') {
                 //关联地图
                 self.getAreaMapConfig(pageConfig.dashboard_no)
@@ -379,6 +424,8 @@ export default {
               } else {
                 self.getChartConfig(pageConfig.dashboard_no);
               }
+              // }
+
             }
           })
           .catch(err => {
@@ -567,6 +614,10 @@ export default {
               if (item.use_flag == "否") {
                 // return {};
               }
+              let settings = typeof item.chart_settings === 'string' ? JSON.parse(item.chart_settings) : null
+              if (settings && settings.showBorder) {
+                // item.chart_height = item.chart_height + 40
+              }
               return item;
             });
             this.chartConfigOld = JSON.parse(JSON.stringify(chartConfig));
@@ -692,7 +743,9 @@ export default {
           backgroundSize: '100% ' + ratioY * 100 + '%'
         })
       }
-      resizeFull()
+      if (this.isPcEnv) {
+        resizeFull()
+      }
       // if (window.screen.display == 2) {
       //   // 等比缩放高度铺满
       //   resizeCenter()
@@ -950,6 +1003,7 @@ export default {
   },
   mounted () {
     let self = this;
+    this.isPcEnv = this.IsPC()
     self.getPageConfig()
     window.onresize = function () {
       if (!document.fullscreenElement) {
@@ -995,6 +1049,11 @@ export default {
       padding: 10px;
       display: inline-block;
     }
+    .date-time {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+    }
     .edit {
       position: absolute;
       top: 20px;
@@ -1020,6 +1079,12 @@ export default {
   .data-view-main {
     .data-view-item {
       height: 100%;
+    }
+    .mobile-box {
+      width: calc(100vw - 20px);
+      height: auto;
+      margin: 0 auto;
+      padding-bottom: 20px;
     }
     .absolute-box {
       position: absolute;
