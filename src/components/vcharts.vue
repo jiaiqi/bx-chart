@@ -19,7 +19,7 @@
               : ''
         }"
       >
-        <div dv class="digital-title" v-if="titleText">{{ titleText }}</div>
+        <div class="digital-title" v-if="titleText">{{ titleText }}</div>
         <div class="digitalNumber">
           <div
             class="units"

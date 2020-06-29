@@ -1,5 +1,17 @@
 <template>
   <div class="bx-data-view" :style="setViewStyle">
+    <div
+      v-if="!isPcEnv"
+      class="data-view-header title"
+      :style="{
+        color:
+          contentData.gis_info_cfg && contentData.gis_info_cfg.titleColor
+            ? contentData.gis_info_cfg.titleColor
+            : ''
+      }"
+    >
+      {{ title }}
+    </div>
     <div class="data-view-header" :style="setHeaderStyle" v-if="isPcEnv">
       <div
         class="title"
@@ -1041,6 +1053,9 @@ export default {
     text-align: center;
     position: relative;
     font-size: 1.6rem;
+    &.title {
+      padding: 10px 0;
+    }
     .title {
       // background: url(/img/head-title-bg.png) no-repeat;
       // background-size: 100%;
