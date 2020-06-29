@@ -164,12 +164,14 @@
           v-if="this.chartConfigs.chart_type === 'table'"
         >
           <el-table
+            class="el-table"
             :row-style="{ background: 'transparent', color: 'white' }"
             :header-cell-style="{
               background: 'transparent',
               color: 'white'
             }"
             :style="{
+              'overflow-y': 'scroll',
               height: showBorder
                 ? chartHeight - 60 + 'px'
                 : chartHeight - 40 + 'px'
@@ -1283,6 +1285,33 @@ export default {
   }
   .parent::-webkit-scrollbar {
     display: none;
+  }
+  .el-table {
+    // 滚动条整体宽度
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    // 滚动条滑槽样式
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    }
+    // 滚动条样式
+    &::-webkit-scrollbar-thumb {
+      border-radius: 8px;
+      background: rgb(9, 48, 133);
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: blue;
+    }
+    &::-webkit-scrollbar-thumb:active {
+      background: rgb(42, 55, 231);
+    }
+    // 浏览器失焦的样式
+    &::-webkit-scrollbar-thumb:window-inactive {
+      background: rgba(255, 0, 0, 0.4);
+    }
   }
   .el-table,
   .el-table__expanded-cell,

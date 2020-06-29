@@ -1,17 +1,23 @@
 <template>
   <div class="bx-data-view" :style="setViewStyle">
-    <div
-      v-if="!isPcEnv"
-      class="data-view-header title"
-      :style="{
-        color:
-          contentData.gis_info_cfg && contentData.gis_info_cfg.titleColor
-            ? contentData.gis_info_cfg.titleColor
-            : ''
-      }"
-    >
-      {{ title }}
+    <div class="data-view-header">
+      <!-- <div class="date-time mobile">
+        <DateTime></DateTime>
+      </div> -->
+      <div
+        v-if="!isPcEnv"
+        class=" title"
+        :style="{
+          color:
+            contentData.gis_info_cfg && contentData.gis_info_cfg.titleColor
+              ? contentData.gis_info_cfg.titleColor
+              : ''
+        }"
+      >
+        {{ title }}
+      </div>
     </div>
+
     <div class="data-view-header" :style="setHeaderStyle" v-if="isPcEnv">
       <div
         class="title"
@@ -1068,6 +1074,9 @@ export default {
       position: fixed;
       top: 10px;
       left: 10px;
+      &.mobile {
+        transform: scale(0.5);
+      }
     }
     .edit {
       position: absolute;
