@@ -20,7 +20,13 @@
         }"
       >
         <div class="digital-title" v-if="titleText">{{ titleText }}</div>
-        <div class="digitalNumber">
+        <div
+          class="digitalNumber"
+          :style="{
+            'justify-content': isPcEnv ? 'center' : 'flex-start',
+            'padding-left': isPcEnv ? '' : '50px'
+          }"
+        >
           <div
             class="units"
             v-if="this.chartConfigs.chart_settings.units_position === 'left'"
@@ -244,7 +250,7 @@
         ></news-list>
         <number-list
           :chartSettings="chartConfigs.chart_settings"
-          :chartDatas="chartDatas"
+          :chartDatas="Array.isArray(chartDatas) ? chartDatas : []"
           v-if="this.chartConfigs.chart_type === 'numberlist'"
           :style="{
             width: chartWidth + 'px',
@@ -296,6 +302,7 @@
 import testData from "../assets/common/data";
 import eMap from "./echartMap";
 import digital from "./digital";
+// import digital from "./RollerDigital/RollerDigital";
 import bMap from '@/components/bMap/bMap.vue'
 import TabList from '@/components/tabList/tabList.vue'
 import customPage from '@/components/customPage/customPage'
@@ -897,6 +904,7 @@ export default {
       let DataUrl = "";
       DataUrl = this.getIp() + information.chart_request_url;
       let DataReq = information.chart_request_payload;
+
       if (DataReq && typeof DataReq == "string") {
         try {
           DataReq = JSON.parse(DataReq);
@@ -904,19 +912,29 @@ export default {
           console.log(error, DataReq)
         }
         let conditions = DataReq.condition;
+
         if (conditions) {
-          conditions.map(cond => {
+          conditions.forEach(cond => {
             let a = cond.value.toString();
             if (cond.value.indexOf("function") > -1) {
               if (self.xssFilter(a)) {
                 cond.value = eval(a);
               }
-            } else {
+            } else if (cond.value.indexOf('new Date()') !== -1) {
+              cond.value = self.formatDate(new Date())
+            }
+            else {
               cond.value = a;
             }
           });
           DataReq.condition = conditions;
         }
+      } else if (typeof DataReq === 'object' && DataReq && Array.isArray(DataReq.condition)) {
+        DataReq.condition.forEach(cond => {
+          if (cond.value.indexOf('new Date()') !== -1) {
+            cond.value = this.formatDate(new Date())
+          }
+        });
       }
       if (
         information.chart_columns &&
@@ -995,7 +1013,6 @@ export default {
             console.log(error)
           }
         }
-
         this.chartConfigs.chart_type = chartType
         if (information.chart_settings && typeof information.chart_settings === 'string') {
           try {

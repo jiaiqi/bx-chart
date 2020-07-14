@@ -85,6 +85,12 @@ const router = new Router({
     name: "monitoringScreen",
     component: () =>
       import( /* webpackChunkName: "houseMsg" */ "./views/monitoringScreen/monitoringScreen.vue")
+  },
+  {
+    path: "/demo",
+    name: "demo",
+    component: () =>
+      import( /* webpackChunkName: "demo" */ "./views/demo/demo.vue")
   }
   ]
 });

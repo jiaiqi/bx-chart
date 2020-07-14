@@ -49,7 +49,7 @@
                   class="floor-item"
                   :style="{
                     color:
-                      f.house_status === '自住'
+                      f.house_status === '自用'
                         ? 'yellow'
                         : f.house_status === '租用'
                         ? 'blue'
@@ -63,7 +63,7 @@
                       class="value"
                       :style="{
                         color:
-                          f.house_status === '自住'
+                          f.house_status === '自用'
                             ? '#0ccfcf'
                             : f.house_status === '租用'
                             ? '#2ECC71'
@@ -81,7 +81,7 @@
                       class="value"
                       :style="{
                         color:
-                          f.house_status === '自住'
+                          f.house_status === '自用'
                             ? '#0ccfcf'
                             : f.house_status === '租用'
                             ? '#2ECC71'
@@ -115,7 +115,7 @@
                       class="status1"
                       :style="{
                         'border-bottom-color':
-                          f.house_status === '自住'
+                          f.house_status === '自用'
                             ? '#0ccfcf'
                             : f.house_status === '租用'
                             ? '#2ECC71'
@@ -126,7 +126,7 @@
                       class="status2"
                       :style="{
                         backgroundColor:
-                          f.house_status === '自住'
+                          f.house_status === '自用'
                             ? '#0ccfcf'
                             : f.house_status === '租用'
                             ? '#2ECC71'

@@ -176,38 +176,34 @@
                style="width: 100%;color:#f1f1f1;"
                 >
                 <el-table-column
-                prop="crsj"
+                prop="eventTime"
                 label="出入时间"
                 >
                 </el-table-column>
                 <el-table-column
-                prop="crlb"
+                prop="devName"
                 label="出入类别"
-                 width="80"
                 >
                 </el-table-column>
                   <el-table-column
-                    prop="xm"
+                    prop="personName"
                     label="姓名"
                 width="80"
-
+                 :formatter="formatDatename" 
                      >
                     </el-table-column>
                 
-                <el-table-column
-                prop="gmsfhm"
-                label="身份证号码">
-                </el-table-column>
+               
             </el-table>
             <div class="pages">
               <el-pagination
-              small
-              layout="prev, pager, next"
-               @current-change="changePage"
-              :current-page="page.pageNo"
-              :page-size="page.rownumber"
-              :total="page.total"
-              >
+                small
+                layout="prev, pager, next"
+                @current-change="changePage"
+                :current-page="page.pageNo *1"
+                :page-size="page.rownumber *1"
+                :total="page.total *1"
+                >
             </el-pagination>
            </div>
         </div>
@@ -225,7 +221,7 @@
                 label="访问日期"
                 >
                 </el-table-column>
-                <el-table-column
+                <el-table-column 
                 prop="name"
                 label="访客姓名"
                 >
@@ -258,24 +254,24 @@
                 :header-cell-style="{background:'#17646e',color:'#e9eaea'}"
                 >
                 <el-table-column
-                prop="cphm"
+                prop="plateNo"
                 label="车牌号码"
                 >
                 </el-table-column>
                 <el-table-column
-                prop="gcsj"
+                prop="crossTime"
                 label="过车时间"
                 >
                 </el-table-column>
                 <el-table-column
-                prop="gclx"
-                label="过车类型"
+                prop="vehicleType"
+                label="车辆类型"
                   width="80"
                 >
                 </el-table-column>
                 <el-table-column
-                prop="tccbh"
-                label="停车场编号"
+                prop="parkName"
+                label="停车场"
                 >
                 </el-table-column>
             </el-table>
@@ -354,6 +350,9 @@ export default {
       }
       
     },
+    formatDatename(e){
+      return (e.personName)?(e.personName):'暂无'
+    },
      async gethouseMsg(fwbm){ //住户信息srvzhxq_guest_mgmt_select
         let url = this.getServiceUrl("select", "srvzhxq_syrk_select", "zhxq");
         let req = { "serviceName": "srvzhxq_syrk_select", "colNames": [ "*" ], "condition": [
@@ -367,22 +366,28 @@ export default {
         let databoole = res.data.data
         let con =''
         for( let i in databoole){
-          con+=(databoole[i].gmsfhm+',')
+          con+=(databoole[i].syrkbm+',')
         }
+        console.log(databoole,'***')
+
         con = con.substring(0, con.lastIndexOf(','));
         this.oneCon = con
+
        this.peopleComein(con)
      },
     async peopleComein(val){ //人员出入记录
-       let url2 = this.getServiceUrl("select", "srvxqaf_rycrxx_select", "xqaf");
-        let req2 = { "serviceName": "srvxqaf_rycrxx_select", "colNames": [ "*" ], "condition": [
-            {colName: "gmsfhm", ruleType: "in", value: val}
-        ], order: [  ],page:this.page }
-        let rese = await this.$http.post(url2, req2)
-        if (rese.data.state === 'SUCCESS') {
-            this.AccessRecords = (rese.data.data)
-            this.page = rese.data.page
-        }
+    console.log(val,'人员出入记录rk')
+       let url2 = this.getServiceUrl("select", "srvzhxa_person_inout_select", "zhxq");
+        let req2 = { "serviceName": "srvzhxa_person_inout_select", "colNames": [ "*" ], "condition": [
+           {
+            colName: "personId", ruleType: "eq", value: val
+            },
+      ],page:this.page }
+          let rese = await this.$http.post(url2, req2)
+          if (rese.data.state === 'SUCCESS') {
+              this.AccessRecords = (rese.data.data)
+              this.page = rese.data.page
+          }
     },
    changePage(val) { //人员出入
       this.page.pageNo = val;
@@ -458,9 +463,9 @@ export default {
      },
 
   async carComein(val){ //车辆出入记录
-       let url2 = this.getServiceUrl("select", "srvxqaf_clcrxx_select", "xqaf");
-        let req2 = { "serviceName": "srvxqaf_clcrxx_select", "colNames": [ "*" ], "condition": [
-            {colName: "cphm", ruleType: "in", value: val}
+       let url2 = this.getServiceUrl("select", "srvzhxa_car_inout_select", "zhxq");
+        let req2 = { "serviceName": "srvzhxa_car_inout_select", "colNames": [ "*" ], "condition": [
+            {colName: "plateNo", ruleType: "in", value: val}
         ], order: [  ],page:this.pagetwo}
         let rese = await this.$http.post(url2, req2)
         if (rese.data.state === 'SUCCESS') {
@@ -473,9 +478,9 @@ export default {
 
   },
   created(){
-    let fwbm = 'HN1-1-1-东'
+    // let fwbm = 'HN1-1-1-东'
+    let fwbm = this.$route.query.fwbm
     this.fwbm= fwbm
-    // 
     this.gethomeMsg(fwbm)
     this.gethouseMsg(fwbm)
     this.getfkMsg(fwbm)

@@ -1,5 +1,6 @@
 module.exports = [
 	"baidumap",
 	"tablist",
-	"custompage"
+	"custompage",
+	"surveillance"
 ];

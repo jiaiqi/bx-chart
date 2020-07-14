@@ -6,7 +6,7 @@
       </div> -->
       <div
         v-if="!isPcEnv"
-        class=" title"
+        class="title"
         :style="{
           color:
             contentData.gis_info_cfg && contentData.gis_info_cfg.titleColor
@@ -42,10 +42,10 @@
           v-if="!editable"
         />
         <img
-          src="../assets/images/save.png"
+          src="../assets/images/exit.png"
           class="img-btn"
           alt=""
-          title="保存"
+          title="退出编辑"
           v-if="editable"
         />
         <!-- {{ editable ? "完成" : "编辑" }} -->
@@ -195,7 +195,7 @@ export default {
         style = {
           height: this.contentData.dashboard_height ? this.contentData.dashboard_height + "px" : '',//如果配置了页面高度就用配的，否则高度为视口高度
           width: this.contentData.dashboard_width ? this.contentData.dashboard_width + "px" : '',//如果配置了页面宽度就用配的，否则宽度为视口宽度
-          "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200622/20200603191436310100/20200622143008967100.png&bx_auth_ticket=${bx_auth_ticket}")`,
+          "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200714/20200603191436310100/20200714152755683000.png&bx_auth_ticket=${bx_auth_ticket}")`,
           "background-size": this.contentData.background_size,
           "background-color": this.contentData.background_color,
           'background-position': 'center center',
@@ -204,7 +204,7 @@ export default {
         };
       } else {
         style = {
-          "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200622/20200603191436310100/20200622143008967100.png&bx_auth_ticket=${bx_auth_ticket}")`,
+          "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200714/20200603191436310100/20200714152755683000.png&bx_auth_ticket=${bx_auth_ticket}")`,
           "background-size": '100% 100%',
           "background-color": this.contentData.background_color,
           'background-position': 'center center',
@@ -716,6 +716,7 @@ export default {
           ratioY = ratioY * window.screen.height / dashboard_height
         }
         $('body').css({
+          'overflow-y': 'hidden',
           transform: 'scale(' + ratioX + ', ' + ratioY + ')',
           transformOrigin: 'left top',
           backgroundSize: '100% 100%'

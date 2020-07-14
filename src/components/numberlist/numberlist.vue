@@ -35,6 +35,7 @@
 
 <script>
 import digital from '../digital'
+// import digital from '../RollerDigital/RollerDigital'
 export default {
   components: {
     digital,
@@ -59,6 +60,7 @@ export default {
     display: inline-block;
     width: auto;
     margin-left: 20px;
+    padding: 0 10px;
     &:first-child {
       margin-left: 0px;
     }

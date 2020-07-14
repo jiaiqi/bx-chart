@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     init () {
-      if (this.value) {
+      if (this.value || Number(this.value) === 0) {
         let self = this
         let html = ""
         this.value.toString().split('').forEach(v => {
@@ -73,7 +73,7 @@ export default {
 <style>
 .wrap-container {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
 }
 .digit-wrap {
   width: 20px;

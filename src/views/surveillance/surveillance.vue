@@ -135,7 +135,7 @@ export default {
           //     // src: "http://ivi.bupt.edu.cn/hls/cctv1.m3u8"
           //   }
           // ],
-          techOrder: [ "flash", "html5" ],
+          techOrder: [ "html5" ],
           autoplay: true,
           width: '1200',
           controls: false
@@ -398,7 +398,7 @@ export default {
         width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 5 : (this.fullarea.width / this.screenAmount) - 5,
         height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 5 : (this.fullarea.height / this.screenAmount) - 5,
         sources: null,
-        techOrder: [ "flash", "html5" ],
+        techOrder: [ "html5" ],
         autoplay: true,
         controls: false
       }
@@ -409,6 +409,9 @@ export default {
         }
       ]
       console.log(obj.width, obj.height)
+      if (row.src) {
+        this.updateLastVideoUrl(row.src)
+      }
       this.$set(this.videoBoxList, this.currentSelect, obj)
       this.showSelectDialog = false
     },
@@ -422,7 +425,6 @@ export default {
     checkSource (item, index) {
       this.currentSelect = index
       if (!item || !item.sources) {
-
         this.showSelectDialog = true
 
       } else {
@@ -474,10 +476,40 @@ export default {
         }
       }
     },
+    async updateLastVideoUrl (lastVideoUrl) {
+      // 修改配置中的 lastVideoUrl 属性
+      let chart_settings = this.surConfig
+      chart_settings.lastVideoUrl = lastVideoUrl
+      chart_settings = JSON.stringify(chart_settings)
+      const url = this.getServiceUrl('operate', 'srvanalyze_chart_update', 'dataanalyze')
+      let req = [ { "serviceName": "srvanalyze_chart_update", "condition": [ { "colName": "id", "ruleType": "eq", "value": this.chartConfigs.id } ], "data": [ { "chart_settings": chart_settings } ] } ]
+      let res = await this.$http.post(url, req)
+      if (res.data.resultCode === 'SUCCESS') {
+        console.log("lastVideoUrl修改成功", res.data)
+      }
+    },
   },
   mounted () {
     let self = this
     let element = document.getElementsByClassName('sur-video-box')[ 0 ]
+    if (this.surConfig && this.surConfig.lastVideoUrl) {
+      this.videoBoxList = [
+        {
+          height: self.fullarea.height / self.screenAmount,
+          sources: [
+            {
+              // type: "rtmp/mp4",
+              type: "application/x-mpegURL",
+              src: this.surConfig.lastVideoUrl//ok
+            }
+          ],
+          techOrder: [ "html5" ],
+          autoplay: true,
+          width: self.fullarea.width / self.screenAmount,
+          controls: false
+        }
+      ]
+    }
     if ((!this.surConfig || !this.surConfig.type) && element) {
       window.onresize = function () {
         if (!document.fullscreenElement) {
@@ -562,7 +594,7 @@ export default {
                   src: "rtmp://127.0.0.1:1935/live/"
                 }
               ],
-              techOrder: [ "flash", "html5" ],
+              techOrder: [ "html5" ],
               autoplay: true,
               controls: false
             }
