@@ -234,6 +234,7 @@
         <surveillance
           v-if="this.chartConfigs.chart_type === 'surveillance'"
           :chartConfigs="chartConfigs"
+          :pageInfo="surPageInfo"
           :chartDatas="Array.isArray(chartDatas) ? chartDatas : []"
           :surConfig="chartConfigs.chart_settings"
         ></surveillance>
@@ -701,6 +702,9 @@ export default {
 
   data () {
     return {
+      surPageInfo: {        total: 0,
+        pageNo: 1,
+        rownumber: 10      },
       isPcEnv: true,//是否是pc环境 默认true false则是移动端
       requestCycle: this.chartConfigs.request_cycle || 30,
       chartDatas: [],
@@ -1061,6 +1065,7 @@ export default {
         } else {
           res = await this.axios.post(DataUrl, DataReq); // 请求异步，同步处理
           if (information.chart_type === 'surveillance') {
+            return
             if (res.data.state === 'SUCCESS') {
               this.chartDatas.length = res.data.data.length
               let data = JSON.parse(JSON.stringify(res.data.data))
@@ -1173,6 +1178,8 @@ export default {
         ]
         let res = await this.$http.post(url, req)
         if (res.data.state === 'SUCCESS' && Array.isArray(res.data.response) && res.data.response.length > 0) {
+          // this.surPageInfo.pageNo = res.data.page.pageNo
+          // this.surPageInfo.total = res.data.page.total
           return res.data?.response[ 0 ]?.response?.data?.url
         }
       }

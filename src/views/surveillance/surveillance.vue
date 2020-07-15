@@ -125,16 +125,6 @@ export default {
       videoBoxList: [
         {
           height: '700',
-          // sources: [
-          //   {
-          //     // type: "rtmp/mp4",
-          //     type: "application/x-mpegURL",
-          //     // type: "rtsp/mov",
-          //     // src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-          //     src: "rtmp://127.0.0.1:1935/live/" //ok
-          //     // src: "http://ivi.bupt.edu.cn/hls/cctv1.m3u8"
-          //   }
-          // ],
           techOrder: [ "html5" ],
           autoplay: true,
           width: '1200',
@@ -221,103 +211,7 @@ export default {
         //   src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
         // }
       ],
-      sourceList: [
-        {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://127.0.0.1:1935/live/" //ok
-            }
-          ],
-        },
-        {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-            }
-          ],
-        },
-        {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://127.0.0.1:1935/live/" //ok
-            }
-          ],
-        },
-        {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-            }
-          ],
-        }, {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-            }
-          ],
-        }, {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-            }
-          ],
-        }, {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-            }
-          ],
-        }, {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-            }
-          ],
-        }, {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-            }
-          ],
-        }, {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-            }
-          ],
-        }, {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-            }
-          ],
-        }, {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-            }
-          ],
-        }, {
-          sources: [
-            {
-              type: "application/x-mpegURL",
-              src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-            }
-          ],
-        }
-      ],
+
       screenAmount: 1
     }
   },
@@ -355,33 +249,84 @@ export default {
           })
         }
       } else {
-        // const url = this.getServiceUrl('select', 'srvvideom_video_channel_cfg_select', 'videomonitor')
+        // let DataUrl = "";
+        let url = this.getIp() + this.chartConfigs.chart_request_url;
+        let req = this.chartConfigs.chart_request_payload
+        if (!req.page) {
+          req.page = this.pageInfo
+        }
+        // const url = this.getServiceUrl('operate', 'srvhk_vieo_url_get', 'zhxq')
         // let req = {
-        //   "serviceName": "srvvideom_video_channel_cfg_select",
+        //   "serviceName": "srvhk_vieo_url_get",
         //   "colNames": [ "*" ],
         //   "condition": [],
         //   "page": { "pageNo": this.pageInfo.pageNo, "rownumber": this.pageInfo.rownumber },
         //   "order": []
         // }
-        // let res = await this.$http.post(url, req)
+        let res = await this.$http.post(url, req)
+        if (res.data.state === 'SUCCESS') {
+          this.pageInfo.pageNo = res.data.page.pageNo
+          this.pageInfo.total = res.data.page.total
+          this.sourcesArray.length = res.data.data.length
+          let data = JSON.parse(JSON.stringify(res.data.data))
+          for (let index = 0; index < data.length; index++) {
+            this.getSurveillanceVideoUrl(data[ index ].cameraIndexCode, index).then(url => {
+              if (url) {
+                data[ index ][ 'src' ] = url
+                data[ index ][ 'video_url' ] = url
+              }
+              data[ index ][ 'id' ] = data[ index ][ 'channelNo' ]
+              data[ index ][ 'name' ] = data[ index ][ 'cameraName' ]
+              // this.chartDatas.push(data[ index ])
+              this.$set(this.sourcesArray, index, data[ index ])
+            })
+          }
+          // res.data.data = data
+          // debugger
+        }
         // let data = res.data.data
-        let sourcesArray = []
-        var data = []
-        if (this.chartDatas && Array.isArray(this.chartDatas)) {
-          data = this.deepCopy(this.chartDatas)
-        }
-        if (data && Array.isArray(data) && data.length > 0) {
-          data.forEach(item => {
-            item.src = item.video_url
-            // item.src = 'rtmp://127.0.0.1:1935/live/livel'
-            item.type = "application/x-mpegURL"
-            sourcesArray.push(item)
-          })
-          this.sourcesArray = sourcesArray
-
-        }
+        // let sourcesArray = []
+        // var data = []
+        // if (this.chartDatas && Array.isArray(this.chartDatas)) {
+        //   data = this.deepCopy(this.chartDatas)
+        // }
+        // if (data && Array.isArray(data) && data.length > 0) {
+        //   data.forEach(item => {
+        //     item.src = item.video_url
+        //     // item.src = 'rtmp://127.0.0.1:1935/live/livel'
+        //     item.type = "application/x-mpegURL"
+        //     sourcesArray.push(item)
+        //   })
+        //   this.sourcesArray = sourcesArray
+        // }
       }
 
+    },
+    async getSurveillanceVideoUrl (cameraIndexCode) {
+      let self = this
+      if (cameraIndexCode) {
+        let url = this.getIp() + '/zhxq/operate/srvhk_vieo_url_get';
+        let req = [
+          {
+            "serviceName": "srvhk_vieo_url_get",
+            "data": [
+              {
+                "cameraIndexCode": cameraIndexCode,
+                "streamType": 0,
+                "protocol": "hls",
+                "transmode": 1,
+                "expand": "streamform=ps",
+                "streamform": "ps"
+              }
+            ]
+          }
+        ]
+        let res = await this.$http.post(url, req)
+        if (res.data.state === 'SUCCESS' && Array.isArray(res.data.response) && res.data.response.length > 0) {
+
+          return res.data?.response[ 0 ]?.response?.data?.url
+        }
+      }
     },
     async getViewHistory () {
       const url = this.getServiceUrl('select', 'srvvideom_user_monitor_view_select', 'videomonitor')
