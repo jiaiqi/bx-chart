@@ -204,7 +204,7 @@ export default {
         };
       } else {
         style = {
-          "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200714/20200603191436310100/20200714152755683100.png&bx_auth_ticket=${bx_auth_ticket}")`,
+          "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top?.pathConfig?.gateway ? top?.pathConfig?.gateway : top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200714/20200603191436310100/20200714152755683100.png&bx_auth_ticket=${bx_auth_ticket}")`,
           "background-size": '100% 100%',
           "background-color": this.contentData.background_color,
           'background-position': 'center center',
@@ -279,7 +279,7 @@ export default {
     async getObjChartData (item) {
       //获取类型为obj的chart的数据
       if (item.chart_request_payload && typeof item.chart_request_payload === 'object' && item.chart_request_url) {
-        let url = top.backendIpAddr + item.chart_request_url
+        let url = top?.pathConfig?.gateway ? top?.pathConfig?.gateway + item.chart_request_url : top.backendIpAddr + item.chart_request_url
         let req = item.chart_request_payload
         let res = await this.$http.post(url, req)
         if (res.data.state === 'SUCCESS') {
@@ -596,7 +596,7 @@ export default {
       let dashboard_background = "";
       let data = res.data.data;
       if (data && data.length > 0) {
-        let path = top.backendIpAddr + "/file/download?filePath=";
+        let path = top?.pathConfig?.gateway ? top?.pathConfig?.gateway + "/file/download?filePath=" : top.backendIpAddr + "/file/download?filePath=";
         dashboard_background = path + data[ 0 ].fileurl;
       } else {
         dashboard_background =

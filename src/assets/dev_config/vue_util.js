@@ -964,7 +964,7 @@ Vue.prototype.getPictureUrl = async function (file_no) {
     if (res.data.state === 'SUCCESS') {
       const data = res.data.data[ 0 ];
       if (data) {
-        const fileurl = top.backendIpAddr + '/file/download?filePath=' + data.fileurl;
+        const fileurl = top?.pathConfig?.gateway ? top?.pathConfig?.gateway + '/file/download?filePath=' + data.fileurl : top.backendIpAddr + '/file/download?filePath=' + data.fileurl;
         return fileurl;
       } else {
         return false

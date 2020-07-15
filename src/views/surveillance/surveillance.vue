@@ -148,78 +148,78 @@ export default {
       },
       viewHistory: [],
       sourcesArray: [
-        {
-          id: '001',
-          name: '摄像头1',
-          type: "application/x-mpegURL",
-          src: "http://ivi.bupt.edu.cn/hls/cctv1.m3u8" //ok
-        },
-        {
-          id: '002',
-          name: '摄像头2',
-          type: "application/x-mpegURL",
-          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-        },
-        {
-          id: '003',
-          name: '摄像头3',
-          type: "application/x-mpegURL",
-          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-        },
-        {
-          id: '004',
-          name: '摄像头4',
-          type: "application/x-mpegURL",
-          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-        },
-        {
-          id: '005',
-          name: '摄像头5',
-          type: "application/x-mpegURL",
-          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-        },
-        {
-          id: '006',
-          name: '摄像头6',
-          type: "application/x-mpegURL",
-          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-        },
-        {
-          id: '007',
-          name: '摄像头7',
-          type: "application/x-mpegURL",
-          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-        },
-        {
-          id: '008',
-          name: '摄像头8',
-          type: "application/x-mpegURL",
-          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-        },
-        {
-          id: '009',
-          name: '摄像头9',
-          type: "application/x-mpegURL",
-          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-        },
-        {
-          id: '0010',
-          name: '摄像头10',
-          type: "application/x-mpegURL",
-          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-        },
-        {
-          id: '0011',
-          name: '摄像头11',
-          type: "application/x-mpegURL",
-          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-        },
-        {
-          id: '0012',
-          name: '摄像头12',
-          type: "application/x-mpegURL",
-          src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
-        }
+        // {
+        //   id: '001',
+        //   name: '摄像头1',
+        //   type: "application/x-mpegURL",
+        //   src: "http://ivi.bupt.edu.cn/hls/cctv1.m3u8" //ok
+        // },
+        // {
+        //   id: '002',
+        //   name: '摄像头2',
+        //   type: "application/x-mpegURL",
+        //   src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        // },
+        // {
+        //   id: '003',
+        //   name: '摄像头3',
+        //   type: "application/x-mpegURL",
+        //   src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        // },
+        // {
+        //   id: '004',
+        //   name: '摄像头4',
+        //   type: "application/x-mpegURL",
+        //   src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        // },
+        // {
+        //   id: '005',
+        //   name: '摄像头5',
+        //   type: "application/x-mpegURL",
+        //   src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        // },
+        // {
+        //   id: '006',
+        //   name: '摄像头6',
+        //   type: "application/x-mpegURL",
+        //   src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        // },
+        // {
+        //   id: '007',
+        //   name: '摄像头7',
+        //   type: "application/x-mpegURL",
+        //   src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        // },
+        // {
+        //   id: '008',
+        //   name: '摄像头8',
+        //   type: "application/x-mpegURL",
+        //   src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        // },
+        // {
+        //   id: '009',
+        //   name: '摄像头9',
+        //   type: "application/x-mpegURL",
+        //   src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        // },
+        // {
+        //   id: '0010',
+        //   name: '摄像头10',
+        //   type: "application/x-mpegURL",
+        //   src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        // },
+        // {
+        //   id: '0011',
+        //   name: '摄像头11',
+        //   type: "application/x-mpegURL",
+        //   src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        // },
+        // {
+        //   id: '0012',
+        //   name: '摄像头12',
+        //   type: "application/x-mpegURL",
+        //   src: "rtmp://58.200.131.2:1935/livetv/hunantv" //ok
+        // }
       ],
       sourceList: [
         {
