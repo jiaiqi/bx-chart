@@ -195,7 +195,7 @@ export default {
         style = {
           height: this.contentData.dashboard_height ? this.contentData.dashboard_height + "px" : '',//如果配置了页面高度就用配的，否则高度为视口高度
           width: this.contentData.dashboard_width ? this.contentData.dashboard_width + "px" : '',//如果配置了页面宽度就用配的，否则宽度为视口宽度
-          "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200714/20200603191436310100/20200714152755683000.png&bx_auth_ticket=${bx_auth_ticket}")`,
+          "background-image": this.contentData.dashboard_background_image,
           "background-size": this.contentData.background_size,
           "background-color": this.contentData.background_color,
           'background-position': 'center center',
@@ -204,19 +204,21 @@ export default {
         };
       } else {
         style = {
-          "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200714/20200603191436310100/20200714152755683000.png&bx_auth_ticket=${bx_auth_ticket}")`,
+          "background-image": this.contentData.dashboard_background_image ? this.contentData.dashboard_background_image : `url("${top.backendIpAddr}/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200714/20200603191436310100/20200714152755683100.png&bx_auth_ticket=${bx_auth_ticket}")`,
           "background-size": '100% 100%',
           "background-color": this.contentData.background_color,
           'background-position': 'center center',
           // overflow: "hidden"
         };
       }
+      console.log(this.contentData, "contentData")
       document.body.style.backgroundColor = this.contentData.background_color
       document.body.style.width = ''
       document.body.style.height = ''
       return style;
     },
     title () {
+      // console.log("contentData", this.contentData)
       return this.contentData.dashboard_title;
     }
   },
@@ -388,7 +390,7 @@ export default {
       );
       return height;
     },
-    getDashboardData (e = DS201909240001) {
+    async getDashboardData (e) {
       let self = this;
       let isLoad = false;
       let resData = null;
@@ -410,44 +412,49 @@ export default {
             }
           ]
         };
-        self.axios.post(url, params)
-          .then(res => {
-            let data = res.data.data;
-            if (data && data.length > 0) {
-              let pageConfig = res.data.data[ 0 ];
-              if (pageConfig.is_editor == "是") {
-                self.viewIsDraggable = true;
-              } else {
-                self.viewIsDraggable = false;
-              }
-              self.contentData.dashboard_no = pageConfig.dashboard_no;
-              self.contentData.dashboard_width = pageConfig.dashboard_width;
-              self.contentData.dashboard_height = pageConfig.dashboard_height;
-              self.contentData.dashboard_title = pageConfig.dashboard_title;
-              document.title = self.contentData.dashboard_title
-              self.contentData.background_color = pageConfig.background_color
-              let file_no = pageConfig.dashboard_background;
-              self.getDashBackground(file_no);
-              try {
-                pageConfig.gis_info_cfg = JSON.parse(pageConfig.gis_info_cfg)
-                self.contentData[ 'gis_info_cfg' ] = pageConfig.gis_info_cfg
-              } catch (error) {
-                console.log(error)
-              }
-              // if (this.isPcEnv) {
-              if (pageConfig.if_gis_map === '是') {
-                //关联地图
-                self.getAreaMapConfig(pageConfig.dashboard_no)
+        let res = await self.axios.post(url, params)
+        // .then(res => {
+        let data = res.data.data;
+        if (data && data.length > 0) {
+          let pageConfig = res.data.data[ 0 ];
+          if (pageConfig.is_editor == "是") {
+            self.viewIsDraggable = true;
+          } else {
+            self.viewIsDraggable = false;
+          }
+          self.contentData.dashboard_no = pageConfig.dashboard_no;
+          self.contentData.dashboard_width = pageConfig.dashboard_width;
+          self.contentData.dashboard_height = pageConfig.dashboard_height;
+          self.contentData.dashboard_title = pageConfig.dashboard_title;
+          document.title = self.contentData.dashboard_title
+          self.contentData.background_color = pageConfig.background_color
+          let file_no = pageConfig.dashboard_background;
+          let backgroundUrl = await self.getDashBackground(file_no)
+          if (backgroundUrl) {
+            self.contentData.dashboard_background_image = backgroundUrl
+          }
+          debugger
+          console.log(this.contentData, "contentData")
+          try {
+            pageConfig.gis_info_cfg = JSON.parse(pageConfig.gis_info_cfg)
+            self.contentData[ 'gis_info_cfg' ] = pageConfig.gis_info_cfg
+          } catch (error) {
+            console.log(error)
+          }
+          // if (this.isPcEnv) {
+          if (pageConfig.if_gis_map === '是') {
+            //关联地图
+            self.getAreaMapConfig(pageConfig.dashboard_no)
 
-              } else {
-                self.getChartConfig(pageConfig.dashboard_no);
-              }
-              // }
+          } else {
+            self.getChartConfig(pageConfig.dashboard_no);
+          }
+          // }
 
-            }
-          })
-          .catch(err => {
-          })
+        }
+        // })
+        // .catch(err => {
+        // })
       } else {
         alert("缺少页面编号，无法显示页面");
       }
@@ -571,7 +578,7 @@ export default {
       );
       return req;
     },
-    getDashBackground (file_no) {
+    async getDashBackground (file_no) {
       this.resize()
       // 获取背景图文件url
       let url = this.getServiceUrl(
@@ -584,24 +591,24 @@ export default {
         colNames: [ "*" ],
         condition: [ { colName: "file_no", value: file_no, ruleType: "eq" } ]
       };
-      this.axios
-        .post(url, req)
-        .then(res => {
-          let dashboard_background = "";
-          let data = res.data.data;
-          if (data && data.length > 0) {
-            let path = this.serviceApi().downloadFile;
-            dashboard_background = path + data[ 0 ].fileurl;
-          } else {
-            dashboard_background =
-              "url(" + require("@/assets/images/home.png") + ")";
-          }
-          const bx_auth_ticket = sessionStorage.getItem('bx_auth_ticket')
-          this.contentData.dashboard_background_image = `url(${dashboard_background}&bx_auth_ticket=${bx_auth_ticket})`;
-        })
-        .catch(err => {
+      let res = await this.axios.post(url, req)
+      // .then(res => {
+      let dashboard_background = "";
+      let data = res.data.data;
+      if (data && data.length > 0) {
+        let path = top.backendIpAddr + "/file/download?filePath=";
+        dashboard_background = path + data[ 0 ].fileurl;
+      } else {
+        dashboard_background =
+          "url(" + require("@/assets/images/home.png") + ")";
+      }
+      const bx_auth_ticket = sessionStorage.getItem('bx_auth_ticket')
+      this.contentData.dashboard_background_image = `url(${dashboard_background}&bx_auth_ticket=${bx_auth_ticket})`;
+      return `url(${dashboard_background}&bx_auth_ticket=${bx_auth_ticket})`
+      // })
+      // .catch(err => {
 
-        });
+      // });
     },
     getChartConfig (e) {
       // 获取图表配置信息
@@ -721,6 +728,7 @@ export default {
           transformOrigin: 'left top',
           backgroundSize: '100% 100%'
         })
+        console.log(ratioX, ratioY, '$(body).css')
 
       }
       // let resizeCenterBak = () => {
@@ -1029,7 +1037,9 @@ export default {
         self.isFullScreen = false
         console.log('非全屏')
       } else {
-        console.log('进入全屏')
+        console.log('全屏状态')
+        self.resize()
+
       }
     }
     try {

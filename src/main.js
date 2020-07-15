@@ -20,7 +20,7 @@ import 'echarts-liquidfill'
 import 'video.js/dist/video-js.css' // 引入样式
 // import 'videojs-flash'
 import 'videojs-contrib-hls'
-import VueVideoPlayer from 'vue-video-player'
+// import { videoPlayer } from 'vue-video-player'
 
 
 Vue.config.productionTip = false
@@ -30,7 +30,7 @@ Vue.use(elementUI)
 Vue.use(VCharts)
 Vue.use(common)
 Vue.use(dataV)
-Vue.use(VueVideoPlayer)
+// Vue.use(videoPlayer)
 
 VueInit()
 VueUtil()

@@ -330,6 +330,10 @@ export default {
       type: Object || Array,
       default: () => { }
     },
+    chartDatas: {
+      type: Array,
+      default: () => { }
+    }
   },
   methods: {
     handleCurrentChange (e) {
@@ -351,25 +355,30 @@ export default {
           })
         }
       } else {
-        const url = this.getServiceUrl('select', 'srvvideom_video_channel_cfg_select', 'videomonitor')
-        let req = {
-          "serviceName": "srvvideom_video_channel_cfg_select",
-          "colNames": [ "*" ],
-          "condition": [],
-          "page": { "pageNo": this.pageInfo.pageNo, "rownumber": this.pageInfo.rownumber },
-          "order": []
-        }
-        let res = await this.$http.post(url, req)
-        let data = res.data.data
+        // const url = this.getServiceUrl('select', 'srvvideom_video_channel_cfg_select', 'videomonitor')
+        // let req = {
+        //   "serviceName": "srvvideom_video_channel_cfg_select",
+        //   "colNames": [ "*" ],
+        //   "condition": [],
+        //   "page": { "pageNo": this.pageInfo.pageNo, "rownumber": this.pageInfo.rownumber },
+        //   "order": []
+        // }
+        // let res = await this.$http.post(url, req)
+        // let data = res.data.data
         let sourcesArray = []
+        var data = []
+        if (this.chartDatas && Array.isArray(this.chartDatas)) {
+          data = this.deepCopy(this.chartDatas)
+        }
         if (data && Array.isArray(data) && data.length > 0) {
           data.forEach(item => {
             item.src = item.video_url
             // item.src = 'rtmp://127.0.0.1:1935/live/livel'
             item.type = "application/x-mpegURL"
             sourcesArray.push(item)
-            this.sourcesArray = sourcesArray
           })
+          this.sourcesArray = sourcesArray
+
         }
       }
 
@@ -428,7 +437,6 @@ export default {
         this.showSelectDialog = true
 
       } else {
-
         let obj = {
           width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 5 : (this.fullarea.width / this.screenAmount) - 5,
           height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 5 : (this.fullarea.height / this.screenAmount) - 5,
@@ -552,7 +560,7 @@ export default {
       }
     }
   },
-  created () {
+  mounted () {
     this.getSourceList();
   },
   watch: {
@@ -562,6 +570,22 @@ export default {
       handler (newvalue, oldvalue) {
         if (newvalue && newvalue.type === 'component' && newvalue.rownumber) {
           this.screenAmount = Number(newvalue.rownumber)
+        }
+      }
+    },
+    chartDatas: {
+      deep: true,
+      immediate: true,
+      handler (newvalue, oldvalue) {
+        if (newvalue && Array.isArray(newvalue) && newvalue.length > 0) {
+          let sourcesArray = []
+          newvalue.forEach(item => {
+            item.src = item.video_url
+            // item.src = 'rtmp://127.0.0.1:1935/live/livel'
+            item.type = "application/x-mpegURL"
+            sourcesArray.push(item)
+          })
+          this.sourcesArray = sourcesArray
         }
       }
     },

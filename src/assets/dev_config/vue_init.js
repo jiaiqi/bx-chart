@@ -16,8 +16,16 @@ function init () {
 		}
 	} else {
 		// 单vue页面使用配置的后台地址
-		if (sessionStorage.getItem('bx_auth_ticket') === null) {
-			devSrv.dummy()
+		if (sessionStorage.getItem('pathConfig')) {
+			try {
+				window.top.pathConfig = JSON.parse(sessionStorage.getItem('pathConfig'))
+			} catch (error) {
+				console.info(error)
+			}
+		} else {
+			if (sessionStorage.getItem('bx_auth_ticket') === null) {
+				devSrv.dummy()
+			}
 		}
 		let server_cfg = devSrv.server_cfg
 		backendIpAddr =

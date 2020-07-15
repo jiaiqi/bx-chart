@@ -2,14 +2,14 @@
     <div class="contewrap">
         <div style="height:40px"></div>
         <el-tabs type="border-card">
+            <el-tab-pane label="人脸门禁系统">
+                <surveiVideo :humanFaceData="FaceData"></surveiVideo>
+            </el-tab-pane>
             <el-tab-pane label="小区人脸抓拍机">
                 <surveiVideo :humanFaceData="humanFaceData"></surveiVideo>
             </el-tab-pane>
             <el-tab-pane label="小区车辆抓拍机">
                 <surveiVideo :humanFaceData="CarData"></surveiVideo>
-            </el-tab-pane>
-            <el-tab-pane label="人脸门禁系统">
-                <surveiVideo :humanFaceData="FaceData"></surveiVideo>
             </el-tab-pane>
             <el-tab-pane label="围栏摄像机">
                 <surveiVideo :humanFaceData="fencingData"></surveiVideo>
@@ -26,6 +26,12 @@ export default {
  components: { surveiVideo },
  data() {
         return {
+             FaceData:{
+                    title:"人脸门禁系统",
+                    viewdata:[
+                   
+                    ]
+            },
             humanFaceData:{
                 title:"小区人脸抓拍机",
                     viewdata:[
@@ -35,16 +41,16 @@ export default {
                         CamerNumber:"001号",CameraPosition:"小区主入口",
                          surveillanceVideo:'http://pic.rmb.bdstatic.com/2f6f46aa62477197c8d3a9ece9b61a7b.gif',
                         monitorMessage:[
-                            {img:"http://www.eleve.cn/houminhua/jk/rl.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl2.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl3.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl4.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl2.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl3.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl4.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl2.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl3.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl4.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl2.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl3.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl4.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
                         ]
                     },
                     {
@@ -53,16 +59,16 @@ export default {
                         CamerNumber:"002号",CameraPosition:"小区活动区域",
                         surveillanceVideo:'http://p3.ssl.cdn.btime.com/t019bfd887a55540b10.gif?size=400x224',
                         monitorMessage:[
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl5.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl5.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl5.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl5.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl5.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl5.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl5.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl5.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl5.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/rl5.png",create_time:"19:25",typeTitle:"相似度",typeIs:"98.5%"},
                         ]
                     },
                 ]
@@ -76,16 +82,16 @@ export default {
                         CamerNumber:"003号",CameraPosition:"小区北门入口",
                          surveillanceVideo:'http://5b0988e595225.cdn.sohucs.com/images/20180224/ce1af971bc304ada8c9b923bfb149cdc.gif',
                         monitorMessage:[
-                           {img:"http://www.eleve.cn/houminhua/jk/cl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/cl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/cl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/cl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/cl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/cl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/cl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/cl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/cl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/cl.png",time:"19:25"},
+                           {picUri:"http://www.eleve.cn/houminhua/jk/cl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/cl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/cl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/cl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/cl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/cl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/cl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/cl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/cl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/cl.png",create_time:"19:25"},
                         ]
                     },
                     {
@@ -94,16 +100,16 @@ export default {
                         CamerNumber:"004号",CameraPosition:"小区西门门入口",
                         surveillanceVideo:'http://5b0988e595225.cdn.sohucs.com/q_70,c_zoom,w_640/images/20181109/130436275166463484b4c2574628a6b5.gif',
                         monitorMessage:[
-                            {img:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",time:"19:25"},
+                            {picUri:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3729547084,1921515073&fm=26&gp=0.jpg",create_time:"19:25"},
                         ]
                     },
                     // {
@@ -114,47 +120,7 @@ export default {
                     // }
                 ]
             },
-            FaceData:{
-                title:"人脸门禁系统",
-                    viewdata:[
-                    {
-                        residentNum:'进入住户数量',vidilocation:'进出访客数量',
-                        residentFig:"1547人",vidilocationFig:"8944人",
-                        CamerNumber:"005号",CameraPosition:"小区主入口",
-                         surveillanceVideo:'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591965358112&di=82bdec96f456570e9760629ea1af7488&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20171206%2F23ce545ea6fe457e92fff18fcf6b208b.gif',
-                        monitorMessage:[
-                            {img:"http://www.eleve.cn/houminhua/jk/rl.png",time:"19:25",typeTitle:"是否住户",typeIs:"是"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl2.png",time:"19:25",typeTitle:"是否住户",typeIs:"是"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl3.png",time:"19:25",typeTitle:"是否住户",typeIs:"是"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl.png",time:"19:25",typeTitle:"是否住户",typeIs:"是"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl4.png",time:"19:25",typeTitle:"是否住户",typeIs:"是"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl2.png",time:"19:25",typeTitle:"是否住户",typeIs:"是"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl3.png",time:"19:25",typeTitle:"是否住户",typeIs:"是"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl.png",time:"19:25",typeTitle:"是否住户",typeIs:"是"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl4.png",time:"19:25",typeTitle:"是否住户",typeIs:"是"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl.png",time:"19:25",typeTitle:"是否住户",typeIs:"是"},
-                        ]
-                    },
-                    {
-                        residentNum:'住户人数',vidilocation:'当前抓拍量',
-                        residentFig:"1547人",vidilocationFig:"8944张",
-                        CamerNumber:"006号",CameraPosition:"小区活动区域",
-                        surveillanceVideo:'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591965474828&di=fb0873d64a1a92992a110c6dba88feff&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20170816%2Ffd3f282258fe48f589cd1e0d0eb89674.jpg',
-                        monitorMessage:[
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/rl5.png",time:"19:25"},
-                        ]
-                    },
-                ]
-            },
+           
              fencingData:{
                 title:"围栏摄像机",
                     viewdata:[
@@ -164,16 +130,16 @@ export default {
                         CamerNumber:"007号",CameraPosition:"小区主入口",
                          surveillanceVideo:'https://t8.baidu.com/it/u=826967053,1848318118&fm=193',
                         monitorMessage:[
-                            {img:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",time:"19:25"},
-                            {img:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",time:"19:25"},
-                            {img:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",time:"19:25"},
-                            {img:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",time:"19:25"},
-                            {img:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",time:"19:25"},
-                            {img:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",time:"19:25"},
-                            {img:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",time:"19:25"},
-                            {img:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",time:"19:25"},
-                            {img:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",time:"19:25"},
-                            {img:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",time:"19:25"},
+                            {picUri:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",create_time:"19:25"},
+                            {picUri:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",create_time:"19:25"},
+                            {picUri:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",create_time:"19:25"},
+                            {picUri:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",create_time:"19:25"},
+                            {picUri:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",create_time:"19:25"},
+                            {picUri:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",create_time:"19:25"},
+                            {picUri:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",create_time:"19:25"},
+                            {picUri:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",create_time:"19:25"},
+                            {picUri:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",create_time:"19:25"},
+                            {picUri:"https://t8.baidu.com/it/u=826967053,1848318118&fm=193",create_time:"19:25"},
                         ]
                     },
                     {
@@ -182,16 +148,16 @@ export default {
                         CamerNumber:"008号",CameraPosition:"小区活动区域",
                         surveillanceVideo:'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591965691263&di=3d6e123f1d9be84460f9d0a5b10c7480&imgtype=0&src=http%3A%2F%2Fimg.mp.sohu.com%2Fupload%2F20170624%2F94d6e894667b46b4b1f16382df88af1f_th.png',
                         monitorMessage:[
-                            {img:"http://www.eleve.cn/houminhua/jk/wl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/wl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/wl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/wl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/wl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/wl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/wl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/wl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/wl.png",time:"19:25"},
-                            {img:"http://www.eleve.cn/houminhua/jk/wl.png",time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/wl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/wl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/wl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/wl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/wl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/wl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/wl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/wl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/wl.png",create_time:"19:25"},
+                            {picUri:"http://www.eleve.cn/houminhua/jk/wl.png",create_time:"19:25"},
                         ]
                     },
                 ]
@@ -205,112 +171,76 @@ export default {
                         CamerNumber:"009号",CameraPosition:"小区主入口",
                          surveillanceVideo:'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591966618211&di=b59e2108c87c80ca26613b556f4f41cc&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20180916%2F1bd444b12d424e449674a580144eecad.gif',
                         monitorMessage:[
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
+                            {picUri:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",create_time:"19:25"},
+                            {picUri:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",create_time:"19:25"},
                         ]
                     },
-                    {
-                        residentNum:'住户人数',vidilocation:'当前抓拍量',
-                        residentFig:"1547人",vidilocationFig:"8944张",
-                        CamerNumber:"010号",CameraPosition:"小区活动区域",
-                        surveillanceVideo:'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591966639112&di=d78e0110d22173bcbcc9bf780c411465&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20170926%2F7b46ab2918c64394a106ff7b7128f90d.gif',
-                        monitorMessage:[
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                        ]
-                    },
-                     {
-                        residentNum:'住户人数',vidilocation:'当前抓拍量',
-                        residentFig:"1547人",vidilocationFig:"8944张",
-                        CamerNumber:"011号",CameraPosition:"小区活动区域",
-                        surveillanceVideo:'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591966639112&di=d78e0110d22173bcbcc9bf780c411465&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20170926%2F7b46ab2918c64394a106ff7b7128f90d.gif',
-                        monitorMessage:[
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                        ]
-                    },
-                    {
-                        residentNum:'进入住户数量',vidilocation:'进出住户数量',
-                        residentFig:"1547人",vidilocationFig:"8944人",
-                        CamerNumber:"009号",CameraPosition:"小区主入口",
-                         surveillanceVideo:'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591966618211&di=b59e2108c87c80ca26613b556f4f41cc&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20180916%2F1bd444b12d424e449674a580144eecad.gif',
-                        monitorMessage:[
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3161336795,1490253615&fm=26&gp=0.jpg",time:"19:25"},
-                        ]
-                    },
-                    {
-                        residentNum:'住户人数',vidilocation:'当前抓拍量',
-                        residentFig:"1547人",vidilocationFig:"8944张",
-                        CamerNumber:"010号",CameraPosition:"小区活动区域",
-                        surveillanceVideo:'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591966639112&di=d78e0110d22173bcbcc9bf780c411465&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20170926%2F7b46ab2918c64394a106ff7b7128f90d.gif',
-                        monitorMessage:[
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                        ]
-                    },
-                     {
-                        residentNum:'住户人数',vidilocation:'当前抓拍量',
-                        residentFig:"1547人",vidilocationFig:"8944张",
-                        CamerNumber:"011号",CameraPosition:"小区活动区域",
-                        surveillanceVideo:'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591966639112&di=d78e0110d22173bcbcc9bf780c411465&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fimages%2F20170926%2F7b46ab2918c64394a106ff7b7128f90d.gif',
-                        monitorMessage:[
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                            {img:"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1066270532,1040608117&fm=26&gp=0.jpg",time:"19:25"},
-                        ]
-                    },
+                    
                      
                 ]
             },
         }
+    },
+    methods:{
+          async getFacility(){ //获取设备
+            let url = this.getServiceUrl("select", "srvxqaf_camera_select", "xqaf");
+            let req = { "serviceName": "srvxqaf_camera_select", "colNames": [ "*" ], "condition": [
+                {colName: "type", ruleType: "eq", value: '人脸门禁'},
+            ], order: [  ] }
+            let res = await this.$http.post(url, req)
+            if (res.data.state === 'SUCCESS') {
+                let databoole = (res.data.data)
+                for( let i in databoole){
+                   this.getRecord(databoole[i].door_code)
+                }
+            }
+        },
+         async getRecord(val){ //获取拍照记录
+            let url = this.getServiceUrl("select", "srvzhxa_person_inout_select", "zhxq");
+            let req = { "serviceName": "srvzhxa_person_inout_select", "colNames": [ "*" ], "condition": [
+                {colName: "doorIndexCode", ruleType: "eq", value:val},
+            ], order: [  ],page: {pageNo: 1, rownumber: 10} }
+            let res = await this.$http.post(url, req)
+            if (res.data.state === 'SUCCESS') {
+                let items = res.data.data
+                items.forEach((item,index,arr) => {
+                    if(item.picUri){
+                        item.picUri = 'http://192.168.0.165'+item.picUri
+                    }
+                });
+                let obj  = {
+                     surveillanceVideo:{
+                        sources: [
+                            {
+                                type: "application/x-mpegURL",
+                                src: "http://192.168.0.165:83/openUrl/UFyRyDK/live.m3u8" //ok
+                            }
+                        ],
+                        techOrder: [ "html5" ],
+                        autoplay: true,
+                        controls: false,
+                        notSupportedMessage: '暂无法播放，请稍后再试',
+                          preload: 'auto',
+                    },
+                     monitorMessage:items
+                }
+                if(items.length>0){
+                    this.FaceData.viewdata.push(obj)
+                }
+                console.log(obj)
+            }
+        },
+    },
+    created(){
+        this.getFacility()
     }
   }
 </script>

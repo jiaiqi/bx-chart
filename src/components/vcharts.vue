@@ -234,6 +234,7 @@
         <surveillance
           v-if="this.chartConfigs.chart_type === 'surveillance'"
           :chartConfigs="chartConfigs"
+          :chartDatas="Array.isArray(chartDatas) ? chartDatas : []"
           :surConfig="chartConfigs.chart_settings"
         ></surveillance>
         <news-list
@@ -1059,10 +1060,33 @@ export default {
           }
         } else {
           res = await this.axios.post(DataUrl, DataReq); // 请求异步，同步处理
+          if (information.chart_type === 'surveillance') {
+            if (res.data.state === 'SUCCESS') {
+              this.chartDatas.length = res.data.data.length
+              let data = JSON.parse(JSON.stringify(res.data.data))
+              for (let index = 0; index < data.length; index++) {
+                this.getSurveillanceVideoUrl(data[ index ].cameraIndexCode, index).then(url => {
+                  if (url) {
+                    data[ index ][ 'src' ] = url
+                    data[ index ][ 'video_url' ] = url
+                  }
+                  data[ index ][ 'id' ] = data[ index ][ 'channelNo' ]
+                  data[ index ][ 'name' ] = data[ index ][ 'cameraName' ]
+                  // this.chartDatas.push(data[ index ])
+                  this.$set(this.chartDatas, index, data[ index ])
+                })
+              }
+              // res.data.data = data
+              // debugger
+            }
+          }
         }
-
         let datas = information.data_source === 'mock' ? res : res.data.state === 'SUCCESS' ? res.data.data : [];
-
+        if (information.chart_type === 'surveillance' && information.data_source !== 'mock') {
+          // this.chartDatas = datas
+          // debugger
+          return
+        }
         if (datas.length > 0) {
           let resData = vChartInfo.getChartColumns(
             datas,
@@ -1128,7 +1152,31 @@ export default {
           return { isRes: false, res: res };
         }
       }
-    }
+    },
+    async getSurveillanceVideoUrl (cameraIndexCode) {
+      if (cameraIndexCode) {
+        let url = this.getIp() + '/zhxq/operate/srvhk_vieo_url_get';
+        let req = [
+          {
+            "serviceName": "srvhk_vieo_url_get",
+            "data": [
+              {
+                "cameraIndexCode": cameraIndexCode,
+                "streamType": 0,
+                "protocol": "hls",
+                "transmode": 1,
+                "expand": "streamform=ps",
+                "streamform": "ps"
+              }
+            ]
+          }
+        ]
+        let res = await this.$http.post(url, req)
+        if (res.data.state === 'SUCCESS' && Array.isArray(res.data.response) && res.data.response.length > 0) {
+          return res.data?.response[ 0 ]?.response?.data?.url
+        }
+      }
+    },
   },
   mounted () {
     this.isPcEnv = this.IsPC()

@@ -650,6 +650,7 @@
         }"
       ></div>
     </div>
+    <div class="dots digital" v-if="number === 'dots'"></div>
   </div>
 </template>
 
@@ -669,7 +670,7 @@ export default {
   },
   props: {
     number: {
-      type: Number,
+      type: [ Number, String ],
       default: 1
     },
     config: {
@@ -859,6 +860,27 @@ export default {
   }
   &.nine .l6 {
     opacity: 0;
+  }
+  &.dots {
+    width: 5px;
+    &::before {
+      width: 5px;
+      height: 5px;
+      content: "";
+      background-color: #333;
+      position: absolute;
+      left: 0;
+      top: 14px;
+    }
+    &::after {
+      width: 5px;
+      height: 5px;
+      background-color: #333;
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 34px;
+    }
   }
 }
 </style>

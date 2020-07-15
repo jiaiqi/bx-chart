@@ -10,31 +10,35 @@
             <div  class="doubles"> 
             <!-- 监控画面以及信息 -->
             <div class="boxImg" v-for="(item,index) in humanFaceData.viewdata" :key="index">
-                <div class="titMsg">
+                <div class="titMsg"  >
                     <div class="videoImg">
-                        <div>摄像机编号：{{item.CamerNumber}}</div>
+                        <div>摄像机编号：{{item.CamerNumber?item.CamerNumber:'暂无'}}</div>
                     </div>
                     <div class="photoImg">
-                                                <div>摄像机位置：{{item.CameraPosition}}</div>
-
+                           <div>摄像机位置：{{item.monitorMessage[0].doorName}}</div>
                     </div>
                 </div>
-                <div class="videototlr">
+                <div class="videototlr">  
                     <div class="videoImg">监控实时画面</div>
                      <div>监控抓拍画面</div>
                 </div>
                 <div class="frames">
                      <!-- 监控实时画面 -->
                     <div class="surveillance">
-                        <img :src="item.surveillanceVideo" alt="">
-                        <!-- 道路 http://p0.qhimgs4.com/t01eb7b23268b809cff.gif -->
+                            <videoPlayer
+                                class="vjs-custom-skin videoPlayer"
+                                v-if="item.surveillanceVideo&& typeof item.surveillanceVideo=='object'"
+                                :options="item.surveillanceVideo"
+                            ></videoPlayer>
+                             <img v-else :src="item.surveillanceVideo" alt="">
+
                     </div>
                     <!-- 监控抓拍画面 -->
                     <div class="photos" >
                         <div v-for="(list,i) in item.monitorMessage" :key="i" class="boxPho">
-                            <img class="hovering" :src="list.img" alt="">
+                            <img class="hovering" :src="list.picUri?list.picUri:defalutPhoto" alt="">
                             <div class="fonts">
-                                <div>时间:{{list.time}}</div>
+                                <div>时间:{{list.create_time?list.create_time.split(" ")[1]:''}}</div>
                                 <div v-if="list.typeTitle">{{list.typeTitle}}:{{list.typeIs}}</div>
                             </div>
                         </div>
@@ -47,7 +51,12 @@
     </div>
 </template>
 <script>
+import { videoPlayer } from "vue-video-player";
+import "videojs-contrib-hls";
 export default {
+    components: {
+        videoPlayer
+    },
     props:{
          humanFaceData: {
             type:Object,
@@ -56,12 +65,17 @@ export default {
     },
  data() {
         return {
+            defalutPhoto:'http://5b0988e595225.cdn.sohucs.com/images/20180828/43bbc000b5ff4222b7e83aff69410805.jpeg'
            
         }
     }
   }
 </script>
 <style lang="scss">
+    .video-js {
+        width: 95% !important;
+        height: 23rem;
+    }
    .wraps{
     margin: 0 auto;
     .back{
@@ -144,6 +158,7 @@ export default {
     }
     .fonts{
         font-size: 20px;
+        text-align: center;
     }
 }
 .hovering:hover{
@@ -172,12 +187,18 @@ export default {
     .surveillance img{
         height: 18rem !important;
     }
+    .video-js {
+        height: 18rem !important;
+    }
     .photos img{
         height: 107px !important;
     }
 }
 @media screen and (max-width:1370px) {
    .surveillance img{
+        height: 24rem !important;
+    }
+    .video-js {
         height: 24rem !important;
     }
    .boxPho{
@@ -191,6 +212,9 @@ export default {
    .surveillance img{
         height: 19rem !important;
     }
+    .video-js {
+       height: 19rem !important;
+    }
    .boxPho{
         width:8.8vw !important;
     }
@@ -201,6 +225,9 @@ export default {
 @media screen and (max-width:1055px) {
    .surveillance img{
         height: 19rem !important;
+    }
+    .video-js {
+      height: 19rem !important;
     }
    .boxPho{
         width:8.5vw !important;

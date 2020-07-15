@@ -168,6 +168,8 @@ export default {
                   JSON.stringify(current_login_user)
                 );
                 top.user = current_login_user;
+                debugger
+
                 if (self.$route.query.length > 0) {
                   const path = self.$route.query.from;
                   if (path) {

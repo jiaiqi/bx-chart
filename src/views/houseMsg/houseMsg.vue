@@ -81,11 +81,7 @@
                 <el-table-column
                 prop="fwrq"
                 label="访问日期"
-                >
-                </el-table-column>
-                <el-table-column
-                prop="lkrq"
-                label="离开日期"
+                :formatter="formatDattime" 
                 >
                 </el-table-column>
                 <el-table-column
@@ -134,24 +130,20 @@
                     </el-image>
                     </template>
                  </el-table-column> -->
-                <el-table-column
-                prop="cphm"
-                label="车牌号码"
-                >
+                   <el-table-column
+                  prop="glry"
+                  label="姓名"
+                  >
                 </el-table-column>
+                
                 <el-table-column
-                prop="glry"
-                label="关联人员"
-                >
+                prop="lxdh"
+                label="电话">
                 </el-table-column>
 
                 <el-table-column
-                prop="cllx"
-                label="车辆类型">
-                </el-table-column>
-                 <el-table-column
-                prop="_csys_disp"
-                label="车身颜色"
+                prop="cphm"
+                label="车牌号码"
                 >
                 </el-table-column>
 
@@ -178,11 +170,13 @@
                 <el-table-column
                 prop="eventTime"
                 label="出入时间"
+                
+                 :formatter="formatDattimefk" 
                 >
                 </el-table-column>
                 <el-table-column
-                prop="devName"
-                label="出入类别"
+                prop="doorName"
+                label="门禁点"
                 >
                 </el-table-column>
                   <el-table-column
@@ -216,31 +210,34 @@
                  :cell-style="{background:'#1c6f77c2'}"
                 :header-cell-style="{background:'#17646e',color:'#e9eaea'}"
                 >
-                <el-table-column
-                prop="date"
-                label="访问日期"
-                >
-                </el-table-column>
-                <el-table-column 
-                prop="name"
-                label="访客姓名"
+             <el-table-column
+                prop="visitEndTime"
+                label="出入时间"
+                :formatter="formatDattimeRy" 
                 >
                 </el-table-column>
                 <el-table-column
-                prop="phone"
-                label="访客电话"
+                prop="phoneNo"
+                label="电话"
                 >
                 </el-table-column>
-                <el-table-column
-                prop="address"
-                label="访客地址">
-                </el-table-column>
+                  <el-table-column
+                    prop="receptionistName"
+                    label="姓名"
+                width="80"
+                 :formatter="formatDatename" 
+                     >
+                    </el-table-column>
             </el-table>
-            <div class="pages">
+             <div class="pages">
               <el-pagination
               small
               layout="prev, pager, next"
-              :total="1">
+               @current-change="changePagefkjl"
+              :current-page="pagefkjl.pageNo"
+              :page-size="pagefkjl.rownumber"
+              :total="pagefkjl.total"
+              >
             </el-pagination>
            </div>
         </div>
@@ -261,17 +258,19 @@
                 <el-table-column
                 prop="crossTime"
                 label="过车时间"
+                
+                :formatter="formatDattimecl" 
                 >
                 </el-table-column>
                 <el-table-column
                 prop="vehicleType"
-                label="车辆类型"
+                label="是否出场"
                   width="80"
                 >
                 </el-table-column>
                 <el-table-column
                 prop="parkName"
-                label="停车场"
+                label="停车库名称"
                 >
                 </el-table-column>
             </el-table>
@@ -324,6 +323,11 @@ export default {
         pageNo: 1,
         rownumber: 6
       },
+      pagefkjl:{
+         total: 0,
+        pageNo: 1,
+        rownumber: 6
+      },
       houseOwner: [
         { type: "户主姓名", name: "暂无" },
         { type: "户主电话", name: "暂无" },
@@ -331,6 +335,7 @@ export default {
       ],
       oneCon:'',
       twoCon:'',
+      fkjlCon:'',
       houseType:{},
       AccessRecords:[],//人员出入记录
       homeMsg:"",
@@ -351,7 +356,19 @@ export default {
       
     },
     formatDatename(e){
-      return (e.personName)?(e.personName):'暂无'
+      return (e.receptionistName)?(e.receptionistName):'暂无'
+    },
+    formatDattime(e){
+      return e.fwrq?(e.fwrq).split(' ')[0]:'暂无'
+    },
+    formatDattimeRy(e){
+       return e.visitEndTime?(e.visitEndTime).split(' ')[0]:'暂无'
+    },
+    formatDattimefk(e){
+       return e.eventTime?(e.eventTime).split(' ')[0]:'暂无'
+    },
+    formatDattimecl(e){
+       return e.crossTime?(e.crossTime).split(' ')[0]:'暂无'
     },
      async gethouseMsg(fwbm){ //住户信息srvzhxq_guest_mgmt_select
         let url = this.getServiceUrl("select", "srvzhxq_syrk_select", "zhxq");
@@ -368,7 +385,6 @@ export default {
         for( let i in databoole){
           con+=(databoole[i].syrkbm+',')
         }
-        console.log(databoole,'***')
 
         con = con.substring(0, con.lastIndexOf(','));
         this.oneCon = con
@@ -376,16 +392,19 @@ export default {
        this.peopleComein(con)
      },
     async peopleComein(val){ //人员出入记录
-    console.log(val,'人员出入记录rk')
        let url2 = this.getServiceUrl("select", "srvzhxa_person_inout_select", "zhxq");
         let req2 = { "serviceName": "srvzhxa_person_inout_select", "colNames": [ "*" ], "condition": [
            {
             colName: "personId", ruleType: "eq", value: val
             },
+            {
+            colName: "eventType", ruleType: "eq", value: '196893'
+            },
       ],page:this.page }
           let rese = await this.$http.post(url2, req2)
           if (rese.data.state === 'SUCCESS') {
-              this.AccessRecords = (rese.data.data)
+              let dataItem  = rese.data.data
+              this.AccessRecords = dataItem
               this.page = rese.data.page
           }
     },
@@ -393,11 +412,15 @@ export default {
       this.page.pageNo = val;
       this.peopleComein(this.oneCon);
     },
+    changePagefkjl(val){
+      this.pagefkjl.pageNo = val;
+      this.getfkjl(this.fkjlCon);
+    },
     changePagetwo(val) { //车辆出入
       this.pagetwo.pageNo = val;
       this.carComein(this.twoCon);
     },
-    changePagefk(val) { //车辆出入
+    changePagefk(val) { //访客信息
       this.pagefk.pageNo = val;
       this.getfkMsg(this.fwbm);
     },
@@ -411,6 +434,15 @@ export default {
         if (res.data.state === 'SUCCESS') {
           this.tabfkData = (res.data.data)
            this.pagefk = res.data.page
+           let databoole = res.data.data
+          let con =''
+          for( let i in databoole){
+            con+=(databoole[i].xm+',') 
+          }
+          con = con.substring(0, con.lastIndexOf(','));
+          console.log(con)
+          this.fkjlCon = con
+           this.getfkjl(con)
         }
      },
        async gethomeMsg(fwbm){ //房屋基本信息
@@ -455,7 +487,7 @@ export default {
          let databoole = res.data.data
           let con =''
           for( let i in databoole){
-            con+=(databoole[i].cphm+',')
+            con+=(databoole[i].cphm+',') 
           }
           con = con.substring(0, con.lastIndexOf(','));
           this.twoCon = con
@@ -473,9 +505,17 @@ export default {
             this.pagetwo = rese.data.page
         }
     },
-
-
-
+    async getfkjl(val){ //访客出入记录
+       let url2 = this.getServiceUrl("select", "srvzhxa_visitors_inout_select", "zhxq");
+        let req2 = { "serviceName": "srvzhxa_visitors_inout_select", "colNames": [ "*" ], "condition": [
+            {colName: "visitorName", ruleType: "in", value: val}
+        ], order: [  ],page:this.pagefkjl}
+        let rese = await this.$http.post(url2, req2)
+        if (rese.data.state === 'SUCCESS') {
+           this.fangkejl =rese.data.data
+            this.pagefkjl = rese.data.page
+        }
+    },
   },
   created(){
     // let fwbm = 'HN1-1-1-东'

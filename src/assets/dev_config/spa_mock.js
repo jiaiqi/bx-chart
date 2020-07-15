@@ -1,5 +1,6 @@
 // !!! mock !!!!
 let dummy = {
+
 	server_cfg: {
 		back_server_protocol: 'https',
 		// back_server_protocol: 'http',
