@@ -1,7 +1,7 @@
 <template>
   <div>
     <img
-      :src="src"
+      :src="imgUrl"
       alt=""
       v-if="chartConfigs.chart_settings.type === 'image'"
       :style="{
@@ -41,6 +41,13 @@ export default {
       type: String,
       default: ""
     },
+  },
+  computed: {
+    imgUrl () {
+      if (this.chartConfigs.chart_settings.type === 'image') {
+        return top.pathConfig.gateway + this.src + '&bx_auth_ticket=' + sessionStorage.getItem('bx_auth_ticket')
+      }
+    }
   },
 }
 </script>

@@ -14,9 +14,18 @@
         {{ item[chartSettings.title.column] }}
       </div>
       <digital
+        v-if="chartSettings.theme !== 'led'"
         :chartSetting="chartSettings.number"
         :number="{ num: item[chartSettings.number.column] }"
       ></digital>
+      <roller-digital
+        :number="Number(item[chartSettings.number.column])"
+        :color="chartSettings.color"
+        :duration="chartSettings.duration"
+        :size="chartSettings.size"
+        v-if="chartSettings && chartSettings.theme === 'led'"
+      >
+      </roller-digital>
       <div
         class="title"
         :style="{
@@ -35,10 +44,11 @@
 
 <script>
 import digital from '../digital'
-// import digital from '../RollerDigital/RollerDigital'
+import RollerDigital from '@/components/RollerDigital/RollerDigital'
+
 export default {
   components: {
-    digital,
+    digital, RollerDigital
   },
   props: {
     chartSettings: {
@@ -57,7 +67,10 @@ export default {
 .number-list {
   width: 100%;
   .number-item {
-    display: inline-block;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     width: auto;
     margin-left: 20px;
     padding: 0 10px;
@@ -65,7 +78,7 @@ export default {
       margin-left: 0px;
     }
     .title {
-      width: 100%;
+      // width: 100%;
     }
   }
 }

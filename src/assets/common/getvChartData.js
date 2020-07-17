@@ -148,10 +148,10 @@ export class vChartInfo {
                 let arr = []
                 console.log(data, dimcols, countCol, chartType, norm, dataTypeCol, colList)
                 if (colList && Array.isArray(colList)) {
-                    debugger
+
 
                     colList.forEach(cols => {
-                        debugger
+
                         data.forEach(d => {
 
                         })

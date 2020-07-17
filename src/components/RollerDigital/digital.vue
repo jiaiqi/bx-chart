@@ -650,7 +650,42 @@
         }"
       ></div>
     </div>
-    <div class="dots digital" v-if="number === 'dots'"></div>
+    <div class="colons digital" v-if="number === 'colons'">
+      <div
+        class="colon line"
+        :style="{
+          'background-color':
+            config.number && config.number.color ? config.number.color : '',
+          'border-color':
+            config.number && config.number.color ? config.number.color : ''
+        }"
+      ></div>
+    </div>
+    <div class="kilos digital" v-if="number === 'kilos'">
+      <div
+        class="kilo "
+        :style="{
+          color:
+            config.number && config.number.color ? config.number.color : '',
+          'border-color':
+            config.number && config.number.color ? config.number.color : '',
+          'font-size': '50px'
+        }"
+      >
+        ,
+      </div>
+    </div>
+    <div class="dots digital" v-if="number === 'dots'">
+      <div
+        class="dot line"
+        :style="{
+          'background-color':
+            config.number && config.number.color ? config.number.color : '',
+          'border-color':
+            config.number && config.number.color ? config.number.color : ''
+        }"
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -658,7 +693,11 @@
 export default {
   data () {
     return {
-      finalNumber: 0
+      finalNumber: 0,
+      domList: [
+
+      ]
+
     }
   },
   methods: {
@@ -815,13 +854,69 @@ export default {
         bottom: -5px;
       }
     }
+    &.dot {
+      width: 5px;
+      &::before {
+        // width: 5px;
+        // height: 5px;
+        content: "";
+        border-radius: 4px;
+        background-color: inherit;
+        position: absolute;
+        left: 0;
+        bottom: 0px;
+        border-width: 3px;
+      }
+      &::after {
+      }
+    }
+    &.kilo {
+      // width: 5px;
+      // &::before {
+      //   // width: 5px;
+      //   // height: 5px;
+      //   content: "";
+      //   background-color: inherit;
+      //   position: absolute;
+      //   left: 0;
+      //   bottom: 0px;
+      // }
+      // &::after {
+      //   content: "";
+      //   background-color: inherit;
+      //   position: absolute;
+      //   left: 0;
+      //   bottom: -10px;
+      //   border-color: transparent;
+      //   background-color: transparent;
+      //   border-top-color: inherit;
+      // }
+    }
+    &.colon {
+      // 冒号
+      width: 5px;
+      &::before {
+        content: "";
+        background-color: inherit;
+        position: absolute;
+        left: 0;
+        top: 14px;
+      }
+      &::after {
+        background-color: inherit;
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 34px;
+      }
+    }
   }
   &.zero .l2 {
     opacity: 0;
   }
   &.one {
     width: 5px;
-    margin: 0 14px;
+    margin: 0 10px;
     .line {
       opacity: 0;
     }
@@ -861,26 +956,12 @@ export default {
   &.nine .l6 {
     opacity: 0;
   }
-  &.dots {
-    width: 5px;
-    &::before {
-      width: 5px;
-      height: 5px;
-      content: "";
-      background-color: #333;
-      position: absolute;
-      left: 0;
-      top: 14px;
-    }
-    &::after {
-      width: 5px;
-      height: 5px;
-      background-color: #333;
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 34px;
-    }
+  &.dots,
+  &.colons,
+  &.kilos {
+    // 小数点
+    width: auto;
+    margin: 0;
   }
 }
 </style>

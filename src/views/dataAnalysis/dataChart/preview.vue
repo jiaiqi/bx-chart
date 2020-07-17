@@ -3,7 +3,7 @@
     <div class="flex_item">
       <div class="title_box">
         <div class="title">图表预览</div>
-        <div class="annotation">{{chartName+'---'+chartType}}</div>
+        <div class="annotation">{{ chartName + "---" + chartType }}</div>
       </div>
       <div class="chart_box">
         <v-charts
@@ -17,7 +17,7 @@
     <div class="flex_item">
       <div class="title_box">
         <div class="title">数据预览</div>
-        <div class="annotation">{{chartName+'---'+chartType}}</div>
+        <div class="annotation">{{ chartName + "---" + chartType }}</div>
         <!-- <el-button @click="exportExcel" type="primary" class="export-button" width="200px">导出为Excel</el-button> -->
       </div>
       <el-table
@@ -26,11 +26,15 @@
         style="width: 100%"
         stripe
         fixed
-        v-if="tableData&&tableTitle"
+        v-if="tableData && tableTitle"
         id="out-table"
       >
-        <template v-for="(only,i) in tableTitle">
-          <el-table-column :key="i" :prop="only.columns" :label="only.label"></el-table-column>
+        <template v-for="(only, i) in tableTitle">
+          <el-table-column
+            :key="i"
+            :prop="only.columns"
+            :label="only.label"
+          ></el-table-column>
         </template>
       </el-table>
       <div class="pagination">
@@ -42,7 +46,7 @@
           :page-size="previewInfo.rowNum"
           layout="total, sizes, prev, pager, next, jumper"
           :total="previewInfo.totalPage"
-          v-if="tableData.length>0"
+          v-if="tableData.length > 0"
         ></el-pagination>
       </div>
     </div>
@@ -96,12 +100,12 @@ export default {
           //Blob 表示的不一定是JavaScript原生格式的数据。
           //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
           //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
-          new Blob([wbout], { type: "application/octet-stream" }),
+          new Blob([ wbout ], { type: "application/octet-stream" }),
           //设置导出文件名称
           fileName
         );
       } catch (e) {
-        
+
       }
       return wbout;
     },
@@ -125,7 +129,7 @@ export default {
           //点击后出先表格
           //表头数组
           let tableAllTitleData = this.requestBody.group;
-          // debugger
+          // 
           let columnsOption = this.columnsOption
           let tableTitle = []
 
@@ -147,14 +151,14 @@ export default {
           //表格内容数据
         })
         .catch(err => {
-          
+
         });
     },
     getColumns () {
       this.columnsList = [];
       let req = {
         serviceName: "srvsys_service_columns_select",
-        colNames: ["*"],
+        colNames: [ "*" ],
         condition: [
           {
             colName: "service_name",
@@ -176,24 +180,24 @@ export default {
         // this.columnsOption = [];
         all.map(item => {
           if (item.in_list === 1) {
-            item["_condition"] = {
+            item[ "_condition" ] = {
               colName: item.columns,
               ruleType: "",
               value: ""
             };
-            item["_group"] = {
+            item[ "_group" ] = {
               colName: item.columns,
               type: "by"
             };
-            item["_order"] = {
+            item[ "_order" ] = {
               colName: item.columns,
               orderType: ""
             };
-            item["_aggregation"] = {
+            item[ "_aggregation" ] = {
               colName: item.columns,
               type: ""
             };
-            item["aliasName"] = "";
+            item[ "aliasName" ] = "";
             columnsOption.push(item);
           }
         });
@@ -201,7 +205,7 @@ export default {
         this.getPreviewTableData()
       })
         .catch(err => {
-          
+
         });
     },
     getChartConfig () { // 获取图表配置
@@ -211,7 +215,7 @@ export default {
         let url = this.getServiceUrl("select", serviceName, "dataanalyze")
         let params = {
           "serviceName": "srvanalyze_chart_select",
-          "colNames": ["*"],
+          "colNames": [ "*" ],
           "condition": [
             {
               "colName": "chart_no",
@@ -229,7 +233,7 @@ export default {
 
             })
             if (data.length >= 0) {
-              data = data[0]
+              data = data[ 0 ]
               this.chartNumber = data.chart_no
               // this.chartName = data.chart_name
               this.chartName = data.chart_name
@@ -237,7 +241,7 @@ export default {
               this.chartType = data.chart_type
               let reqArr = data.chart_request_url.split('/')
               if (reqArr.length > 0) {
-                this.appName = reqArr[1]
+                this.appName = reqArr[ 1 ]
                 this.requestBody = data.chart_request_payload ? JSON.parse(data.chart_request_payload) : null
                 if (data.chart_request_payload) {
                   this.serviceName = this.requestBody.serviceName
@@ -254,25 +258,25 @@ export default {
             }
           })
           .catch(err => {
-            
+
           })
       }
     },
     onSubmit (e) {
       let data = {};
-      let oData = this.chartConfigOld[this.onIndex];
+      let oData = this.chartConfigOld[ this.onIndex ];
 
       if (e.chart_height !== oData.chart_height) {
-        data["chart_height"] = e.chart_height;
+        data[ "chart_height" ] = e.chart_height;
       }
       if (e.chart_width !== oData.chart_width) {
-        data["chart_width"] = e.chart_width;
+        data[ "chart_width" ] = e.chart_width;
       }
       if (e.chart_top !== oData.chart_top) {
-        data["chart_top"] = e.chart_top;
+        data[ "chart_top" ] = e.chart_top;
       }
       if (e.chart_left !== oData.chart_left) {
-        data["chart_left"] = e.chart_left;
+        data[ "chart_left" ] = e.chart_left;
       }
 
       let len = Object.keys(data);
@@ -287,7 +291,7 @@ export default {
           let params = [
             {
               serviceName: "srvanalyze_chart_update",
-              colNames: ["*"],
+              colNames: [ "*" ],
               condition: [
                 {
                   colName: "id",
@@ -295,7 +299,7 @@ export default {
                   value: e.id
                 }
               ],
-              data: [data]
+              data: [ data ]
             }
           ];
           this.axios
@@ -306,7 +310,7 @@ export default {
               if (data.state === "SUCCESS") {
                 let c = this.chartConfig;
                 c = c.map((item, index) => {
-                  if (item.id === data.response[0].response.effect_data[0].id) {
+                  if (item.id === data.response[ 0 ].response.effect_data[ 0 ].id) {
                     item._isActive = false;
                     item._isLoaded = false;
                     return item;
@@ -315,14 +319,14 @@ export default {
                     return item;
                   }
                 });
-                
-              } 
+
+              }
             })
             .catch(err => {
-              
+
             });
         } else {
-          
+
         }
       } else {
         return false;

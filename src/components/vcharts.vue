@@ -33,7 +33,23 @@
           >
             {{ chartConfigs.chart_settings.units }}
           </div>
+          <roller-digital
+            :number="
+              typeof chartDatas === 'object' && !Array.isArray(chartDatas)
+                ? Number(chartDatas.num)
+                : 0
+            "
+            :color="chartConfigs.chart_settings.color"
+            :duration="chartConfigs.chart_settings.duration"
+            :size="chartConfigs.chart_settings.size"
+            v-if="
+              chartConfigs.chart_settings &&
+                chartConfigs.chart_settings.theme === 'led'
+            "
+          >
+          </roller-digital>
           <digital
+            v-else
             :chartSetting="chartConfigs.chart_settings"
             :number="
               typeof chartDatas === 'object' && !Array.isArray(chartDatas)
@@ -312,9 +328,11 @@ import ImageBox from '@/components/pictureBox/pictureBox'
 import surveillance from '@/views/surveillance/surveillance'
 import newsList from '@/components/news-list/newsList'
 import NumberList from '@/components/numberlist/numberlist'
+import RollerDigital from '@/components/RollerDigital/RollerDigital'
+
 export default {
   name: "bx-chart-views",
-  components: { eMap, digital, bMap, TabList, customPage, ImageBox, surveillance, newsList, NumberList },
+  components: { eMap, digital, bMap, TabList, customPage, ImageBox, surveillance, newsList, NumberList, RollerDigital },
   props: {
     chartConfigs: {
       type: Object,
@@ -1082,14 +1100,14 @@ export default {
                 })
               }
               // res.data.data = data
-              // debugger
+              // 
             }
           }
         }
         let datas = information.data_source === 'mock' ? res : res.data.state === 'SUCCESS' ? res.data.data : [];
         if (information.chart_type === 'surveillance' && information.data_source !== 'mock') {
           // this.chartDatas = datas
-          // debugger
+          // 
           return
         }
         if (datas.length > 0) {
@@ -1198,6 +1216,9 @@ export default {
         if (newValue && newValue.chart_settings && typeof newValue.chart_settings === 'string') {
           try {
             newValue.chart_settings = JSON.parse(newValue.chart_settings)
+            if (newValue.chart_settings.duration) {
+              newValue.chart_settings.duration = Number(newValue.chart_settings.duration)
+            }
           } catch (error) {
             console.log(error)
           }
@@ -1222,8 +1243,8 @@ export default {
 
           }
         }
-        if (newValue.chart_settings && newValue.chart_settings.imgUrl && newValue.chart_settings.imgUrl.indexOf('bx_auth_ticket') === -1 && (newValue.chart_type === 'custompage' || newValue.chart_type === '自定义页面' || newValue.chart_type === 'obj')) {
-          newValue.chart_settings.imgUrl = newValue.chart_settings.imgUrl + '&bx_auth_ticket=' + sessionStorage.getItem('bx_auth_ticket')
+        if (newValue.chart_settings && newValue.chart_settings.imgUrl && newValue.chart_settings.imgUrl.indexOf('bx_auth_ticket') === -1 && newValue.chart_settings.imgUrl.indexOf(top.pathConfig.gateway) === -1 && (newValue.chart_type === 'custompage' || newValue.chart_type === '自定义页面' || newValue.chart_type === 'obj')) {
+          newValue.chart_settings.imgUrl = top.pathConfig.gateway + newValue.chart_settings.imgUrl + '&bx_auth_ticket=' + sessionStorage.getItem('bx_auth_ticket')
         }
       },
       deep: true //对象内部的属性监听，即深度监听

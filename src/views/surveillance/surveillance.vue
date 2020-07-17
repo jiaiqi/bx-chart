@@ -23,7 +23,13 @@
           height: fullarea.height / screenAmount - 5 + 'px'
         }"
       >
-        <videoPlayer
+        <div
+          class="xg-hls"
+          :id="'carameid' + item.id"
+          style="width:100%;height:100%"
+          v-if="item && item.src && !isFullscreen"
+        ></div>
+        <!-- <videoPlayer
           class="vjs-custom-skin videoPlayer"
           v-if="item && item.sources && !isFullscreen"
           :options="item"
@@ -32,13 +38,17 @@
           class="vjs-custom-skin videoPlayer"
           v-if="item && item.sources && isFullscreen"
           :options="item"
-        ></videoPlayer>
-        <div class="video-box" v-if="!item || !item.sources">
+        ></videoPlayer> -->
+        <div class="video-box" v-if="!item || !item.src">
+          <!-- <div class="video-box" v-if="!item || !item.sources"> -->
           无信号
         </div>
         <div class="menu" @click="checkSource(item, index)">
-          {{ !item || !item.sources ? "选择信号源" : "关闭" }}
+          {{ !item || !item.src ? "选择信号源" : "关闭" }}
         </div>
+        <!-- <div class="menu" @click="checkSource(item, index)">
+          {{ !item || !item.sources ? "选择信号源" : "关闭" }}
+        </div> -->
       </div>
     </div>
     <div class="control-box" v-if="!surConfig.type">
@@ -109,6 +119,8 @@
 <script>
 import { videoPlayer } from "vue-video-player";
 import "videojs-contrib-hls";
+import 'xgplayer';
+import HlsPlayer from 'xgplayer-hls.js';
 export default {
   components: {
     videoPlayer
@@ -212,7 +224,8 @@ export default {
         // }
       ],
 
-      screenAmount: 1
+      screenAmount: 1,
+      playerObj: {}
     }
   },
   props: {
@@ -231,7 +244,7 @@ export default {
   },
   methods: {
     handleCurrentChange (e) {
-      this.pageInfo.pageNo = e
+      this.pageInfo.pageNo = Number(e)
       this.getSourceList();
 
     },
@@ -265,8 +278,8 @@ export default {
         // }
         let res = await this.$http.post(url, req)
         if (res.data.state === 'SUCCESS') {
-          this.pageInfo.pageNo = res.data.page.pageNo
-          this.pageInfo.total = res.data.page.total
+          this.pageInfo.pageNo = Number(res.data.page.pageNo)
+          this.pageInfo.total = Number(res.data.page.total)
           this.sourcesArray.length = res.data.data.length
           let data = JSON.parse(JSON.stringify(res.data.data))
           for (let index = 0; index < data.length; index++) {
@@ -282,7 +295,7 @@ export default {
             })
           }
           // res.data.data = data
-          // debugger
+          // 
         }
         // let data = res.data.data
         // let sourcesArray = []
@@ -362,11 +375,22 @@ export default {
           src: row.src
         }
       ]
+      this.$set(this.videoBoxList, this.currentSelect, row)
+      setTimeout(() => {
+        this.playerObj[ 'carameid' + row.id ] = new HlsPlayer({
+          id: 'carameid' + row.id,
+          url: row.src,
+          autoplay: true,
+          playsinline: true,
+          height: this.fullarea.height / this.screenAmount - 5 + 'px',
+          width: this.fullarea.width / this.screenAmount - 5 + 'px'
+        });
+      }, 500)
       console.log(obj.width, obj.height)
       if (row.src) {
         this.updateLastVideoUrl(row.src)
       }
-      this.$set(this.videoBoxList, this.currentSelect, obj)
+      // this.$set(this.videoBoxList, this.currentSelect, row)
       this.showSelectDialog = false
     },
     changeScreenAmount (val) {
@@ -378,21 +402,25 @@ export default {
     },
     checkSource (item, index) {
       this.currentSelect = index
-      if (!item || !item.sources) {
+      if (!item || !item.src) {
+        // if (!item || !item.sources) {
         this.showSelectDialog = true
-
       } else {
-        let obj = {
-          width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 5 : (this.fullarea.width / this.screenAmount) - 5,
-          height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 5 : (this.fullarea.height / this.screenAmount) - 5,
-          sources: null,
-          techOrder: [ "html5" ],
-          // techOrder: [ "flash", "html5" ],
-          autoplay: true,
-          controls: false
-        }
-        console.log(obj.width, obj.height)
+        // let obj = {
+        //   width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 5 : (this.fullarea.width / this.screenAmount) - 5,
+        //   height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 5 : (this.fullarea.height / this.screenAmount) - 5,
+        //   sources: null,
+        //   techOrder: [ "html5" ],
+        //   // techOrder: [ "flash", "html5" ],
+        //   autoplay: true,
+        //   controls: false
+        // }
+        let obj = this.deepCopy(item)
+        obj.src = ''
+        console.log(obj)
+        this.playerObj[ 'carameid' + item.id ].destroy()
         this.$set(this.videoBoxList, index, obj)
+
 
       }
     },

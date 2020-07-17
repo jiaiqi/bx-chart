@@ -433,7 +433,7 @@ export default {
           if (backgroundUrl) {
             self.contentData.dashboard_background_image = backgroundUrl
           }
-          debugger
+
           console.log(this.contentData, "contentData")
           try {
             pageConfig.gis_info_cfg = JSON.parse(pageConfig.gis_info_cfg)
@@ -529,9 +529,9 @@ export default {
                   if (d.idCol && d[ d.idCol ]) {
                     d.id = d[ d.idCol ]
                   }
-                  if (item.chart_settings.imgUrl && item.chart_settings.imgUrl.indexOf('&bx_auth_ticket') === -1) {
-                    d.imgUrl = item.chart_settings.imgUrl + '&bx_auth_ticket=' + sessionStorage.getItem('bx_auth_ticket')
-                  } else if (item.chart_settings.imgUrl && item.chart_settings.imgUrl.indexOf('&bx_auth_ticket') !== -1) {
+                  if (item.chart_settings.imgUrl && item.chart_settings.imgUrl.indexOf('&bx_auth_ticket') === -1 && item.chart_settings.imgUrl.indexOf(top.pathConfig.gateway) === -1) {
+                    d.imgUrl = top.pathConfig.gateway + item.chart_settings.imgUrl + '&bx_auth_ticket=' + sessionStorage.getItem('bx_auth_ticket')
+                  } else if (item.chart_settings.imgUrl && item.chart_settings.imgUrl.indexOf('&bx_auth_ticket') !== -1 && item.chart_settings.imgUrl.indexOf(top.pathConfig.gateway) !== -1) {
                     let params = item.chart_settings.imgUrl.split('&bx_auth_ticket')
                     params = params.length > 1 ? params[ 1 ] : ''
                     if (params) {
@@ -849,7 +849,7 @@ export default {
         );
         let serviceName = e.chart_request_payload.serviceName.replace('select', 'update')
 
-        // debugger
+        // 
         // if (e.objType === 'camera') {
         //   serviceName = 'srvxqaf_camera_update'
         //   url = this.getServiceUrl(

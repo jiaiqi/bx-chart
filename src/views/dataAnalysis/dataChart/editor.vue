@@ -1,35 +1,49 @@
 <template>
   <div class="hual">
-    <el-form ref="ruleForm" label-width="120px" class="select-box" :model="ruleForm">
+    <el-form
+      ref="ruleForm"
+      label-width="120px"
+      class="select-box"
+      :model="ruleForm"
+    >
       <el-form-item
         label="仪表盘名称："
         prop="service_name"
         :rules="[{ required: true, message: '请选择仪表盘', trigger: 'blur' }]"
       >
-        <el-select v-model="ruleForm.dashBoardId" disabled placeholder="请选择仪表盘" filterable>
+        <el-select
+          v-model="ruleForm.dashBoardId"
+          disabled
+          placeholder="请选择仪表盘"
+          filterable
+        >
           <el-option
             v-for="item in dashBoardIdOption"
             :key="item.value"
             :label="item.dashboard_name"
             :value="item.dashboard_no"
           >
-            <span
-              style="float: left;font-size: 13px"
-            >{{ item.dashboard_name+'/'+item.dashboard_no }}</span>
+            <span style="float: left;font-size: 13px">{{
+              item.dashboard_name + "/" + item.dashboard_no
+            }}</span>
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item
         label="图表名称："
         prop="chartName"
-        :rules="[{ required: true, message: '请输入图表名称', trigger: 'blur' }]"
+        :rules="[
+          { required: true, message: '请输入图表名称', trigger: 'blur' }
+        ]"
       >
         <el-input v-model="ruleForm.chartName"></el-input>
       </el-form-item>
       <el-form-item
         label="应用名称："
         prop="app_name"
-        :rules="[{ required: true, message: '请输入图表名称', trigger: 'blur' }]"
+        :rules="[
+          { required: true, message: '请输入图表名称', trigger: 'blur' }
+        ]"
       >
         <el-select
           v-model="ruleForm.appName"
@@ -48,9 +62,15 @@
       <el-form-item
         label="服务名称："
         prop="service_name"
-        :rules="[{ required: true, message: '请选择服务名称', trigger: 'blur' }]"
+        :rules="[
+          { required: true, message: '请选择服务名称', trigger: 'blur' }
+        ]"
       >
-        <el-select v-model="ruleForm.serviceName" placeholder="请选择服务名称" @change="getColumns()">
+        <el-select
+          v-model="ruleForm.serviceName"
+          placeholder="请选择服务名称"
+          @change="getColumns()"
+        >
           <el-option
             v-for="item in allService"
             :key="item.value"
@@ -60,8 +80,16 @@
         </el-select>
       </el-form-item>
       <el-form-item label="请求参数：" prop="request_params">
-        <el-checkbox-group v-model="checkedReqOptions" @change="changeReqOption">
-          <el-checkbox v-for="option in ReqOptions" :label="option" :key="option" name="type"></el-checkbox>
+        <el-checkbox-group
+          v-model="checkedReqOptions"
+          @change="changeReqOption"
+        >
+          <el-checkbox
+            v-for="option in ReqOptions"
+            :label="option"
+            :key="option"
+            name="type"
+          ></el-checkbox>
         </el-checkbox-group>
       </el-form-item>
     </el-form>
@@ -70,7 +98,12 @@
         <listhaul :singList="allColum"></listhaul>
       </div>
       <div class="condition-box">
-        <div class="sing_hual" v-for="(item,index) in listData" :key="index" v-show="item.show">
+        <div
+          class="sing_hual"
+          v-for="(item, index) in listData"
+          :key="index"
+          v-show="item.show"
+        >
           <listhaul ref="child" @save="requestData" :singList="item"></listhaul>
         </div>
       </div>
@@ -82,7 +115,9 @@
     <div class="preview-box">
       <div class="preview-title">
         <div class="title">数据预览</div>
-        <el-button @click="exportExcel" type="primary" class="export-button">导出为Excel</el-button>
+        <el-button @click="exportExcel" type="primary" class="export-button"
+          >导出为Excel</el-button
+        >
       </div>
       <div class="preview-content">
         <el-table
@@ -91,14 +126,14 @@
           stripe
           fixed
           border
-          v-if="tableData&&tableTitle"
+          v-if="tableData && tableTitle"
           id="out-table"
         >
-          <template v-for="(only,i) in tableTitle">
+          <template v-for="(only, i) in tableTitle">
             <el-table-column
               :key="i"
               :prop="only.columns"
-              :label="only.aliasName?only.aliasName:only.label"
+              :label="only.aliasName ? only.aliasName : only.label"
             ></el-table-column>
           </template>
           <!-- <el-table-column
@@ -122,7 +157,7 @@
           :page-size="previewInfo.rowNum"
           layout="total, sizes, prev, pager, next, jumper"
           :total="previewInfo.totalPage"
-          v-if="tableData.length>0"
+          v-if="tableData.length > 0"
         ></el-pagination>
       </div>
     </div>
@@ -220,8 +255,8 @@ export default {
           show: false
         }
       ],
-      checkedReqOptions: ["条件", "分组", "聚合", "排序"],
-      ReqOptions: ["条件", "分组", "聚合", "排序"],
+      checkedReqOptions: [ "条件", "分组", "聚合", "排序" ],
+      ReqOptions: [ "条件", "分组", "聚合", "排序" ],
       detailTableData: [], // 详情表格数据
       detailTableTitle: [], // 详情表头数据
       columnsOption: [],
@@ -271,7 +306,7 @@ export default {
         "serviceName": serviceName,
         "queryMethod": "select",
         "distinct": false,
-        "colNames": ["*"],
+        "colNames": [ "*" ],
         "condition": [],
         // "page": { "pageNo": 1, "rownumber": 20 }
       }
@@ -282,7 +317,7 @@ export default {
           }
         })
         .catch(err => {
-         
+
         })
 
     },
@@ -291,7 +326,7 @@ export default {
       this.allColum.list = [];
       let req = {
         serviceName: "srvsys_service_columns_select",
-        colNames: ["*"],
+        colNames: [ "*" ],
         condition: [
           {
             colName: "service_name",
@@ -318,24 +353,24 @@ export default {
           this.columnsOption = [];
           all.forEach(item => {
             if (item.in_list === 1) {
-              item["_condition"] = {
+              item[ "_condition" ] = {
                 colName: item.columns,
                 ruleType: "",
                 value: ""
               };
-              item["_group"] = {
+              item[ "_group" ] = {
                 colName: item.columns,
                 type: "by"
               };
-              item["_order"] = {
+              item[ "_order" ] = {
                 colName: item.columns,
                 orderType: ""
               };
-              item["_aggregation"] = {
+              item[ "_aggregation" ] = {
                 colName: item.columns,
                 type: ""
               };
-              item["aliasName"] = "";
+              item[ "aliasName" ] = "";
               this.columnsOption.push(item);
             }
           });
@@ -395,10 +430,10 @@ export default {
             })
           }
 
-          this.listData[0].list = endData.condition
-          this.listData[1].list = endData.group
-          this.listData[2].list = endData.aggregation
-          this.listData[3].list = endData.order
+          this.listData[ 0 ].list = endData.condition
+          this.listData[ 1 ].list = endData.group
+          this.listData[ 2 ].list = endData.aggregation
+          this.listData[ 3 ].list = endData.order
           this.endData.condition = _condition
           this.endData.group = _group
           this.endData.aggregation = _aggregation
@@ -407,19 +442,19 @@ export default {
           // this.detailTableTitle = this.columnsOption;
         })
         .catch(err => {
-          
+
         });
     },
     requestData (endList, endData) {
 
       if (endList.type === "condition") {
-        this.endData["condition"] = endData.condition;
+        this.endData[ "condition" ] = endData.condition;
       } else if (endList.type === "group") {
-        this.endData["group"] = endData.group;
+        this.endData[ "group" ] = endData.group;
       } else if (endList.type === "aggregation") {
-        this.endData["aggregation"] = endData.aggregation;
+        this.endData[ "aggregation" ] = endData.aggregation;
       } else if (endList.type === "order") {
-        this.endData["order"] = endData.order;
+        this.endData[ "order" ] = endData.order;
       }
       this.endList = endList;
     },
@@ -469,24 +504,24 @@ export default {
       );
 
       if (this.allColum.list.length === 0) {
-        reqData["colNames"] = ["*"];
+        reqData[ "colNames" ] = [ "*" ];
       } else {
-        reqData["colNames"] = this.columnsList;
+        reqData[ "colNames" ] = this.columnsList;
       }
-      reqData["serviceName"] = this.ruleForm.serviceName;
-      reqData["colNames"] = ["*"];
+      reqData[ "serviceName" ] = this.ruleForm.serviceName;
+      reqData[ "colNames" ] = [ "*" ];
       this.reqData = reqData;
       this.requestBody = reqData
       this.getPreviewTableData(reqData);
     },
     saveConfig () { // 保存配置到服务器
       let saveData = {};
-      saveData['dashboard_no'] = this.dashBoardId
-      saveData['dashboard_name'] = this.dashBoardName
-      saveData['chart_name'] = this.chartName
-      saveData['chart_type'] = this.chartType
-      saveData['chart_request_url'] = '/' + this.appName + '/select/' + this.serviceName
-      saveData['chart_request_payload'] = JSON.stringify(this.requestBody)
+      saveData[ 'dashboard_no' ] = this.dashBoardId
+      saveData[ 'dashboard_name' ] = this.dashBoardName
+      saveData[ 'chart_name' ] = this.chartName
+      saveData[ 'chart_type' ] = this.chartType
+      saveData[ 'chart_request_url' ] = '/' + this.appName + '/select/' + this.serviceName
+      saveData[ 'chart_request_payload' ] = JSON.stringify(this.requestBody)
 
       // if (this.$route.chartNumber && this.$route.chartNumber.indexOf('CR')) {
       this.updateModel(saveData)
@@ -523,14 +558,14 @@ export default {
             //Blob 表示的不一定是JavaScript原生格式的数据。
             //File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
             //返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
-            new Blob([wbout], { type: "application/octet-stream" }),
+            new Blob([ wbout ], { type: "application/octet-stream" }),
             //设置导出文件名称
             fileName
           );
           this.tableExportStatus = true
 
         } catch (e) {
-          
+
         }
         return wbout;
       }
@@ -538,7 +573,7 @@ export default {
     getApp () {
       //获取应用列表
       let req = {
-        colNames: ["*"],
+        colNames: [ "*" ],
         condition: [],
         order: [
           {
@@ -556,7 +591,7 @@ export default {
 
         })
         .catch(err => {
-          
+
         });
     },
     changeReqOption () {
@@ -565,24 +600,24 @@ export default {
       let options = this.checkedReqOptions;
       if (options) {
         if (options.indexOf('条件') >= 0) {
-          self.listData[0].show = true
+          self.listData[ 0 ].show = true
         } else {
-          self.listData[0].show = false
+          self.listData[ 0 ].show = false
         }
         if (options.indexOf('分组') >= 0) {
-          self.listData[1].show = true
+          self.listData[ 1 ].show = true
         } else {
-          self.listData[1].show = false
+          self.listData[ 1 ].show = false
         }
         if (options.indexOf('聚合') >= 0) {
-          self.listData[2].show = true
+          self.listData[ 2 ].show = true
         } else {
-          self.listData[2].show = false
+          self.listData[ 2 ].show = false
         }
         if (options.indexOf('排序') >= 0) {
-          self.listData[3].show = true
+          self.listData[ 3 ].show = true
         } else {
-          self.listData[3].show = false
+          self.listData[ 3 ].show = false
         }
       }
     },
@@ -591,7 +626,7 @@ export default {
       let url = this.getServiceUrl("select", this.ruleForm.serviceName, this.ruleForm.appName);
       let req = {
         serviceName: this.ruleForm.serviceName,
-        colNames: ["*"],
+        colNames: [ "*" ],
         condition: condition,
         page: {
           "pageNo": this.dialogInfo.currentPage,
@@ -609,7 +644,7 @@ export default {
           this.detailTableData = resData;
         })
         .catch(err => {
-          
+
         });
     },
     toDetail (rowData) {
@@ -622,11 +657,11 @@ export default {
 
         let condition = [];
         colnumns.map(rows => {
-          if (rowData[rows]) {
+          if (rowData[ rows ]) {
             condition.push({
               colName: rows,
               ruleType: "eq",
-              value: rowData[rows]
+              value: rowData[ rows ]
             });
           } else {
             condition.push({
@@ -640,7 +675,7 @@ export default {
         this.getDetailData()
       } else {
 
-        this.detailTableData = [rowData];
+        this.detailTableData = [ rowData ];
       }
     },
     getServiceName (appno) {
@@ -656,7 +691,7 @@ export default {
       this.endData.aggregation = [];
       let req = {
         serviceName: "srvsys_service_select",
-        colNames: ["*"],
+        colNames: [ "*" ],
         condition: [
           {
             colName: "service_type",
@@ -701,12 +736,12 @@ export default {
           this.colNameOption = selectServiceList;
         })
         .catch(err => {
-          
+
         });
     },
     deleteListData () {
       for (let index = 0; index < this.listData.length; index++) {
-        this.listData[index].list = [];
+        this.listData[ index ].list = [];
       }
     },
     getPreviewTableData (req) {
@@ -734,7 +769,7 @@ export default {
             tableAllTitleData.forEach(item => {
               if (item.type) {
                 self.columnsOption.forEach(col => {
-                  // debugger
+                  // 
                   if (item.colName === col.columns) {
                     self.tableTitle.push(col);
                   }
@@ -746,9 +781,9 @@ export default {
             let obj = {};
             let newArr = [];
             newArr = self.tableTitle.reduce((item, next) => {
-              obj[next.columns]
+              obj[ next.columns ]
                 ? " "
-                : (obj[next.columns] = true && item.push(next));
+                : (obj[ next.columns ] = true && item.push(next));
               return item;
             }, []);
 
@@ -757,7 +792,7 @@ export default {
           //表格内容数据
         })
         .catch(err => {
-          
+
         });
     },
     getChartConfig () {
@@ -767,7 +802,7 @@ export default {
         let url = this.getServiceUrl("select", serviceName, "dataanalyze")
         let params = {
           "serviceName": "srvanalyze_chart_select",
-          "colNames": ["*"],
+          "colNames": [ "*" ],
           "condition": [
             {
               "colName": "chart_no",
@@ -781,7 +816,7 @@ export default {
 
             let data = res.data.data
             if (data.length > 0) {
-              data = data[0]
+              data = data[ 0 ]
               this.chartNumber = data.chart_no
               // this.chartName = data.chart_name
               this.ruleForm.chartName = data.chart_name
@@ -792,7 +827,7 @@ export default {
               this.chart_id = data.id
               let reqArr = data.chart_request_url.split('/')
               if (reqArr.length > 0) {
-                this.ruleForm.appName = reqArr[1]
+                this.ruleForm.appName = reqArr[ 1 ]
                 this.getServiceName()
                 this.requestBody = data.chart_request_payload ? JSON.parse(data.chart_request_payload) : null
                 if (data.chart_request_payload) {
@@ -812,14 +847,14 @@ export default {
 
           })
           .catch(err => {
-            
+
           })
       }
     },
     addModel (saveData) { // 增加模型
       let serviceName = "srvanalyze_model_add"
       let url = this.getServiceUrl("operate", serviceName, "dataanalyze");
-      let params = [{
+      let params = [ {
         condition: [],
         serviceName: serviceName,
         data: [
@@ -834,7 +869,7 @@ export default {
             "order_json": saveData.endData.order.length > 0 ? JSON.stringify(saveData.endData.order) : ""
           }
         ]
-      }]
+      } ]
       this.axios.post(url, params)
         .then(res => {
           if (res.data.resultCode === "SUCCESS") {
@@ -850,19 +885,19 @@ export default {
 
         })
         .catch(err => {
-          
+
         })
     },
     updateModel (saveData) { // 编辑模型
       let serviceName = "srvanalyze_chart_update"
       let url = this.getServiceUrl("operate", serviceName, "dataanalyze");
-      let params = [{
-        condition: [{ colName: "id", ruleType: "eq", value: this.chart_id }],
+      let params = [ {
+        condition: [ { colName: "id", ruleType: "eq", value: this.chart_id } ],
         serviceName: serviceName,
         data: [
           saveData
         ]
-      }]
+      } ]
       this.axios.post(url, params)
         .then(res => {
           if (res.data.resultCode === "SUCCESS") {
@@ -876,7 +911,7 @@ export default {
 
         })
         .catch(err => {
-          
+
         })
     },
 

@@ -158,7 +158,7 @@ export default {
         let formatter = chartSettings.label.formatter;
         if (formatter && typeof formatter === "string") {
           let max = this.liquid_max;
-          debugger
+
           if (this.xssFilter(formatter)) {
             formatter = eval(formatter);
           }
@@ -577,7 +577,7 @@ export default {
         if (newValue.chart_type === "ranking") {
           this.chartDatas[ "waitTime" ] = 9999999;
         }
-        debugger
+
 
         try {
           let chart_settings = typeof newValue.chart_settings === 'string' ? JSON.parse(newValue.chart_settings) : {}

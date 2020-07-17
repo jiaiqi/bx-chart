@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <RollerDigital></RollerDigital>
+  <div style="display:inline-block">
+    <RollerDigital :number="39" :duration="2"></RollerDigital>
   </div>
 </template>
 

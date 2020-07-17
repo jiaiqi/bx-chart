@@ -218,7 +218,7 @@ export default {
   methods: {
 
     setEchartMapData (e, d) {
-      debugger
+
       return
       let self = this;
       let mapName = "panjin";

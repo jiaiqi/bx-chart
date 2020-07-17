@@ -19,21 +19,24 @@ function init () {
 		if (sessionStorage.getItem('pathConfig')) {
 			try {
 				window.top.pathConfig = JSON.parse(sessionStorage.getItem('pathConfig'))
+				backendIpAddr = window.top.pathConfig.gateway
 			} catch (error) {
 				console.info(error)
 			}
 		} else {
-			if (sessionStorage.getItem('bx_auth_ticket') === null) {
-				devSrv.dummy()
-			}
+			console.error('未发现pathConfig,即将使用mock地址')
+			// if (sessionStorage.getItem('bx_auth_ticket') === null) {
+			devSrv.dummy()
+			// }
+			let server_cfg = devSrv.server_cfg
+			backendIpAddr =
+				server_cfg.back_server_protocol +
+				'://' +
+				server_cfg.back_server_ip +
+				':' +
+				server_cfg.back_server_port
 		}
-		let server_cfg = devSrv.server_cfg
-		backendIpAddr =
-			server_cfg.back_server_protocol +
-			'://' +
-			server_cfg.back_server_ip +
-			':' +
-			server_cfg.back_server_port
+
 	}
 	top.window.backendIpAddr = backendIpAddr
 
