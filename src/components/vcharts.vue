@@ -36,7 +36,7 @@
           <roller-digital
             :number="
               typeof chartDatas === 'object' && !Array.isArray(chartDatas)
-                ? Number(chartDatas.num)
+                ? chartDatas.num
                 : 0
             "
             :color="chartConfigs.chart_settings.color"
@@ -44,7 +44,8 @@
             :size="chartConfigs.chart_settings.size"
             v-if="
               chartConfigs.chart_settings &&
-                chartConfigs.chart_settings.theme === 'led'
+                chartConfigs.chart_settings.theme === 'led' &&
+                (chartDatas.num || chartDatas.num === 0)
             "
           >
           </roller-digital>

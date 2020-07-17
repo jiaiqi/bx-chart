@@ -76,9 +76,10 @@ export default {
   },
   methods: {
     numberAdd () {
+      debugger
       let step = parseFloat(this.number * 10 / (this.duration * 1000))
       let current = 0
-      let start = 0
+      let start = 0.
       let t = setInterval(() => {
         start += step
         if (start > this.number) {
@@ -95,7 +96,7 @@ export default {
         }
         current = start
         this.finalNumber = current
-      }, this.duration)
+      }, 10)
     }
   },
   mounted () {

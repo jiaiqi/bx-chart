@@ -214,7 +214,7 @@ export class vChartInfo {
                 let data = this.resData
                 let num = data[ 0 ][ dimcols ]
                 allChartData.all = {}
-                allChartData.all[ "num" ] = num
+                allChartData.all[ "num" ] = Number(num)
             }
             if (vChartType === "radar" && isMultiseriate) {
                 let data = this.resData

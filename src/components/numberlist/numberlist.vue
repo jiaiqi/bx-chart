@@ -19,7 +19,7 @@
         :number="{ num: item[chartSettings.number.column] }"
       ></digital>
       <roller-digital
-        :number="Number(item[chartSettings.number.column])"
+        :number="item[chartSettings.number.column]"
         :color="chartSettings.color"
         :duration="chartSettings.duration"
         :size="chartSettings.size"
@@ -76,9 +76,6 @@ export default {
     padding: 0 10px;
     &:first-child {
       margin-left: 0px;
-    }
-    .title {
-      // width: 100%;
     }
   }
 }

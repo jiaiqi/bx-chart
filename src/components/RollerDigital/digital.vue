@@ -663,7 +663,7 @@
     </div>
     <div class="kilos digital" v-if="number === 'kilos'">
       <div
-        class="kilo "
+        class="kilo"
         :style="{
           color:
             config.number && config.number.color ? config.number.color : '',
@@ -695,7 +695,24 @@ export default {
     return {
       finalNumber: 0,
       domList: [
-
+        {
+          type: 'number',
+          out: {
+            class: 'one',
+            in: [
+              'l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7'
+            ]
+          }
+        },
+        {
+          type: 'symbol',
+          out: {
+            class: 'one',
+            in: [
+              'l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7'
+            ]
+          }
+        }
       ]
 
     }
@@ -867,30 +884,6 @@ export default {
         bottom: 0px;
         border-width: 3px;
       }
-      &::after {
-      }
-    }
-    &.kilo {
-      // width: 5px;
-      // &::before {
-      //   // width: 5px;
-      //   // height: 5px;
-      //   content: "";
-      //   background-color: inherit;
-      //   position: absolute;
-      //   left: 0;
-      //   bottom: 0px;
-      // }
-      // &::after {
-      //   content: "";
-      //   background-color: inherit;
-      //   position: absolute;
-      //   left: 0;
-      //   bottom: -10px;
-      //   border-color: transparent;
-      //   background-color: transparent;
-      //   border-top-color: inherit;
-      // }
     }
     &.colon {
       // 冒号
@@ -951,15 +944,13 @@ export default {
   &.seven .l6 {
     opacity: 0;
   }
-  &.eight {
-  }
   &.nine .l6 {
     opacity: 0;
   }
   &.dots,
   &.colons,
   &.kilos {
-    // 小数点
+    // 千分位逗号
     width: auto;
     margin: 0;
   }
