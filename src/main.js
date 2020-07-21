@@ -9,10 +9,10 @@ import VueUtil from '@/assets/dev_config/vue_util'
 import { vChartInfo } from '@/assets/common/getvChartData'
 // import { resizeJs } from '@/assets/dev_config/resize'
 import common from '@/assets/common/common'
-import elementUI from 'element-ui'
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 import dataV from '@jiaminghi/data-view'
 import 'font-awesome/css/font-awesome.css'
-import 'element-ui/lib/theme-chalk/index.css'
 import VueDragResize from 'vue-drag-resize'
 import yanan from './assets/common/yanan.json' // 导入延安地图geo json
 import echarts from 'echarts'
@@ -26,7 +26,7 @@ import 'videojs-contrib-hls'
 Vue.config.productionTip = false
 
 Vue.use(VueAwesomeSwiper)
-Vue.use(elementUI)
+Vue.use(ElementUI)
 Vue.use(VCharts)
 Vue.use(common)
 Vue.use(dataV)

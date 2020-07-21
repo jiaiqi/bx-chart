@@ -69,6 +69,13 @@ function init () {
 	// 封装axios
 	Vue.prototype.axios = axios // 将axios挂载到vue原型
 	Vue.prototype.$http = axios // 将axios挂载到vue原型
+	// Vue.prototype.axiosQueue = {}
+	// Vue.prototype.destroyAxiosQueue = function (url) {
+	// 	delete Vue.prototype.axiosQueue[ url ]
+	// 	if (!Object.keys(Vue.prototype.axiosQueue).length) {
+	// 		// Spin.hide()
+	// 	}
+	// }
 	axios.defaults.retry = 3 // 设置请求超时后重新发起请求的次数
 	axios.defaults.retryDelay = 5000 // 设置超时时间（毫秒）
 	axios.interceptors.request.use(
@@ -78,6 +85,11 @@ function init () {
 			if (bx_auth_ticket) {
 				config.headers[ 'bx_auth_ticket' ] = bx_auth_ticket
 			}
+			// if (!Vue.prototype.axiosQueue[ config.url ]) {
+			// 	Vue.prototype.axiosQueue[ config.url ] = true
+			// 	console.log('axiosQueue', Vue.prototype.axiosQueue)
+			// }
+
 			return config
 		},
 		error => {
@@ -90,6 +102,8 @@ function init () {
 		response => {
 			// let self  =this
 			// 对响应数据做处理
+			// Vue.prototype.destroyAxiosQueue(response.config.url)
+			// console.log('axiosQueue', Vue.prototype.axiosQueue)
 			if (response.data.state == 'FAILURE') {
 				if (response.data.resultCode == '0011') {
 					// 需要登录访问
@@ -114,6 +128,10 @@ function init () {
 			return response
 		},
 		error => {
+			console.log('error', error)
+
+			// Vue.prototype.destroyAxiosQueue(response.config.url)
+			// console.log('axiosQueue', Vue.prototype.axiosQueue)
 			// 对响应错误做处理
 			var config = error.config
 			// 判断是否配置了重试

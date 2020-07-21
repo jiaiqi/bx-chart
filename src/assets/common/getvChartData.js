@@ -7,11 +7,6 @@ export class vChartInfo {
             "columns": [],
             "rows": []
         }
-        this.colArrData =
-            this.getColumns = () => {
-                let arr = []
-                arr.push()
-            }
         this.dataType = true
         this.getChartColumns = (data, dimName, chartType, dataType, isMultiseriate) => {
             // data : 原始数据, dimName: 图表数据 ‘维度’,‘指标’的合计
@@ -171,7 +166,6 @@ export class vChartInfo {
                         arr.push(obj)
                     })
                 }
-
                 allChartData.all = {}
                 allChartData.all[ 'data' ] = arr
             } else if (vChartType === 'gauge') {
@@ -187,7 +181,6 @@ export class vChartInfo {
                     allChartData.all = chartData
                 }
             } else if (vChartType === 'liquidfill') {
-
                 let max = norm.max
                 let data1 = this.resData
                 if (data1 && data1.length > 0) {

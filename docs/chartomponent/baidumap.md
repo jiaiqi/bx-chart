@@ -1,5 +1,5 @@
-## baidumap
-### 图表设置
+# baidumap
+## 图表设置
 ```json
   {
     "mapCenter": [108.7330380000, 34.4605530000],
@@ -29,9 +29,9 @@
   }
 ```
 
-### 图表url: 配置子表的url `/dataanalyze/select/srvanalyze_chart_map_data_select`
+## 图表url: 配置子表的url `/dataanalyze/select/srvanalyze_chart_map_data_select`
 
-### 图表请求: 配置请求子表数据的请求参数
+## 图表请求: 配置请求子表数据的请求参数
 ```json
   {
     "condition": [{

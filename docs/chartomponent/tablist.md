@@ -1,5 +1,5 @@
-## tablist
-### 图表设置
+# tablist
+## 图表设置
 
 ```json
 [

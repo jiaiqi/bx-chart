@@ -1,10 +1,10 @@
 <template>
   <div class="list-wrap">
-    <div class="list-item" v-for="(item, index) in list" :key="index">
-      <div class="text" v-if="textCol && item[textCol]">
+    <div class="list-item" v-for="(item, index) in listData" :key="index">
+      <div class="text" v-if="item && textCol && item[textCol]">
         {{ item[textCol] }}
       </div>
-      <div class="date" v-if="dateCol && item[dateCol]">
+      <div class="date" v-if="item && dateCol && item[dateCol]">
         {{ new Date(item[dateCol]).toISOString().slice(0, 10) }}
       </div>
     </div>
@@ -15,6 +15,18 @@
 export default {
   data () {
     return {
+      listData: []
+    }
+  },
+  watch: {
+    list: {
+      deep: true,
+      immediate: true,
+      handler (newValue, oldValue) {
+        if (newValue && Array.isArray(newValue) && newValue.length > 0) {
+          this.listData = JSON.parse(JSON.stringify(newValue))
+        }
+      }
     }
   },
   props: {

@@ -413,7 +413,6 @@ export default {
           ]
         };
         let res = await self.axios.post(url, params)
-        // .then(res => {
         let data = res.data.data;
         if (data && data.length > 0) {
           let pageConfig = res.data.data[ 0 ];
@@ -452,9 +451,6 @@ export default {
           // }
 
         }
-        // })
-        // .catch(err => {
-        // })
       } else {
         alert("缺少页面编号，无法显示页面");
       }
@@ -470,7 +466,6 @@ export default {
       let params = {
         serviceName: "srvanalyze_chart_select",
         colNames: [ "*" ],
-        // colNames: [ "dashboard_no", "dashboard_name", "data_label_visible", "data_source", "legend_visible", "chart_columns", "subdata", "use_flag", "z_order", "chart_height", "chart_left", "chart_top", "chart_width", "chart_name", "chart_no", "chart_request_payload", "chart_request_url", "chart_settings", "chart_type" ],
         condition: [
           {
             colName: "dashboard_no",

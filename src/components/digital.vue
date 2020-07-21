@@ -26,12 +26,11 @@ export default {
         this.value.toString().split('').forEach(v => {
           html += `<div class="digit-wrap"><ul class="list scroll${v}">`
           for (let i = 0; i <= 9; i++) {
-            html += '<li>' + i + '</li>'
+            html += `<li style="color:${this.chartSetting.color}">${i}</li>`
           }
           html += '</ul></div>'
         })
         this.$refs.number.innerHTML = html
-
       }
     }
   },
@@ -97,7 +96,7 @@ export default {
   width: 20px;
   height: 50px;
   line-height: 50px;
-  color: rgb(226, 243, 71);
+  color: #123123;
   text-align: center;
   float: left;
   box-sizing: border-box;

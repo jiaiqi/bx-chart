@@ -76,7 +76,6 @@ export default {
   },
   methods: {
     numberAdd () {
-      debugger
       let step = parseFloat(this.number * 10 / (this.duration * 1000))
       let current = 0
       let start = 0.

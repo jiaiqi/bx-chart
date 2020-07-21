@@ -79,7 +79,6 @@
     <el-dialog
       title="请选择信号源"
       :visible.sync="showSelectDialog"
-      width="70%"
       :append-to-body="true"
       center
       :destroy-on-close="true"
@@ -90,13 +89,31 @@
         style="width: 100%;margin-bottom: 20px;"
         row-key="id"
         border
-        @row-click="rowClick"
       >
-        <el-table-column prop="id" label="编号" sortable width="180">
+        <el-table-column prop="camera_no" label="编号" sortable width="180">
         </el-table-column>
-        <el-table-column prop="name" label="名称" sortable width="180">
+        <el-table-column prop="name" label="名称" sortable> </el-table-column>
+        <el-table-column prop="type" label="类型" width="150">
         </el-table-column>
-        <el-table-column prop="src" label="地址"> </el-table-column>
+        <el-table-column prop="src" label="url"> </el-table-column>
+        <el-table-column fixed="right" label="操作" width="100">
+          <template slot-scope="scope">
+            <el-button
+              @click="handleClick(scope.row)"
+              type="success"
+              size="small"
+              v-if="!scope.row.src"
+              >查找</el-button
+            >
+            <el-button
+              v-if="scope.row.src"
+              type="primary"
+              @click="rowClick(scope.row, 'check')"
+              size="small"
+              >选择</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
       <el-pagination
         background
@@ -243,6 +260,21 @@ export default {
     }
   },
   methods: {
+    async handleClick (e) {
+      let cameraIndexId = e.hk_id
+      if (cameraIndexId) {
+        let url = await this.getSurveillanceVideoUrl(cameraIndexId)
+        if (url) {
+          this.sourcesArray.forEach((item, index) => {
+            if (item.hk_id === cameraIndexId) {
+              item[ 'src' ] = url
+              item[ 'video_url' ] = url
+              this.$set(this.sourcesArray, index, item)
+            }
+          })
+        }
+      }
+    },
     handleCurrentChange (e) {
       this.pageInfo.pageNo = Number(e)
       this.getSourceList();
@@ -283,37 +315,20 @@ export default {
           this.sourcesArray.length = res.data.data.length
           let data = JSON.parse(JSON.stringify(res.data.data))
           for (let index = 0; index < data.length; index++) {
-            this.getSurveillanceVideoUrl(data[ index ].cameraIndexCode, index).then(url => {
-              if (url) {
-                data[ index ][ 'src' ] = url
-                data[ index ][ 'video_url' ] = url
-              }
-              data[ index ][ 'id' ] = data[ index ][ 'channelNo' ]
-              data[ index ][ 'name' ] = data[ index ][ 'cameraName' ]
-              // this.chartDatas.push(data[ index ])
-              this.$set(this.sourcesArray, index, data[ index ])
-            })
+            // let url = await this.getSurveillanceVideoUrl(data[ index ].cameraIndexCode, index)
+            // //  .then(url => {
+            // if (url) {
+            //   data[ index ][ 'src' ] = url
+            //   data[ index ][ 'video_url' ] = url
+            // }
+            // data[ index ][ 'id' ] = data[ index ][ 'channelNo' ]
+            // data[ index ][ 'name' ] = data[ index ][ 'cameraName' ]
+            // this.chartDatas.push(data[ index ])
+            this.$set(this.sourcesArray, index, data[ index ])
+            // })
           }
-          // res.data.data = data
-          // 
         }
-        // let data = res.data.data
-        // let sourcesArray = []
-        // var data = []
-        // if (this.chartDatas && Array.isArray(this.chartDatas)) {
-        //   data = this.deepCopy(this.chartDatas)
-        // }
-        // if (data && Array.isArray(data) && data.length > 0) {
-        //   data.forEach(item => {
-        //     item.src = item.video_url
-        //     // item.src = 'rtmp://127.0.0.1:1935/live/livel'
-        //     item.type = "application/x-mpegURL"
-        //     sourcesArray.push(item)
-        //   })
-        //   this.sourcesArray = sourcesArray
-        // }
       }
-
     },
     async getSurveillanceVideoUrl (cameraIndexCode) {
       let self = this
@@ -334,10 +349,30 @@ export default {
             ]
           }
         ]
+        if (Array.isArray(cameraIndexCode)) {
+          let datas = cameraIndexCode.map(code => {
+            return {
+              "cameraIndexCode": code,
+              "streamType": 0,
+              "protocol": "hls",
+              "transmode": 1,
+              "expand": "streamform=ps",
+              "streamform": "ps"
+            }
+          })
+          req = [
+            {
+              "data": datas
+            }
+          ]
+        }
         let res = await this.$http.post(url, req)
         if (res.data.state === 'SUCCESS' && Array.isArray(res.data.response) && res.data.response.length > 0) {
-
-          return res.data?.response[ 0 ]?.response?.data?.url
+          if (Array.isArray(cameraIndexCode) !== true) {
+            return res.data?.response[ 0 ]?.response?.data?.url
+          } else {
+            return res.data?.response
+          }
         }
       }
     },
@@ -359,8 +394,22 @@ export default {
       })
       this.sourcesArray = sourcesArray
     },
-    rowClick (row) {
+    createVideoPlayerInstance (row) {
+      // 创建视频播放器实例
+      this.playerObj[ 'carameid' + row.id ] = new HlsPlayer({
+        id: 'carameid' + row.id,
+        url: row.src,
+        autoplay: true,
+        playsinline: true,
+        height: this.fullarea.height / this.screenAmount - 5 + 'px',
+        width: this.fullarea.width / this.screenAmount - 5 + 'px'
+      });
+    },
+    rowClick (row, check) {
       console.log(row)
+      if (!check || !row.src) {
+        return
+      }
       let obj = {
         width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 5 : (this.fullarea.width / this.screenAmount) - 5,
         height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 5 : (this.fullarea.height / this.screenAmount) - 5,
@@ -376,15 +425,14 @@ export default {
         }
       ]
       this.$set(this.videoBoxList, this.currentSelect, row)
+
       setTimeout(() => {
-        this.playerObj[ 'carameid' + row.id ] = new HlsPlayer({
-          id: 'carameid' + row.id,
-          url: row.src,
-          autoplay: true,
-          playsinline: true,
-          height: this.fullarea.height / this.screenAmount - 5 + 'px',
-          width: this.fullarea.width / this.screenAmount - 5 + 'px'
-        });
+        if (row.id) {
+          this.createVideoPlayerInstance(row)
+        } else {
+          this.rowClick(row, 'check')
+        }
+
       }, 500)
       console.log(obj.width, obj.height)
       if (row.src) {

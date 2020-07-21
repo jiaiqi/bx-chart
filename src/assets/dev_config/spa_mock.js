@@ -16,6 +16,8 @@ let dummy = {
 		if (!top.pathConfig) {
 			top.pathConfig = {}
 			top.pathConfig.application = 'datacenter' //  开发app
+			top.pathConfig = { gateway_protocol: "http", gateway_ip: "192.168.0.153", port: "8103", gateway: "http://192.168.0.153:8103", sso_app: "sso" }
+			sessionStorage.setItem('pathConfig', JSON.stringify(top.pathConfig))
 			top.user = localStorage.getItem('user')
 			top.user = {
 				create_time: '2019-08-11 22:30:15',

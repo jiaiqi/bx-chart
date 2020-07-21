@@ -12,10 +12,10 @@
             <div class="boxImg" v-for="(item,index) in humanFaceData.viewdata" :key="index">
                 <div class="titMsg"  >
                     <div class="videoImg">
-                        <div>摄像机编号：{{item.CamerNumber?item.CamerNumber:'暂无'}}</div>
+                        <div>IP地址：{{item.ip?item.ip:'暂无'}}</div>
                     </div>
                     <div class="photoImg">
-                           <div>摄像机位置：{{item.monitorMessage[0].doorName}}</div>
+                           <div>摄像机位置：{{item.name?item.name:'暂无'}}</div>
                     </div>
                 </div>
                 <div class="videototlr">  

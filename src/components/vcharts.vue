@@ -105,8 +105,9 @@
       </div>
       <image-box
         v-if="
-          chartConfigs.chart_type === 'image' ||
-            chartConfigs.chart_type === 'obj'
+          (chartConfigs.chart_type === 'image' ||
+            chartConfigs.chart_type === 'obj') &&
+            chartConfigs.imgUrl
         "
         :config="chartConfigs"
         :bgUrl="chartConfigs.imgUrl"
@@ -123,7 +124,6 @@
 
     <div
       class="chart-main"
-      :style="vchartStyle"
       v-else-if="
         chartConfigs.chart_type !== 'digital' &&
           chartConfigs.chart_type !== 'image' &&
@@ -256,7 +256,11 @@
           :surConfig="chartConfigs.chart_settings"
         ></surveillance>
         <news-list
-          v-if="this.chartConfigs.chart_type === 'newslist'"
+          v-if="
+            this.chartConfigs.chart_type === 'newslist' &&
+              Array.isArray(chartDatas) &&
+              chartDatas.length > 0
+          "
           :dateCol="chartConfigs.chart_settings.dateColumn"
           :textCol="chartConfigs.chart_settings.textColumn"
           :list="chartDatas"
@@ -955,7 +959,7 @@ export default {
         }
       } else if (typeof DataReq === 'object' && DataReq && Array.isArray(DataReq.condition)) {
         DataReq.condition.forEach(cond => {
-          if (cond.value.indexOf('new Date()') !== -1) {
+          if (typeof cond.value === 'string' && cond.value.indexOf('new Date()') !== -1) {
             cond.value = this.formatDate(new Date())
           }
         });

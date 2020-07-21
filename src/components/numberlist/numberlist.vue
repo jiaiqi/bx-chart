@@ -15,12 +15,12 @@
       </div>
       <digital
         v-if="chartSettings.theme !== 'led'"
-        :chartSetting="chartSettings.number"
+        :chartSetting="chartSettings.number[index]"
         :number="{ num: item[chartSettings.number.column] }"
       ></digital>
       <roller-digital
-        :number="item[chartSettings.number.column]"
-        :color="chartSettings.color"
+        :number="item[chartSettings.number[index].column]"
+        :color="chartSettings.number[index].color"
         :duration="chartSettings.duration"
         :size="chartSettings.size"
         v-if="chartSettings && chartSettings.theme === 'led'"

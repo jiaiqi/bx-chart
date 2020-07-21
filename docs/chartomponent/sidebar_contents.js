@@ -2,5 +2,7 @@ module.exports = [
 	"baidumap",
 	"tablist",
 	"custompage",
-	"surveillance"
+	"surveillance",
+	"RollerDigital",
+	"numberlist",
 ];
