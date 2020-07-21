@@ -25,7 +25,7 @@
       >
         <div
           class="xg-hls"
-          :id="'carameid' + item.id"
+          :id="'carameid' + item.hk_id"
           style="width:100%;height:100%"
           v-if="item && item.src && !isFullscreen"
         ></div>
@@ -340,7 +340,7 @@ export default {
             "data": [
               {
                 "cameraIndexCode": cameraIndexCode,
-                "streamType": 0,
+                "streamType": 1,
                 "protocol": "hls",
                 "transmode": 1,
                 "expand": "streamform=ps",
@@ -396,8 +396,8 @@ export default {
     },
     createVideoPlayerInstance (row) {
       // 创建视频播放器实例
-      this.playerObj[ 'carameid' + row.id ] = new HlsPlayer({
-        id: 'carameid' + row.id,
+      this.playerObj[ 'carameid' + row.hk_id ] = new HlsPlayer({
+        id: 'carameid' + row.hk_id,
         url: row.src,
         autoplay: true,
         playsinline: true,
@@ -406,6 +406,8 @@ export default {
       });
     },
     rowClick (row, check) {
+      debugger
+
       console.log(row)
       if (!check || !row.src) {
         return
@@ -427,7 +429,7 @@ export default {
       this.$set(this.videoBoxList, this.currentSelect, row)
 
       setTimeout(() => {
-        if (row.id) {
+        if (row.hk_id) {
           this.createVideoPlayerInstance(row)
         } else {
           this.rowClick(row, 'check')
