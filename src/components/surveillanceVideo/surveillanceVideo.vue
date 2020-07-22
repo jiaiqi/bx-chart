@@ -19,31 +19,30 @@
                     </div>
                 </div>
                 <div class="videototlr">  
-                    <div class="videoImg">监控实时画面</div>
-                     <div>监控抓拍画面</div>
+                    <div class="videoImg" v-if="humanFaceData.ShowMonitoring">监控实时画面</div>
+                     <div>抓拍画面</div>
                 </div>
                 <div class="frames">
                      <!-- 监控实时画面 -->
-                    <div class="surveillance">
+                    <div class="surveillance" v-if="humanFaceData.ShowMonitoring">
                             <videoPlayer
                                 class="vjs-custom-skin videoPlayer"
                                 v-if="item.surveillanceVideo&& typeof item.surveillanceVideo=='object'"
                                 :options="item.surveillanceVideo"
                             ></videoPlayer>
                              <img v-else :src="item.surveillanceVideo" alt="">
-
                     </div>
                     <!-- 监控抓拍画面 -->
-                    <div class="photos" >
-                        <div v-for="(list,i) in item.monitorMessage" :key="i" class="boxPho">
-                            <img class="hovering" :src="list.picUri?list.picUri:defalutPhoto" alt="">
-                            <div class="fonts">
-                                <div>时间:{{list.create_time?list.create_time.split(" ")[1]:''}}</div>
-                                <div v-if="list.typeTitle">{{list.typeTitle}}:{{list.typeIs}}</div>
+                    <div class="photos" :style="[{width:!humanFaceData.ShowMonitoring?'100%':'60%'}]">
+                            <div v-for="(list,i) in item.monitorMessage" :key="i" class="boxPho">
+                                <img class="hovering" :src="list.picUri?list.picUri:defalutPhoto" alt="">
+                                <div class="fonts">
+                                    <div>时间:{{list.create_time?list.create_time.split(" ")[1]:''}}</div>
+                                    <div v-if="list.typeTitle">{{list.typeTitle}}:{{list.typeIs}}</div>
+                                </div>
                             </div>
-                        </div>
                     </div>
-            </div>
+                </div>
             </div>
         </div>
         </div>
@@ -66,7 +65,6 @@ export default {
  data() {
         return {
             defalutPhoto:'http://5b0988e595225.cdn.sohucs.com/images/20180828/43bbc000b5ff4222b7e83aff69410805.jpeg'
-           
         }
     }
   }

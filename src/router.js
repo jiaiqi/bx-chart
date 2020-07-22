@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
-
+import dataView from "./views/dataView.vue"
 Vue.use(Router);
 
 const router = new Router({
@@ -19,8 +19,9 @@ const router = new Router({
   {
     path: '/dataView/:chart',
     name: 'dataView',
-    component: () =>
-      import( /* webpackChunkName: "dataView" */ "./views/dataView.vue")
+    component: dataView,
+    // component: () =>
+    //   import( /* webpackChunkName: "dataView" */ "./views/dataView.vue")
   },
   {
     path: '/login',
@@ -34,7 +35,7 @@ const router = new Router({
     name: "listdemo",
     component: () =>
       import(
-          /* webpackChunkName: "dataView" */ "./views/dataAnalysis/dataModel/eidtor.vue"
+        "./views/dataAnalysis/dataModel/eidtor.vue"
       )
   },
   {
@@ -42,7 +43,7 @@ const router = new Router({
     name: "preview",
     component: () =>
       import(
-          /* webpackChunkName: "dataView" */ "./views/dataAnalysis/dataModel/preview.vue"
+        "./views/dataAnalysis/dataModel/preview.vue"
       )
   },
   {
@@ -50,7 +51,7 @@ const router = new Router({
     name: "dataChartPreview",
     component: () =>
       import(
-          /* webpackChunkName: "dataView" */ "./views/dataAnalysis/dataChart/preview.vue"
+        "./views/dataAnalysis/dataChart/preview.vue"
       )
   },
   {
@@ -58,7 +59,7 @@ const router = new Router({
     name: "dataChartEditor",
     component: () =>
       import(
-          /* webpackChunkName: "dataView" */ "./views/dataAnalysis/dataChart/editor.vue"
+        "./views/dataAnalysis/dataChart/editor.vue"
       )
   },
   {
@@ -86,12 +87,12 @@ const router = new Router({
     component: () =>
       import( /* webpackChunkName: "houseMsg" */ "./views/monitoringScreen/monitoringScreen.vue")
   },
-  {
-    path: "/demo",
-    name: "demo",
-    component: () =>
-      import( /* webpackChunkName: "demo" */ "./views/demo/demo.vue")
-  }
+    // {
+    //   path: "/demo",
+    //   name: "demo",
+    //   component: () =>
+    //     import( /* webpackChunkName: "demo" */ "./views/demo/demo.vue")
+    // }
   ]
 });
 

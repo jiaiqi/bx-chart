@@ -23,9 +23,12 @@
           height: fullarea.height / screenAmount - 5 + 'px'
         }"
       >
+        <div class="menu" @click="checkSource(item, index)">
+          {{ !item || !item.src ? "选择信号源" : "关闭" }}
+        </div>
         <div
           class="xg-hls"
-          :id="'carameid' + item.hk_id"
+          :id="item.hk_id"
           style="width:100%;height:100%"
           v-if="item && item.src && !isFullscreen"
         ></div>
@@ -43,9 +46,9 @@
           <!-- <div class="video-box" v-if="!item || !item.sources"> -->
           无信号
         </div>
-        <div class="menu" @click="checkSource(item, index)">
+        <!-- <div class="menu" @click="checkSource(item, index)">
           {{ !item || !item.src ? "选择信号源" : "关闭" }}
-        </div>
+        </div> -->
         <!-- <div class="menu" @click="checkSource(item, index)">
           {{ !item || !item.sources ? "选择信号源" : "关闭" }}
         </div> -->
@@ -261,6 +264,7 @@ export default {
   },
   methods: {
     async handleClick (e) {
+      // 查找视频url
       let cameraIndexId = e.hk_id
       if (cameraIndexId) {
         let url = await this.getSurveillanceVideoUrl(cameraIndexId)
@@ -394,20 +398,28 @@ export default {
       })
       this.sourcesArray = sourcesArray
     },
-    createVideoPlayerInstance (row) {
+    createVideoPlayerInstance (item) {
       // 创建视频播放器实例
-      this.playerObj[ 'carameid' + row.hk_id ] = new HlsPlayer({
-        id: 'carameid' + row.hk_id,
-        url: row.src,
+      this.playerObj[ item.hk_id ] = new HlsPlayer({
+        id: item.hk_id,
+        // el: document.getElementById('carameid' + item.hk_id),
+        url: item.src,
+        // url: 'http://192.168.0.165:83/openUrl/dxHn4uk/live.m3u8',
         autoplay: true,
         playsinline: true,
+        closeVideoClick: true,
+        // "fluid": true,
+        ignores: [ 'replay' ],
+        controls: false,
+        closeVideoDblclick: true,
         height: this.fullarea.height / this.screenAmount - 5 + 'px',
         width: this.fullarea.width / this.screenAmount - 5 + 'px'
       });
+      this.playerObj[ item.hk_id ].once('ready', () => { console.log(item.hk_id, '实例化完成') })
+      this.playerObj[ item.hk_id ].once('complete', () => { console.log(item.hk_id, '视频生成结束') })
+      this.playerObj[ item.hk_id ].once('destroy', () => { console.log(item.hk_id, '实例已销毁') })
     },
     rowClick (row, check) {
-      debugger
-
       console.log(row)
       if (!check || !row.src) {
         return
@@ -434,7 +446,6 @@ export default {
         } else {
           this.rowClick(row, 'check')
         }
-
       }, 500)
       console.log(obj.width, obj.height)
       if (row.src) {
@@ -468,10 +479,8 @@ export default {
         let obj = this.deepCopy(item)
         obj.src = ''
         console.log(obj)
-        this.playerObj[ 'carameid' + item.id ].destroy()
+        this.playerObj[ item.hk_id ].destroy()
         this.$set(this.videoBoxList, index, obj)
-
-
       }
     },
     requestFullScreen (element) {
@@ -710,6 +719,7 @@ export default {
       right: 5px;
       box-sizing: border-box;
       cursor: pointer;
+      z-index: 999;
     }
     .video-box {
       background-color: #000;
