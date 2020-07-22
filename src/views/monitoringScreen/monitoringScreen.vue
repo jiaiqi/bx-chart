@@ -72,7 +72,7 @@ export default {
                  },
                   humanFaceData:{
                     title:"小区人脸抓拍机",
-                     ShowMonitoring:true,
+                    ShowMonitoring:false,
                     viewdata:[
                    
                 ]
@@ -121,13 +121,17 @@ export default {
                 if(tab.label=='小区车辆抓拍机'){
                     this.getRecord(null,null,null,1,'srvzhxa_car_inout_select','CarData','getCarImg')
                 }else if(tab.label=='人脸门禁系统'){
-                    this.getFacility('人脸门禁','srvzhxa_person_inout_select','FaceData','getPersonImg',14)
-                }else{
+                    this.getFacility('人脸门禁','srvzhxa_person_inout_select','FaceData','getPersonImg',14,'door_code')
+                }else if(tab.label=='小区人脸抓拍机'){
                    //  获取抓取图片
-                     this.getCaptrueImg(current)
+                    //  this.getCaptrueImg(current)
+                     this.getFacility('人脸抓拍','srvzhxa_person_inout_select','humanFaceData','getPersonImg',10,'hk_id')
+                }else{
+                     this.loadingImg =  this.normalCar
+                this.norText='暂无可用设备'
                 }
             },
-          async getFacility(conName,serName,AlldataArr,mist,rownumber){ //获取设备
+          async getFacility(conName,serName,AlldataArr,mist,rownumber,codeId){ //获取设备
             let url = this.getServiceUrl("select", "srvxqaf_camera_select", "xqaf");
             let req = { "serviceName": "srvxqaf_camera_select", "colNames": [ "*" ], "condition": [
                 {colName: "type", ruleType: "eq", value: conName},
@@ -137,8 +141,8 @@ export default {
                 let databoole = (res.data.data)
                 let code = []
                 for( let i in databoole){
-                    if(databoole[i].door_code){
-                        code.push({'codes':databoole[i].door_code,'name':databoole[i].name,'ip':databoole[i].ip_addr})
+                    if(databoole[i][codeId]){
+                        code.push({'codes':databoole[i][codeId],'name':databoole[i].name,'ip':databoole[i].ip_addr})
                     }
                 }
                 if(code.length==0){
@@ -148,13 +152,18 @@ export default {
                  this.codeLength=code.length
                 }
                 for(let j in code){
-                   this.getRecord(code[j].codes,code[j].ip,code[j].name,parseInt(j)+1,serName,AlldataArr,mist,rownumber)
+                   if(conName == '人脸抓拍'){
+                       this.getCaptrueImg(AlldataArr,code[j].codes,code[j].ip,code[j].name,parseInt(j)+1)
+                   }else{
+                     this.getRecord(code[j].codes,code[j].ip,code[j].name,parseInt(j)+1,serName,AlldataArr,mist,rownumber)
+                   }
                 }
             }else{
                 this.loadingImg =  this.normalCar
                 this.norText='暂无可用设备'
             }
         },
+        
          async getRecord(val,ip,name,indexval,serName,AlldataArr,mist,rownumber){ //获取拍照记录
             let url = this.getServiceUrl("select", serName, "zhxq");
             var req = { "serviceName": serName, "colNames": [ "*" ], "condition": [
@@ -179,7 +188,6 @@ export default {
                             {
                                 type: "application/x-mpegURL",
                                 src: "http://192.168.0.165:83/openUrl/WHXH9CM/live.m3u8" 
-                                	
                             }
                         ],
                         techOrder: [ "html5" ],
@@ -200,7 +208,7 @@ export default {
                 }
             }
         },
-     async getCaptrueImg(cur){
+     async getCaptrueImg(cur,codes,ip,name,indexval){
          let url = this.getServiceUrl("select", 'srvhk_video_img_select', "zhxq");
             var req = {
                 "serviceName": "srvhk_video_img_select",
@@ -213,13 +221,13 @@ export default {
                     {
                         "colName": "endTime",
                         "ruleType": "eq",
-                        "value": this.getPreDate(this.curentTime())
+                        "value": this.getPreDate(this.curentTime())+" " + this.curentTime().split(' ')
                     },
-                    // {
-                    //     "colName": "cameraIndexCodes",
-                    //     "ruleType": "in",
-                    //     "value": "ffffffffffff,fffdfdfdfdfdf"
-                    // }
+                    {
+                        "colName": "cameraIndexCodes",
+                        "ruleType": "in",
+                        "value": codes
+                    }
                 ],
                 "page": {
                     "pageNo": "1",
@@ -228,23 +236,22 @@ export default {
             }
             let res = await this.$http.post(url, req)
             
-            if (res.data.state === 'SUCCESS') {
-                if(res.data.data.length>0){
+            if (res.data.state === 'SUCCESS'&&res.data.data.length>0) {
                     let obj  = {
-                        ip:'ip',
-                        name:'name',
+                        ip:ip,
+                        name:name,
                         surveillanceVideo:{
-                            // sources: [
-                            //     {
-                            //         type: "application/x-mpegURL",
-                            //         src: "http://192.168.0.165:83/openUrl/Txvwfhm/live.m3u8" 
-                            //     }
-                            // ],
-                            // techOrder: [ "html5" ],
-                            // autoplay: true,
-                            // controls: false,
-                            // notSupportedMessage: '暂无法播放，请稍后再试',
-                            //   preload: 'auto',
+                            sources: [
+                                {
+                                    type: "application/x-mpegURL",
+                                    src: "http://192.168.0.165:83/openUrl/Txvwfhm/live.m3u8" 
+                                }
+                            ],
+                            techOrder: [ "html5" ],
+                            autoplay: true,
+                            controls: false,
+                            notSupportedMessage: '暂无法播放，请稍后再试',
+                              preload: 'auto',
                         },
                         monitorMessage:items
                 }
@@ -253,11 +260,16 @@ export default {
                 for(let i in dataItem){
                     this.$set(dataItem[i],'picUri',dataItem[i].snapUrl)
                 }
-                this[cur].viewdata.push(obj)
-                }else{
-                     this.loadingImg =  this.normalCar
+                if(dataItem.length>0){
+                    this[cur].viewdata.push(obj)
+                    this.isShowcar=false
+                }
+                
+                 if(this.codeLength==indexval){
+                    this.loadingImg =  this.normalCar
                     this.norText='暂无可用设备'
                 }
+               
             }else{
                  this.loadingImg =  this.normalCar
                 this.norText='暂无可用设备'
@@ -312,7 +324,8 @@ export default {
         }
     },
     created(){
-         this.getFacility('人脸门禁','srvzhxa_person_inout_select','FaceData','getPersonImg')
+       this.getFacility('人脸门禁','srvzhxa_person_inout_select','FaceData','getPersonImg',14,'door_code')
+
     }
   }
 </script>
