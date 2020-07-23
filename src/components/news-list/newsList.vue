@@ -1,7 +1,11 @@
 <template>
   <div class="list-wrap">
     <div class="list-item" v-for="(item, index) in listData" :key="index">
-      <div class="text" v-if="item && textCol && item[textCol]">
+      <div
+        class="text"
+        v-if="item && textCol && item[textCol]"
+        :title="item[textCol]"
+      >
         {{ item[textCol] }}
       </div>
       <div class="date" v-if="item && dateCol && item[dateCol]">
@@ -78,8 +82,6 @@ export default {
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-    }
-    .date {
     }
     line-height: 30px;
     border-bottom: 1px dashed #999;

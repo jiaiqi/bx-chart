@@ -581,7 +581,7 @@ export default {
   }
 }
 
-::v-deep .el-image,
+::v-deep.el-image,
 .el-image__inner {
   width: 150px !important;
   height: 100px !important;
@@ -595,17 +595,17 @@ export default {
   background: #206675d4;
   padding-left: 10px;
 }
-::v-deep .el-table tr {
+::v-deep.el-table tr {
   background-color: #1c6f77c2 !important;
 }
-::v-deep .el-table,
+::v-deep.el-table,
 .el-table__expanded-cell {
   background-color: #fff0 !important;
 }
-::v-deep .el-table__body-wrapper {
+::v-deep.el-table__body-wrapper {
   background: #fff0 !important;
 }
-::v-deep .el-table {
+::v-deep.el-table {
   color: #f1f1f1 !important;
 }
 .has-gutter .tr {

@@ -110,8 +110,8 @@ function init () {
 					if (sessionStorage.getItem('need_login_flag') != 'need_login') {
 						sessionStorage.setItem('need_login_flag', 'need_login')
 					}
-					alert("未登录，即将跳转到登录页面")
-					router.push({ name: "login" })
+					// alert("未登录，即将跳转到登录页面")
+					// router.push({ name: "login" })
 				} else if (response.data.resultCode == '0000') {
 					if (sessionStorage.getItem('need_login_flag') != 'need_login') {
 						alert(response.data.resultMessage)
