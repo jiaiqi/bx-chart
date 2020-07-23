@@ -4,7 +4,7 @@
       class="chart-main"
       v-if="this.chartConfigs.chart_type === 'digital'"
       :class="{
-        'show-border': showBorder
+        'show-border': showBorder,
       }"
     >
       <div
@@ -16,7 +16,7 @@
               ? chartHeight + 40 + 'px'
               : !showBorder && isPcEnv
               ? chartHeight + 'px'
-              : ''
+              : '',
         }"
       >
         <div class="digital-title" v-if="titleText">{{ titleText }}</div>
@@ -24,7 +24,7 @@
           class="digitalNumber"
           :style="{
             'justify-content': isPcEnv ? 'center' : 'flex-start',
-            'padding-left': isPcEnv ? '' : '50px'
+            'padding-left': isPcEnv ? '' : '50px',
           }"
         >
           <div
@@ -44,8 +44,8 @@
             :size="chartConfigs.chart_settings.size"
             v-if="
               chartConfigs.chart_settings &&
-                chartConfigs.chart_settings.theme === 'led' &&
-                (chartDatas.num || chartDatas.num === 0)
+              chartConfigs.chart_settings.theme === 'led' &&
+              (chartDatas.num || chartDatas.num === 0)
             "
           >
           </roller-digital>
@@ -77,12 +77,20 @@
       class="chart-main full-height"
       v-if="
         this.chartConfigs.chart_type === 'image' ||
-          this.chartConfigs.chart_type === 'obj'
+        this.chartConfigs.chart_type === 'obj'
       "
       :style="vchartStyle"
     >
       <div
-        style="z-index:9999;top:-40px;position:absolute;;width:100%;dispaly:flex;justify-content:center;min-width:150px"
+        style="
+          z-index: 9999;
+          top: -40px;
+          position: absolute;
+          width: 100%;
+          dispaly: flex;
+          justify-content: center;
+          min-width: 150px;
+        "
         @click.native.stop
       >
         <el-button
@@ -93,7 +101,13 @@
         >
         <span
           v-if="chartConfigs._isActive"
-          style="width:60px;background:#fff;padding:0 10px;color:#333;margin:0 5px"
+          style="
+            width: 60px;
+            background: #fff;
+            padding: 0 10px;
+            color: #333;
+            margin: 0 5px;
+          "
           v-text="chartConfigs.rotation_angle"
         ></span>
         <el-button
@@ -107,7 +121,7 @@
         v-if="
           (chartConfigs.chart_type === 'image' ||
             chartConfigs.chart_type === 'obj') &&
-            chartConfigs.imgUrl
+          chartConfigs.imgUrl
         "
         :config="chartConfigs"
         :bgUrl="chartConfigs.imgUrl"
@@ -126,11 +140,12 @@
       class="chart-main"
       v-else-if="
         chartConfigs.chart_type !== 'digital' &&
-          chartConfigs.chart_type !== 'image' &&
-          chartConfigs.chart_type !== 'obj'
+        chartConfigs.chart_type !== 'image' &&
+        chartConfigs.chart_type !== 'obj'
       "
       :class="{
-        'show-border': showBorder && this.chartConfigs.chart_type !== 'baidumap'
+        'show-border':
+          showBorder && this.chartConfigs.chart_type !== 'baidumap',
       }"
     >
       <div class="chart-title" :style="chartTitleStyle" v-if="titleText">
@@ -139,7 +154,7 @@
       <div
         class="chart-box"
         :class="{
-          'show-border': showBorder
+          'show-border': showBorder,
         }"
       >
         <eMap
@@ -182,7 +197,7 @@
           :style="{
             height: showBorder
               ? chartHeight - 60 + 'px'
-              : chartHeight - 40 + 'px'
+              : chartHeight - 40 + 'px',
           }"
           v-if="this.chartConfigs.chart_type === 'table'"
         >
@@ -191,16 +206,16 @@
             :row-style="{ background: 'transparent', color: 'white' }"
             :header-cell-style="{
               background: 'transparent',
-              color: 'white'
+              color: 'white',
             }"
             :style="{
               'overflow-y': 'scroll',
               height: showBorder
                 ? chartHeight - 60 + 'px'
-                : chartHeight - 40 + 'px'
+                : chartHeight - 40 + 'px',
             }"
             :data="chartDatas ? chartDatas.data : []"
-            style="width: 100%"
+            style="width: 100%;"
           >
             <el-table-column
               prop="name"
@@ -230,7 +245,7 @@
         <customPage
           v-if="
             this.chartConfigs.chart_type === 'custompage' ||
-              this.chartConfigs.chart_type === '自定义页面'
+            this.chartConfigs.chart_type === '自定义页面'
           "
           :chartWidth="chartWidth"
           :chartHeight="chartHeight"
@@ -245,7 +260,7 @@
           :style="{
             width: chartWidth - 20 + 'px',
             height: chartHeight - 60 + 'px',
-            margin: '0 auto'
+            margin: '0 auto',
           }"
         />
         <surveillance
@@ -258,8 +273,8 @@
         <news-list
           v-if="
             this.chartConfigs.chart_type === 'newslist' &&
-              Array.isArray(chartDatas) &&
-              chartDatas.length > 0
+            Array.isArray(chartDatas) &&
+            chartDatas.length > 0
           "
           :dateCol="chartConfigs.chart_settings.dateColumn"
           :textCol="chartConfigs.chart_settings.textColumn"
@@ -268,7 +283,7 @@
             width: chartWidth + 'px',
             height: chartHeight + 'px',
             margin: '0 auto',
-            overflow: 'hidden'
+            overflow: 'hidden',
           }"
         ></news-list>
         <number-list
@@ -279,24 +294,24 @@
             width: chartWidth + 'px',
             height: chartHeight + 'px',
             margin: '0 auto',
-            overflow: 'hidden'
+            overflow: 'hidden',
           }"
         ></number-list>
         <ve-chart
           v-else-if="
             this.chartConfigs.chart_type !== 'custompage' &&
-              this.chartConfigs.chart_type !== '自定义页面' &&
-              this.chartConfigs.chart_type !== 'tablist' &&
-              this.chartConfigs.chart_type !== 'table' &&
-              this.chartConfigs.chart_type !== 'map' &&
-              this.chartConfigs.chart_type !== 'baidumap' &&
-              this.chartConfigs.chart_type !== 'gauge' &&
-              this.chartConfigs.chart_type !== 'ranking' &&
-              this.chartConfigs.chart_type !== 'digital' &&
-              this.chartConfigs.chart_type !== 'liquidfill' &&
-              this.chartConfigs.chart_type !== 'surveillance' &&
-              this.chartConfigs.chart_type !== 'newslist' &&
-              this.chartConfigs.chart_type !== 'numberlist'
+            this.chartConfigs.chart_type !== '自定义页面' &&
+            this.chartConfigs.chart_type !== 'tablist' &&
+            this.chartConfigs.chart_type !== 'table' &&
+            this.chartConfigs.chart_type !== 'map' &&
+            this.chartConfigs.chart_type !== 'baidumap' &&
+            this.chartConfigs.chart_type !== 'gauge' &&
+            this.chartConfigs.chart_type !== 'ranking' &&
+            this.chartConfigs.chart_type !== 'digital' &&
+            this.chartConfigs.chart_type !== 'liquidfill' &&
+            this.chartConfigs.chart_type !== 'surveillance' &&
+            this.chartConfigs.chart_type !== 'newslist' &&
+            this.chartConfigs.chart_type !== 'numberlist'
           "
           :data="chartDatas"
           :settings="chartSettings"
@@ -725,9 +740,11 @@ export default {
 
   data () {
     return {
-      surPageInfo: {        total: 0,
+      surPageInfo: {
+        total: 0,
         pageNo: 1,
-        rownumber: 10      },
+        rownumber: 10
+      },
       isPcEnv: true,//是否是pc环境 默认true false则是移动端
       requestCycle: this.chartConfigs.request_cycle || 30,
       chartDatas: [],
@@ -1414,7 +1431,7 @@ export default {
   .el-table,
   .el-table__expanded-cell,
   .el-table th,
-  .el-table /deep/ tr {
+  .el-table ::v-deep tr {
     background-color: transparent !important;
   }
 }

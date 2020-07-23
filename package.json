@@ -41,8 +41,8 @@
     "@babel/plugin-proposal-optional-chaining": "^7.9.0",
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
-    "node-sass": "^4.9.0",
-    "sass-loader": "^7.3.1",
+    "sass": "^1.26.10",
+    "sass-loader": "^9.0.2",
     "vue-template-compiler": "^2.6.10",
     "vuepress": "^1.2.0",
     "vuepress-theme-antdocs": "^1.0.1"

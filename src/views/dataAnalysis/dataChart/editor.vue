@@ -23,7 +23,7 @@
             :label="item.dashboard_name"
             :value="item.dashboard_no"
           >
-            <span style="float: left;font-size: 13px">{{
+            <span style="float: left; font-size: 13px;">{{
               item.dashboard_name + "/" + item.dashboard_no
             }}</span>
           </el-option>
@@ -33,7 +33,7 @@
         label="图表名称："
         prop="chartName"
         :rules="[
-          { required: true, message: '请输入图表名称', trigger: 'blur' }
+          { required: true, message: '请输入图表名称', trigger: 'blur' },
         ]"
       >
         <el-input v-model="ruleForm.chartName"></el-input>
@@ -42,7 +42,7 @@
         label="应用名称："
         prop="app_name"
         :rules="[
-          { required: true, message: '请输入图表名称', trigger: 'blur' }
+          { required: true, message: '请输入图表名称', trigger: 'blur' },
         ]"
       >
         <el-select
@@ -63,7 +63,7 @@
         label="服务名称："
         prop="service_name"
         :rules="[
-          { required: true, message: '请选择服务名称', trigger: 'blur' }
+          { required: true, message: '请选择服务名称', trigger: 'blur' },
         ]"
       >
         <el-select
@@ -122,7 +122,7 @@
       <div class="preview-content">
         <el-table
           :data="tableData"
-          style="width: 100%"
+          style="width: 100%;"
           stripe
           fixed
           border
@@ -1088,7 +1088,7 @@ export default {
     justify-content: center;
     height: 5rem;
   }
-  .detail-dialog /deep/ .el-dialog__body .el-table {
+  .detail-dialog ::v-deep .el-dialog__body .el-table {
     overflow-y: scroll;
     height: 600px;
   }

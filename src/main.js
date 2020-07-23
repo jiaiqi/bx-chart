@@ -18,7 +18,7 @@ import yanan from './assets/common/yanan.json' // 导入延安地图geo json
 import echarts from 'echarts'
 import 'echarts-liquidfill'
 import 'video.js/dist/video-js.css' // 引入样式
-// import 'videojs-flash'
+import 'videojs-flash'
 import 'videojs-contrib-hls'
 // import { videoPlayer } from 'vue-video-player'
 

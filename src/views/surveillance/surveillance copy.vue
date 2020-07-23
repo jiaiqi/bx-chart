@@ -23,19 +23,16 @@
           height: fullarea.height / screenAmount - 5 + 'px',
         }"
       >
-        <!-- <div class="menu" @click="checkSource(item, index)">
-          {{ !item || !item.src ? "选择信号源" : "关闭" }}
-        </div> -->
         <div class="menu" @click="checkSource(item, index)">
-          {{ !item || !item.sources ? "选择信号源" : "关闭" }}
+          {{ !item || !item.src ? "选择信号源" : "关闭" }}
         </div>
-        <!-- <div
+        <div
           class="xg-hls"
           :id="item.hk_id"
           style="width: 100%; height: 100%;"
           v-if="item && item.src && !isFullscreen"
-        ></div> -->
-        <videoPlayer
+        ></div>
+        <!-- <videoPlayer
           class="vjs-custom-skin videoPlayer"
           v-if="item && item.sources && !isFullscreen"
           :options="item"
@@ -44,7 +41,7 @@
           class="vjs-custom-skin videoPlayer"
           v-if="item && item.sources && isFullscreen"
           :options="item"
-        ></videoPlayer>
+        ></videoPlayer> -->
         <div class="video-box" v-if="!item || !item.src">
           <!-- <div class="video-box" v-if="!item || !item.sources"> -->
           无信号
@@ -160,7 +157,7 @@ export default {
       videoBoxList: [
         {
           height: '700',
-          techOrder: [ "flash", "html5" ],
+          techOrder: [ "html5" ],
           autoplay: true,
           width: '1200',
           controls: false
@@ -348,7 +345,7 @@ export default {
               {
                 "cameraIndexCode": cameraIndexCode,
                 "streamType": 1,
-                "protocol": "rtmp",
+                "protocol": "hls",
                 "transmode": 1,
                 "expand": "streamform=ps",
                 "streamform": "ps"
@@ -361,7 +358,7 @@ export default {
             return {
               "cameraIndexCode": code,
               "streamType": 0,
-              "protocol": "rtmp",
+              "protocol": "hls",
               "transmode": 1,
               "expand": "streamform=ps",
               "streamform": "ps"
@@ -430,7 +427,7 @@ export default {
         width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 5 : (this.fullarea.width / this.screenAmount) - 5,
         height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 5 : (this.fullarea.height / this.screenAmount) - 5,
         sources: null,
-        techOrder: [ "flash", "html5" ],
+        techOrder: [ "html5" ],
         autoplay: true,
         controls: false
       }
@@ -440,16 +437,15 @@ export default {
           src: row.src
         }
       ]
-      // this.$set(this.videoBoxList, this.currentSelect, row)
-      this.$set(this.videoBoxList, this.currentSelect, obj)
+      this.$set(this.videoBoxList, this.currentSelect, row)
 
-      // setTimeout(() => {
-      //   if (row.hk_id) {
-      //     this.createVideoPlayerInstance(row)
-      //   } else {
-      //     this.rowClick(row, 'check')
-      //   }
-      // }, 500)
+      setTimeout(() => {
+        if (row.hk_id) {
+          this.createVideoPlayerInstance(row)
+        } else {
+          this.rowClick(row, 'check')
+        }
+      }, 500)
       console.log(obj.width, obj.height)
       if (row.src) {
         this.updateLastVideoUrl(row.src)
@@ -470,19 +466,19 @@ export default {
         // if (!item || !item.sources) {
         this.showSelectDialog = true
       } else {
-        let obj = {
-          width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 5 : (this.fullarea.width / this.screenAmount) - 5,
-          height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 5 : (this.fullarea.height / this.screenAmount) - 5,
-          sources: null,
-          // techOrder: [ "html5" ],
-          techOrder: [ "flash", "html5" ],
-          autoplay: true,
-          controls: false
-        }
-        // let obj = this.deepCopy(item)
+        // let obj = {
+        //   width: this.isFullscreen ? (this.fullarea.width / this.screenAmount) - 5 : (this.fullarea.width / this.screenAmount) - 5,
+        //   height: this.isFullscreen ? (this.fullarea.height / this.screenAmount) - 5 : (this.fullarea.height / this.screenAmount) - 5,
+        //   sources: null,
+        //   techOrder: [ "html5" ],
+        //   // techOrder: [ "flash", "html5" ],
+        //   autoplay: true,
+        //   controls: false
+        // }
+        let obj = this.deepCopy(item)
         obj.src = ''
         console.log(obj)
-        // this.playerObj[ item.hk_id ].destroy()
+        this.playerObj[ item.hk_id ].destroy()
         this.$set(this.videoBoxList, index, obj)
       }
     },
@@ -546,7 +542,7 @@ export default {
               src: this.surConfig.lastVideoUrl//ok
             }
           ],
-          techOrder: [ "flash", "html5" ],
+          techOrder: [ "html5" ],
           autoplay: true,
           width: self.fullarea.width / self.screenAmount,
           controls: false
@@ -653,7 +649,7 @@ export default {
                   src: "rtmp://127.0.0.1:1935/live/"
                 }
               ],
-              techOrder: [ "flash", "html5" ],
+              techOrder: [ "html5" ],
               autoplay: true,
               controls: false
             }
