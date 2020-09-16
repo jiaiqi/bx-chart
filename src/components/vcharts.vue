@@ -1,58 +1,170 @@
 <template>
-  <div class="bx-chart-views">
+  <div class="bx-chart-views" :style="{ 'z-index': chartConfigs.z_order }">
     <div
       class="chart-main"
       v-if="this.chartConfigs.chart_type === 'digital'"
       :class="{
-        'show-border': showBorder
+        'show-border': showBorder,
       }"
     >
       <div
         class="digital"
-        :style="{ width: chartWidth + 'px', height: chartHeight + 'px' }"
+        :style="{
+          width: chartWidth + 'px',
+          height:
+            showBorder && isPcEnv
+              ? chartHeight + 40 + 'px'
+              : !showBorder && isPcEnv
+              ? chartHeight + 'px'
+              : '',
+        }"
       >
         <div class="digital-title" v-if="titleText">{{ titleText }}</div>
-        <div class="digitalNumber">
+        <div
+          class="digitalNumber"
+          :style="{
+            'justify-content': isPcEnv ? 'center' : 'flex-start',
+            'padding-left': isPcEnv ? '' : '50px',
+          }"
+        >
           <div
             class="units"
-            v-if="
-              JSON.parse(this.chartConfigs.chart_settings).units_position ===
-                'left'
-            "
+            v-if="this.chartConfigs.chart_settings.units_position === 'left'"
           >
-            {{ JSON.parse(chartConfigs.chart_settings).units }}
+            {{ chartConfigs.chart_settings.units }}
           </div>
-          <digital :number="chartDatas"></digital>
-          <div
-            class="units"
+          <roller-digital
+            :number="
+              typeof chartDatas === 'object' && !Array.isArray(chartDatas)
+                ? chartDatas.num
+                : 0
+            "
+            :color="chartConfigs.chart_settings.color"
+            :duration="chartConfigs.chart_settings.duration"
+            :size="chartConfigs.chart_settings.size"
             v-if="
-              JSON.parse(this.chartConfigs.chart_settings).units_position ===
-                'right'
+              chartConfigs.chart_settings &&
+              chartConfigs.chart_settings.theme === 'led' &&
+              (chartDatas.num || chartDatas.num === 0)
             "
           >
-            {{ JSON.parse(chartConfigs.chart_settings).units }}
+          </roller-digital>
+          <digital
+            v-else
+            :chartSetting="chartConfigs.chart_settings"
+            :number="
+              typeof chartDatas === 'object' && !Array.isArray(chartDatas)
+                ? chartDatas
+                : {}
+            "
+          ></digital>
+          <div
+            class="units"
+            v-if="this.chartConfigs.chart_settings.units_position === 'right'"
+          >
+            {{ chartConfigs.chart_settings.units }}
           </div>
         </div>
       </div>
-      <el-button v-if="this.chartConfigs._isActive" @click.stop="onSave"
+      <el-button
+        class="save-btn"
+        v-if="this.chartConfigs._isActive"
+        @click.stop="onSave"
         >保存</el-button
       >
     </div>
     <div
-      class="chart-main"
+      class="chart-main full-height"
+      v-if="
+        this.chartConfigs.chart_type === 'image' ||
+        this.chartConfigs.chart_type === 'obj'
+      "
       :style="vchartStyle"
-      v-else
+    >
+      <div
+        style="
+          z-index: 9999;
+          top: -40px;
+          position: absolute;
+          width: 100%;
+          dispaly: flex;
+          justify-content: center;
+          min-width: 150px;
+        "
+        @click.native.stop
+      >
+        <el-button
+          type="text"
+          v-if="chartConfigs._isActive"
+          @click.stop="chartConfigs.rotation_angle++"
+          >角度+</el-button
+        >
+        <span
+          v-if="chartConfigs._isActive"
+          style="
+            width: 60px;
+            background: #fff;
+            padding: 0 10px;
+            color: #333;
+            margin: 0 5px;
+          "
+          v-text="chartConfigs.rotation_angle"
+        ></span>
+        <el-button
+          type="text"
+          v-if="chartConfigs._isActive"
+          @click.stop="chartConfigs.rotation_angle--"
+          >角度-</el-button
+        >
+      </div>
+      <image-box
+        v-if="
+          (chartConfigs.chart_type === 'image' ||
+            chartConfigs.chart_type === 'obj') &&
+          chartConfigs.imgUrl
+        "
+        :config="chartConfigs"
+        :bgUrl="chartConfigs.imgUrl"
+        :rotate="chartConfigs.rotation_angle"
+        @clickChart="clickChart"
+      ></image-box>
+      <el-button
+        class="save-btn"
+        v-if="chartConfigs._isActive"
+        @click.stop="onSave"
+        >保存</el-button
+      >
+    </div>
+
+    <div
+      class="chart-main"
+      v-else-if="
+        chartConfigs.chart_type !== 'digital' &&
+        chartConfigs.chart_type !== 'image' &&
+        chartConfigs.chart_type !== 'obj'
+      "
       :class="{
-        'show-border': showBorder && this.chartConfigs.chart_type !== 'baidumap'
+        'show-border':
+          showBorder && this.chartConfigs.chart_type !== 'baidumap',
       }"
     >
-      <div class="chart-title" :style="chartTitleStyle" v-if="titleText">
+      <div
+        class="chart-title"
+        :style="chartTitleStyle"
+        v-if="titleText"
+        @click="thirdParty(chartConfigs.chart_settings.src)"
+      >
         {{ titleText }}
       </div>
-      <div class="chart-box">
+      <div
+        class="chart-box"
+        :class="{
+          'show-border': showBorder,
+        }"
+      >
         <eMap
           v-if="this.chartConfigs.chart_type === 'map'"
-          :style="{ width: chartWidth + 'px', height: chartHeight - 30 + 'px' }"
+          :style="{ width: chartWidth + 'px', height: chartHeight - 40 + 'px' }"
           :chartWidth="chartWidth"
           :chartHeight="chartHeight"
           :mapConfigs="chartDatas"
@@ -69,46 +181,67 @@
         <tab-list
           :chartWidth="chartWidth"
           :chartHeight="chartHeight"
-          :tabList="
-            typeof chartConfigs.chart_settings !== 'string'
-              ? chartConfigs.chart_settings
+          :dataList="
+            typeof chartConfig.chart_settings !== 'string'
+              ? chartConfig.chart_settings
               : null
           "
-          v-if="this.chartConfigs.chart_type === 'tablist'"
-          :chartConfigs="chartConfigs"
+          :tabList="
+            typeof chartConfig.chart_settings !== 'string'
+              ? chartConfig.chart_settings
+              : null
+          "
+          v-if="this.chartConfig.chart_type === 'tablist'"
+          :chartConfigs="chartConfig"
         ></tab-list>
         <ve-gauge
           :data="chartDatas"
           v-if="this.chartConfigs.chart_type === 'gauge'"
-          :settings="JSON.parse(chartConfigs.chart_settings)"
-          :height="chartHeight - 30 + 'px'"
+          :settings="chartConfigs.chart_settings"
+          :height="chartHeight - 40 + 'px'"
           :width="chartWidth + 'px'"
           :extend="getChartExtend(this.chartConfigs.chart_type)"
         ></ve-gauge>
         <div
           class="parent"
-          :style="{ height: chartHeight - 30 + 'px' }"
+          :style="{
+            height: showBorder
+              ? chartHeight - 60 + 'px'
+              : chartHeight - 40 + 'px',
+          }"
           v-if="this.chartConfigs.chart_type === 'table'"
         >
           <el-table
-            :row-style="{ background: 'rgb(11, 15, 52)', color: 'white' }"
+            class="el-table"
+            :row-style="{ background: 'transparent', color: 'white' }"
             :header-cell-style="{
-              background: 'rgb(11, 15, 52)',
-              color: 'white'
+              background: 'transparent',
+              color: 'white',
             }"
-            :data="chartDatas.data"
+            :style="{
+              'overflow-y': 'scroll',
+              height: showBorder
+                ? chartHeight - 60 + 'px'
+                : chartHeight - 40 + 'px',
+            }"
+            :data="chartDatas ? chartDatas.data : []"
             style="width: 100%"
           >
-            <el-table-column prop="name" label="医院"></el-table-column>
-            <el-table-column prop="value" label="次数"></el-table-column>
+            <el-table-column
+              prop="name"
+              :label="chartConfigs.chart_settings['name']"
+            ></el-table-column>
+            <el-table-column
+              prop="value"
+              :label="chartConfigs.chart_settings['value']"
+            ></el-table-column>
           </el-table>
-          <!-- </el-table> -->
         </div>
         <ve-liquidfill
           v-if="this.chartConfigs.chart_type === 'liquidfill'"
           :data="chartDatas"
           :width="chartWidth + 'px'"
-          :height="chartHeight - 30 + 'px'"
+          :height="chartHeight - 40 + 'px'"
           :settings="chartSettings"
         ></ve-liquidfill>
         <ve-heatmap
@@ -116,36 +249,106 @@
           v-if="this.chartConfigs.chart_type === 'heatmap'"
           :width="chartWidth + 'px'"
           :settings="chartSettings"
-          :height="chartHeight - 30 + 'px'"
+          :height="chartHeight - 40 + 'px'"
           :extend="getChartExtend(this.chartConfigs.chart_type)"
         ></ve-heatmap>
         <customPage
-          v-if="this.chartConfigs.chart_type === 'custompage'"
+          v-if="
+            this.chartConfigs.chart_type === 'custompage' ||
+            this.chartConfigs.chart_type === '自定义页面'
+          "
           :chartWidth="chartWidth"
           :chartHeight="chartHeight"
           :chartConfigs="chartConfigs"
           :src="chartConfigs.chart_settings.src"
         ></customPage>
+        <dv-scroll-ranking-board
+          :chartWidth="chartWidth"
+          :chartHeight="chartHeight"
+          v-if="this.chartConfigs.chart_type === 'ranking'"
+          :config="!Array.isArray(chartDatas) ? chartDatas : {}"
+          :style="{
+            width: chartWidth - 20 + 'px',
+            height: chartHeight - 60 + 'px',
+            margin: '0 auto',
+          }"
+        />
+        <listAnimage
+          :chartWidth="chartWidth"
+          :chartHeight="chartHeight"
+          :chartConfigs="chartConfigs"
+          v-if="this.chartConfigs.chart_type === 'listauq'"
+        >
+        </listAnimage>
+        <surveillance
+          v-if="this.chartConfigs.chart_type === 'surveillance'"
+          :chartConfigs="chartConfigs"
+          :pageInfo="surPageInfo"
+          :chartDatas="Array.isArray(chartDatas) ? chartDatas : []"
+          :surConfig="chartConfigs.chart_settings"
+        ></surveillance>
+        <news-list
+          v-if="
+            this.chartConfigs.chart_type === 'newslist' &&
+            Array.isArray(chartDatas) &&
+            chartDatas.length > 0
+          "
+          :chartSetting="chartConfigs.chart_settings"
+          :dateCol="chartConfigs.chart_settings.dateColumn"
+          :textCol="chartConfigs.chart_settings.textColumn"
+          :list="chartDatas"
+          :style="{
+            width: chartWidth + 'px',
+            height: chartHeight + 'px',
+            margin: '0 auto',
+            overflow: 'hidden',
+          }"
+        ></news-list>
+        <number-list
+          :chartSettings="chartConfigs.chart_settings"
+          :chartDatas="Array.isArray(chartDatas) ? chartDatas : []"
+          v-if="this.chartConfigs.chart_type === 'numberlist'"
+          :style="{
+            width: chartWidth + 'px',
+            height: chartHeight + 'px',
+            margin: '0 auto',
+            overflow: 'hidden',
+          }"
+        ></number-list>
+
         <ve-chart
           v-else-if="
             this.chartConfigs.chart_type !== 'custompage' &&
-              this.chartConfigs.chart_type !== 'tablist' &&
-              this.chartConfigs.chart_type !== 'table' &&
-              this.chartConfigs.chart_type !== 'map' &&
-              this.chartConfigs.chart_type !== 'baidumap' &&
-              this.chartConfigs.chart_type !== 'gauge' &&
-              this.chartConfigs.chart_type !== 'ranking' &&
-              this.chartConfigs.chart_type !== 'digital' &&
-              this.chartConfigs.chart_type !== 'liquidfill'
+            this.chartConfigs.chart_type !== '自定义页面' &&
+            this.chartConfigs.chart_type !== 'tablist' &&
+            this.chartConfigs.chart_type !== 'table' &&
+            this.chartConfigs.chart_type !== 'map' &&
+            this.chartConfigs.chart_type !== 'baidumap' &&
+            this.chartConfigs.chart_type !== 'gauge' &&
+            this.chartConfigs.chart_type !== 'ranking' &&
+            this.chartConfigs.chart_type !== 'digital' &&
+            this.chartConfigs.chart_type !== 'liquidfill' &&
+            this.chartConfigs.chart_type !== 'surveillance' &&
+            this.chartConfigs.chart_type !== 'newslist' &&
+            this.chartConfigs.chart_type !== 'numberlist'
           "
           :data="chartDatas"
           :settings="chartSettings"
-          :height="chartHeight - 30 + 'px'"
-          :width="chartWidth + 'px'"
+          :height="
+            chartHeight && showBorder
+              ? chartHeight - 60 + 'px'
+              : chartHeight && !showBorder
+              ? chartHeight - 30 + 'px'
+              : 'auto'
+          "
+          :width="chartWidth ? chartWidth + 'px' : '100%'"
           :extend="getChartExtend(this.chartConfigs.chart_type)"
         ></ve-chart>
       </div>
-      <el-button v-if="this.chartConfigs._isActive" @click.stop="onSave"
+      <el-button
+        class="save-btn"
+        v-if="this.chartConfigs._isActive"
+        @click.stop="onSave"
         >保存</el-button
       >
     </div>
@@ -156,12 +359,19 @@
 import testData from "../assets/common/data";
 import eMap from "./echartMap";
 import digital from "./digital";
+import listAnimage from "@/components/listAnimage/listAnimage";
 import bMap from '@/components/bMap/bMap.vue'
 import TabList from '@/components/tabList/tabList.vue'
 import customPage from '@/components/customPage/customPage'
+import ImageBox from '@/components/pictureBox/pictureBox'
+import surveillance from '@/views/surveillance/surveillance'
+import newsList from '@/components/news-list/newsList'
+import NumberList from '@/components/numberlist/numberlist'
+import RollerDigital from '@/components/RollerDigital/RollerDigital'
+import buildChartData from '@/assets/common/buildvChartsData.js'
 export default {
   name: "bx-chart-views",
-  components: { eMap, digital, bMap, TabList, customPage },
+  components: { eMap, digital, bMap, TabList, customPage, ImageBox, surveillance, newsList, NumberList, RollerDigital, listAnimage },
   props: {
     chartConfigs: {
       type: Object,
@@ -184,10 +394,24 @@ export default {
   },
   computed: {
     showBorder () {
-      return true
+      let chart_settings = typeof this.chartConfigs.chart_settings === 'string' && this.chartConfigs.chart_settings ? JSON.parse(this.chartConfigs.chart_settings) : this.chartConfigs.chart_settings
+      if (chart_settings && chart_settings.showBorder) {
+        debugger
+        return true
+      } else {
+        return false
+      }
     },
     mapDatas () {
       return testData.mapData.rows;
+    },
+
+    showPictureBorder () {
+      let chart_settings = typeof this.chartConfigs.chart_settings === 'string' && this.chartConfigs.chart_settings ? JSON.parse(this.chartConfigs.chart_settings) : this.chartConfigs.chart_settings
+      if (chart_settings && chart_settings.hideTitle === true) {
+        title = null
+      }
+      return true
     },
     chartTitleStyle () {
       let style = {
@@ -205,13 +429,72 @@ export default {
     },
     chartSettings () {
       let chartSetting = { type: this.chartConfigs.chart_type };
+      switch (this.chartConfigs.chart_type) {
+        case '折线图':
+          chartSetting.type = 'line'
+          break;
+        case '柱状图':
+          chartSetting.type = 'histogram'
+          break;
+        case '饼图':
+          chartSetting.type = 'pie'
+          break;
+        case '条形图':
+          chartSetting.type = 'bar'
+          break;
+        case '雷达图':
+          chartSetting.type = 'radar'
+          break;
+        case '环图':
+          chartSetting.type = 'ring'
+          break;
+        case '地图':
+          debugger
+          chartSetting.type = 'map'
+          break;
+        case '散点图':
+          chartSetting.type = 'scatter'
+          break;
+        case '仪表盘':
+          chartSetting.type = 'gauge'
+          break;
+        case '水球图':
+          chartSetting.type = 'liquidfill'
+          break;
+        case '排行滚动表':
+          chartSetting.type = 'ranking'
+          break;
+        case '表格':
+          chartSetting.type = 'table'
+          break;
+        case '多标签表格':
+          chartSetting.type = 'tablist'
+          break;
+        case '百度地图':
+          chartSetting.type = 'baidumap'
+          break;
+        case '自定义页面':
+          chartSetting.type = 'custompage'
+          break;
+        case '监控摄像头':
+          chartSetting.type = 'surveillance'
+          break;
+        case '对象':
+          chartSetting.type = 'obj'
+          break;
+        case '新闻列表':
+          chartSetting.type = 'newslist'
+          break;
+        case '数字列表':
+          chartSetting.type = 'numberlist'
+          break;
+      }
       if (this.chartConfigs.chart_type === "histogram" && this.isStack) {
         chartSetting[ "stack" ] = { 用户: this.stackLabel };
       }
       if (this.chartConfigs.chart_type === "custompage" && this.isStack) {
         try {
           chartSetting[ "src" ] = JSON.parse(this.chartConfigs.chart_settings).src
-
         } catch (error) {
 
         }
@@ -223,16 +506,17 @@ export default {
         chartSetting[ "stack" ] = { 用户: this.stackLabel };
       } else if (this.chartConfigs.chart_type === "liquidfill") {
         chartSetting[ "seriesMap" ] = [];
-        let chartSettings = JSON.parse(this.chartConfigs.chart_settings);
-        let formatter = chartSettings.label.formatter;
-        if (formatter && typeof formatter === "string") {
-          let max = this.liquid_max;
+        // let chartSettings = this.chartConfigs.chart_settings && typeof this.chartConfigs.chart_settings === 'string' ? JSON.parse(this.chartConfigs.chart_settings) : null;
+        let chartSettings = this.chartConfigs.chart_settings;
+        let formatter = chartSettings?.label?.formatter;
+        if (formatter && typeof formatter === "string" && chartSettings.label) {
+          let max = this.liquid_max || chartSettings.max;
           if (this.xssFilter(formatter)) {
             formatter = eval(formatter);
             // formatter = eval("(o)=>`${o.seriesName}\n${this.convert(Math.round(o.value * this.liquid_max))}次\n占比:${(o.value*100).toFixed(2)}%`")
             chartSettings.label[ "formatter" ] = formatter;
           }
-        } else {
+        } else if (chartSettings.label) {
           chartSettings.label[ "formatter" ] = o => {
             return `${o.seriesName}\n${Math.round(
               parseFloat(o.value * this.liquid_max)
@@ -363,7 +647,6 @@ export default {
         label: {
           normal: {
             show: this.data_label_visible
-            // position: ['0', '-10']
           }
         }
       };
@@ -395,8 +678,8 @@ export default {
         legend: legend,
         textStyle: textStyle,
         radar: {
-          radius: "75%",
-          center: [ "50%", "60%" ]
+          radius: "65%",
+          center: [ "50%", "55%" ]
         }
       };
       return chartSetting;
@@ -419,8 +702,8 @@ export default {
       };
       let visualMap = {};
       if (this.chartConfigs.chart_settings) {
-        let chart_settings = JSON.parse(this.chartConfigs.chart_settings);
-        if (chart_settings.visualMap.type === "piecewise") {
+        let chart_settings = this.chartConfigs.chart_settings && typeof this.chartConfigs.chart_settings === 'string' ? JSON.parse(this.chartConfigs.chart_settings) : null;
+        if (chart_settings && chart_settings.visualMap && chart_settings.visualMap.type === "piecewise") {
           visualMap = {
             min: chart_settings.visualMap.min || 0,
             max: chart_settings.visualMap.max || 1500,
@@ -432,13 +715,13 @@ export default {
         } else {
           visualMap = {
             type: "continuous", // continuous---连续的视觉映射组件，piecewise--分段的视觉映射组件
-            orient: chart_settings.visualMap.orient || "horizontal",
-            show: chart_settings.visualMap.show || true,
-            left: chart_settings.visualMap.left || "50%",
-            right: chart_settings.visualMap.right || "auto",
-            top: chart_settings.visualMap.top || "auto",
-            bottom: chart_settings.visualMap.bottom || "auto",
-            textStyle: chart_settings.visualMap.textStyle || { color: "#fff" }
+            orient: chart_settings && chart_settings.visualMap && chart_settings.visualMap.orient ? chart_settings.visualMap.orient : "horizontal",
+            show: chart_settings && chart_settings.visualMap && chart_settings.visualMap.show ? chart_settings.visualMap.show : true,
+            left: chart_settings && chart_settings.visualMap && chart_settings.visualMap.left ? chart_settings.visualMap.left : "50%",
+            right: chart_settings && chart_settings.visualMap && chart_settings.visualMap.right ? chart_settings.visualMap.right : "auto",
+            top: chart_settings && chart_settings.visualMap && chart_settings.visualMap.top ? chart_settings.visualMap.top : "auto",
+            bottom: chart_settings && chart_settings.visualMap && chart_settings.visualMap.bottom ? chart_settings.visualMap.bottom : "auto",
+            textStyle: chart_settings && chart_settings.visualMap && chart_settings.visualMap.textStyle ? chart_settings.visualMap.textStyle : { color: "#fff" }
           };
         }
       } else {
@@ -460,6 +743,14 @@ export default {
     },
     titleText () {
       let title = this.chartConfigs.chart_name;
+
+      let chart_settings = typeof this.chartConfigs.chart_settings === 'string' && this.chartConfigs.chart_settings ? JSON.parse(this.chartConfigs.chart_settings) : this.chartConfigs.chart_settings
+      if (chart_settings && chart_settings.hideTitle === true) {
+        title = null
+      } else if (chart_settings && chart_settings[ 0 ] && chart_settings[ 0 ].hideTitle === true) {
+        title = null
+      }
+
       return title;
     },
     vchartStyle () {
@@ -467,8 +758,8 @@ export default {
         background: this.chartConfigs.background,
         "background-size": "100% 100%",
         "box-sizing": "border-box",
-        height: this.chartHeight,
-        width: this.chartWidth
+        height: this.chartHeight ? this.chartHeight : "100%",
+        width: this.chartWidth,
       };
       return style;
     }
@@ -476,6 +767,13 @@ export default {
 
   data () {
     return {
+      requestNum: 0,
+      surPageInfo: {
+        total: 0,
+        pageNo: 1,
+        rownumber: 10
+      },
+      isPcEnv: true,//是否是pc环境 默认true false则是移动端
       requestCycle: this.chartConfigs.request_cycle || 30,
       chartDatas: [],
       legend: {
@@ -491,7 +789,6 @@ export default {
       isStack: false, // 是否堆叠
       stackLabel: [], // 需要堆叠的项目
       rotate: 0,
-
       colors:
         this.chartConfigs.chart_type == "line"
           ? [ "#00B7C3", "#00CC6A", "F7630C", "#0078D7", "#6B69D6", "#009688" ]
@@ -514,18 +811,27 @@ export default {
       },
       markerData: [],
       lineData: [],
+      chartConfig: {},
     };
 
   },
-
   methods: {
+    thirdParty (e) {
+      if (e) {
+        window.open(e)
+      }
+    },
+    clickChart (e) {
+      this.$emit('clickChart', e)
+    },
     getTabListData (chartSettings) {
       console.log('chartConfig', chartSettings)
-      if (Array.isArray(chartSettings)) {
+      if (Array.isArray(chartSettings) && this.requestNum < 5) {
         chartSettings.forEach((item, index) => {
           let url = this.getIp() + item.requestUrl
           let req = item.requestParams
           this.$http.post(url, req).then(res => {
+            this.requestNum++
             if (res.data.state === "SUCCESS") {
               item[ 'listData' ] = res.data.data
               this.$set(chartSettings, index, item)
@@ -552,24 +858,6 @@ export default {
           colNames: [ "*" ],
           "serviceName": chart_request_payload.serviceName
         }
-        // if (chartSettings.subdataConfig &&
-        //   chartSettings.subdataConfig.operator &&
-        //   chartSettings.subdataConfig.serviceName &&
-        //   chartSettings.subdataConfig.app) {
-        //   const url = this.getServiceUrl(
-        //     chartSettings.subdataConfig.operator,
-        //     chartSettings.subdataConfig.serviceName,
-        //     chartSettings.subdataConfig.app
-        //   );
-        //   let req = {
-        //     "condition": [ {
-        //       colName: "chart_no",
-        //       ruleType: "eq",
-        //       value: subdataConfig.chart_no
-        //     } ],
-        //     "colNames": [ "chart_columns", "chart_no", "chart_request_payload", "chart_request_url", "icon", "map_data_no", "name", "type", "_chart_no_disp", "remark" ],
-        //     "serviceName": chartSettings.subdataConfig.serviceName
-        //   }
         const res = await this.$http.post(url, req)
         if (res.data.state === "SUCCESS") {
           subdataList = res.data.data.filter(item => item.chart_columns && item.chart_request_payload && item)
@@ -602,21 +890,15 @@ export default {
                   req: sub.chart_request_payload,
                   columns: sub.chart_columns
                 }).then(data => {
-                  // self.subdataList.push(data)
                   if (sub.type === "地标") {
                     Array.isArray(data) && data.forEach(item => {
                       item[ 'lat' ] = item[ sub.chart_columns[ 'lat' ] ]
                       item[ 'lng' ] = item[ sub.chart_columns[ 'lon' ] ]
                       item[ 'label' ] = item[ sub.chart_columns[ 'name' ] ]
                       item[ 'icon' ] = sub[ 'iconPath' ]
-                      // item[ 'icon' ] = sub[ 'remark' ]
                     })
                     self.$set(self.markerData, subIndex, data)
-                    // let item = self.subdataList[ 'marker' ]
-                    // item.push(data)
-                    // self.$set(self.subdataList, "marker", item)
                   } else if (sub.type === '路径') {
-                    // self.subdataList[ 'line' ].push(data)
                     Array.isArray(data) && data.forEach(item => {
                       item[ 'lat' ] = item[ sub.chart_columns[ 'lat' ] ]
                       item[ 'lng' ] = item[ sub.chart_columns[ 'lon' ] ]
@@ -633,21 +915,15 @@ export default {
                 req: sub.chart_request_payload,
                 columns: sub.chart_columns
               }).then(data => {
-                // self.subdataList.push(data)
                 if (sub.type === "地标") {
                   Array.isArray(data) && data.forEach(item => {
                     item[ 'lat' ] = item[ sub.chart_columns[ 'lat' ] ]
                     item[ 'lng' ] = item[ sub.chart_columns[ 'lon' ] ]
                     item[ 'label' ] = item[ sub.chart_columns[ 'name' ] ]
                     item[ 'icon' ] = sub[ 'remark' ]
-                    // item[ 'icon' ] = sub[ 'remark' ]
                   })
                   self.$set(self.markerData, subIndex, data)
-                  // let item = self.subdataList[ 'marker' ]
-                  // item.push(data)
-                  // self.$set(self.subdataList, "marker", item)
                 } else if (sub.type === '路径') {
-                  // self.subdataList[ 'line' ].push(data)
                   Array.isArray(data) && data.forEach(item => {
                     item[ 'lat' ] = item[ sub.chart_columns[ 'lat' ] ]
                     item[ 'lng' ] = item[ sub.chart_columns[ 'lon' ] ]
@@ -661,7 +937,6 @@ export default {
 
           })
         }
-        // }
       }
     },
     async getSubdata (e) {
@@ -708,6 +983,7 @@ export default {
       let DataUrl = "";
       DataUrl = this.getIp() + information.chart_request_url;
       let DataReq = information.chart_request_payload;
+
       if (DataReq && typeof DataReq == "string") {
         try {
           DataReq = JSON.parse(DataReq);
@@ -715,19 +991,32 @@ export default {
           console.log(error, DataReq)
         }
         let conditions = DataReq.condition;
+
         if (conditions) {
-          conditions.map(cond => {
+          conditions.forEach(cond => {
             let a = cond.value.toString();
             if (cond.value.indexOf("function") > -1) {
               if (self.xssFilter(a)) {
                 cond.value = eval(a);
               }
+            } else if (cond.value.indexOf('new Date()') !== -1) {
+              cond.value = self.formatDate(new Date())
+            } else if (cond.value.indexOf('top.user.user_no') !== -1) {
+              cond.value = eval(a)
             } else {
               cond.value = a;
             }
           });
           DataReq.condition = conditions;
         }
+      } else if (typeof DataReq === 'object' && DataReq && Array.isArray(DataReq.condition)) {
+        DataReq.condition.forEach(cond => {
+          if (typeof cond.value === 'string' && cond.value.indexOf('new Date()') !== -1) {
+            cond.value = this.formatDate(new Date())
+          } else if (cond.value.indexOf('top.user.user_no') !== -1) {
+            cond.value = eval(a)
+          }
+        });
       }
       if (
         information.chart_columns &&
@@ -735,19 +1024,94 @@ export default {
       ) {
         let keys = JSON.parse(information.chart_columns).columns; // 维度 +  指标合集
         let countColName = JSON.parse(information.chart_columns).nums; // count 字段
-        let dataType = JSON.parse(information.chart_columns).columns[ 1 ]; // 数据分类，例如tab时使用
+        let dataType = JSON.parse(information.chart_columns) && JSON.parse(information.chart_columns).columns ? JSON.parse(information.chart_columns).columns[ 1 ] : null; // 数据分类，例如tab时使用
         let chartType = information.chart_type; // 图标类型
         let norm = null; //chartSetting 需要有几个指标及对应的名称
+
+        switch (chartType) {
+          case '折线图':
+            chartType = 'line'
+            break;
+          case '柱状图':
+            chartType = 'histogram'
+            break;
+          case '饼图':
+            chartType = 'pie'
+            break;
+          case '条形图':
+            chartType = 'bar'
+            break;
+          case '雷达图':
+            chartType = 'radar'
+            break;
+          case '环图':
+            chartType = 'ring'
+            break;
+          case '地图':
+            debugger
+            chartType = 'map'
+            break;
+          case '散点图':
+            chartType = 'scatter'
+            break;
+          case '仪表盘':
+            chartType = 'gauge'
+            break;
+          case '水球图':
+            chartType = 'liquidfill'
+            break;
+          case '排行滚动表':
+            chartType = 'ranking'
+            break;
+          case '表格':
+            chartType = 'table'
+            break;
+          case '多标签表格':
+            chartType = 'tablist'
+            break;
+          case '百度地图':
+            chartType = 'baidumap'
+            break;
+          case '自定义页面':
+            chartType = 'custompage'
+            break;
+          case '监控摄像头':
+            chartType = 'surveillance'
+            break;
+          case '对象':
+            chartType = 'obj'
+            break;
+          case '新闻列表':
+            chartType = 'newslist'
+            break;
+          case '数字列表':
+            chartType = 'numberlist'
+            break;
+        }
+        if (chartType === "table") {
+          try {
+            if (this.chartConfigs.chart_settings && typeof this.chartConfigs.chart_settings === 'string') {
+              this.chartConfigs.chart_settings = JSON.parse(this.chartConfigs.chart_settings)
+            }
+          } catch (error) {
+            console.log(error)
+          }
+        }
+        this.chartConfigs.chart_type = chartType
+        if (information.chart_settings && typeof information.chart_settings === 'string') {
+          try {
+            information.chart_settings = JSON.parse(information.chart_settings)
+          } catch (error) {
+            console.log(error)
+          }
+        }
         if (chartType === "line" || chartType === "histogram") {
           let chart_settings = information.chart_settings;
-          if (chart_settings) {
-            chart_settings = JSON.parse(chart_settings);
-          }
           this.isStack = chart_settings.isStack;
           this.rotate = chart_settings.rotate;
         }
         if (chartType === "map" || chartType === "liquidfill") {
-          norm = JSON.parse(information.chart_settings);
+          norm = information.chart_settings;
           if (chartType === "liquidfill") {
             this.liquid_max = norm.max;
           }
@@ -755,7 +1119,7 @@ export default {
         if (chartType === "radar") {
           if (
             information.chart_settings &&
-            JSON.parse(information.chart_settings).isMultiseriate == "true"
+            information.chart_settings.isMultiseriate == "true"
           ) {
             this.isMultiseriate = true;
           } else {
@@ -765,15 +1129,31 @@ export default {
         if (chartType === "heatmap") {
           if (
             information.chart_settings &&
-            JSON.parse(information.chart_settings).xAxis.axisLabel.rotate
+            information.chart_settings.xAxis.axisLabel.rotate
           ) {
-            this.rotate = JSON.parse(
-              information.chart_settings
-            ).xAxis.axisLabel.rotate;
+            this.rotate = information.chart_settings.xAxis.axisLabel.rotate;
           }
         }
-        let res = await this.axios.post(DataUrl, DataReq); // 请求异步，同步处理
-        let datas = res.data.data;
+        let res = ''
+        if (information.data_source === 'mock') {
+          try {
+            res = information.mock_data && typeof information.mock_data === 'string' ? JSON.parse(information.mock_data) : []
+          } catch (error) {
+            console.log(error)
+          }
+        } else {
+          if (information.chart_type === 'surveillance') {
+            return
+          }
+          res = await this.axios.post(DataUrl, DataReq); // 请求异步，同步处理
+
+        }
+        let datas = information.data_source === 'mock' ? res : res.data.state === 'SUCCESS' ? res.data.data : [];
+        if (information.chart_type === 'surveillance' && information.data_source !== 'mock') {
+          // this.chartDatas = datas
+          // 
+          return
+        }
         if (datas.length > 0) {
           let resData = vChartInfo.getChartColumns(
             datas,
@@ -782,14 +1162,31 @@ export default {
             "",
             this.isMultiseriate
           );
-          resData = vChartInfo.getChart(
-            keys,
-            countColName,
-            chartType,
-            norm,
-            "",
-            this.isMultiseriate
-          );
+          console.log(resData)
+          let colList = null
+          // let colList = this.chartConfigs?.chart_settings?.columns
+          if (chartType !== 'table' || !colList) {
+            resData = vChartInfo.getChart(
+              keys,
+              countColName,
+              chartType,
+              norm,
+              "",
+              this.isMultiseriate
+            );
+          } else {
+            if (colList && Array.isArray(colList)) {
+              resData = vChartInfo.getChart(
+                keys,
+                countColName,
+                chartType,
+                norm,
+                "",
+                this.isMultiseriate,
+                colList
+              );
+            }
+          }
           if (this.isStack) {
             this.stackLabel = resData.all.columns;
           }
@@ -799,7 +1196,25 @@ export default {
             this.chartDatas = resData;
           } else if (chartType === "liquidfill") {
             this.chartDatas = resData.all;
-          } else if (chartType === "table") {
+          } else if (chartType === "ranking") {
+            let settings = information.chart_settings
+            this.chartDatas = {
+              data: datas.map(item => {
+                return {
+                  name: item[ settings.name ],
+                  value: Number(item[ settings.value ])
+                }
+              }),
+              unit: settings.unit
+            }
+          } else if (chartType === 'line' || chartType === 'histogram' || chartType === 'pie') {
+            if (this.chartConfigs.chart_settings && Array.isArray(this.chartConfigs.chart_settings.dimension) && this.chartConfigs.chart_settings.dimension.length === 1) {
+              debugger
+              this.chartDatas = buildChartData(datas, this.chartConfigs.chart_settings.dimension, chartType, this.chartConfigs.chart_settings.labelMap)
+            }
+          }
+          if (chartType === 'newslist' || chartType === 'numberlist') {
+            this.chartDatas = datas
           }
           return { isRes: true, res: res };
         } else {
@@ -809,47 +1224,81 @@ export default {
           return { isRes: false, res: res };
         }
       }
-    }
+    },
+    async getSurveillanceVideoUrl (cameraIndexCode) {
+      if (cameraIndexCode) {
+        let url = this.getIp() + '/zhxq/operate/srvhk_vieo_url_get';
+        let req = [
+          {
+            "serviceName": "srvhk_vieo_url_get",
+            "data": [
+              {
+                "cameraIndexCode": cameraIndexCode,
+                "streamType": 0,
+                "protocol": "hls",
+                "transmode": 1,
+                "expand": "streamform=ps",
+                "streamform": "ps"
+              }
+            ]
+          }
+        ]
+        let res = await this.$http.post(url, req)
+        if (res.data.state === 'SUCCESS' && Array.isArray(res.data.response) && res.data.response.length > 0) {
+          // this.surPageInfo.pageNo = res.data.page.pageNo
+          // this.surPageInfo.total = res.data.page.total
+          return res.data?.response[ 0 ]?.response?.data?.url
+        }
+      }
+    },
   },
   mounted () {
+    this.isPcEnv = this.IsPC()
     let TimeOut = new this.timeOut(this.requestCycle, 0, this.getCharts);
     TimeOut.reqFun();
     TimeOut.startTime();
   },
   watch: {
-    // subdataList: {
-    //   handler: function (newValue, oldValue) {
-
-    //     // return newValue;
-    //   },
-    //   deep: true //对象内部的属性监听，即深度监听
-    // },
     chartConfigs: {
       immediate: true,
       handler: function (newValue, oldValue) {
-        if (newValue.chart_type === "ranking") {
-          this.chartDatas[ "waitTime" ] = 9999999;
-        }
-        if (newValue.subdata === "是") {
-          this.getSubdataConfig(newValue)
-        }
-        if (newValue.chart_type === 'tablist') {
+        let that = this
+        that.chartConfig = that.deepClone(newValue)
+        if (that.chartConfig && that.chartConfig.chart_settings && typeof that.chartConfig.chart_settings === 'string') {
           try {
-            newValue.chart_settings = JSON.parse(newValue.chart_settings)
-            this.getTabListData(newValue.chart_settings)
+            that.chartConfig.chart_settings = JSON.parse(that.chartConfig.chart_settings)
+            if (that.chartConfig.chart_settings.duration) {
+              that.chartConfig.chart_settings.duration = Number(that.chartConfig.chart_settings.duration)
+            }
           } catch (error) {
-            newValue.chart_settings = newValue.chart_settings
+            console.log(error)
           }
         }
-        if (newValue.chart_type === 'custompage') {
+        if (that.chartConfig.chart_type === "ranking" && that.chartDatas) {
+          that.chartDatas[ "waitTime" ] = 9999999;
+        }
+        if (that.chartConfig.subdata === "是") {
+          that.getSubdataConfig(that.chartConfig)
+        }
+        if (that.chartConfig.chart_type === 'tablist') {
           try {
-            newValue.chart_settings = JSON.parse(newValue.chart_settings)
-
+            if (that.chartConfig.data_source === 'mock') {
+              that.chartConfig.chart_settings.forEach((item, index) => {
+                item[ 'listData' ] = that.chartConfig.mock_data && typeof that.chartConfig.mock_data === 'string' ? JSON.parse(that.chartConfig.mock_data) : ""
+                that.$set(that.chartConfig.chart_settings, index, item)
+                // that.$set(that.chartConfig.chartSetting, index, item)
+              })
+            } else {
+              that.getTabListData(that.chartConfig.chart_settings)
+            }
           } catch (error) {
 
           }
         }
-        return newValue;
+        if (that.chartConfig.chart_settings && that.chartConfig.chart_settings.imgUrl && that.chartConfig.chart_settings.imgUrl.indexOf('bx_auth_ticket') === -1 && that.chartConfig.chart_settings.imgUrl.indexOf(top.pathConfig.gateway) === -1 && (that.chartConfig.chart_type === 'custompage' || that.chartConfig.chart_type === '自定义页面' || that.chartConfig.chart_type === 'obj')) {
+          that.chartConfig.chart_settings.imgUrl = top.pathConfig.gateway + that.chartConfig.chart_settings.imgUrl + '&bx_auth_ticket=' + sessionStorage.getItem('bx_auth_ticket')
+        }
+        // that.chartConfig = that.deepClone(chartConfig)
       },
       deep: true //对象内部的属性监听，即深度监听
     }
@@ -861,49 +1310,72 @@ export default {
 .bx-chart-views {
   width: 100%;
   height: 100%;
+  position: relative;
+
   .chart-main {
+    // height: 100%;
+    .save-btn {
+      position: absolute;
+      bottom: -40px;
+    }
+    &.full-height {
+      height: 100%;
+    }
+    width: 100%;
     .chart-title {
-      text-align: center;
+      text-align: left;
       line-height: 51px;
-      width: 180px;
+      min-width: 180px;
       height: 51px;
       background: url("../../public/img/title-bg.png") no-repeat;
       // background: url(/img/title-bg.png) no-repeat;
+      display: inline-block;
+      background-size: 100% 100%;
+      padding: 0 20px;
     }
     .chart-box {
       position: relative;
+      box-sizing: border-box;
+      overflow: hidden;
       // border: 1px solid rgba(67, 108, 218, 0.8);
       padding: 5px;
-      &::before {
-        content: "";
-        // background: url(/img/left-top.svg) 0 0 no-repeat,
-        //   url(/img/right-top.svg) right 0 no-repeat;
-        background: url("../../public/img/left-top.svg") 0 0 no-repeat,
-          url("../../public/img/right-top.svg") right 0 no-repeat;
-        position: absolute;
-        top: 0;
-        left: 0;
-        display: block;
-        width: 100%;
-        height: 13px;
-      }
-      &::after {
-        content: "";
-        // background: url(/img/left-bottom.svg) 0 bottom no-repeat,
-        //   url(/img/right-bottom.svg) right bottom no-repeat;
-        background: url("../../public/img/left-bottom.svg") 0 bottom no-repeat,
-          url("../../public/img/right-bottom.svg") right bottom no-repeat;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        display: block;
-        width: 100%;
-        height: 13px;
+      width: calc(100%);
+      height: calc(100%);
+      &.show-border {
+        background-color: rgba(2, 12, 29, 0.2);
+        position: relative;
+        &::before {
+          content: "";
+          // background: url(/img/left-top.svg) 0 0 no-repeat,
+          //   url(/img/right-top.svg) right 0 no-repeat;
+          background: url("../../public/img/left-top.svg") 0 0 no-repeat,
+            url("../../public/img/right-top.svg") right 0 no-repeat;
+          position: absolute;
+          top: 0;
+          left: 0;
+          display: block;
+          width: 100%;
+          height: 13px;
+        }
+        &::after {
+          content: "";
+          // background: url(/img/left-bottom.svg) 0 bottom no-repeat,
+          //   url(/img/right-bottom.svg) right bottom no-repeat;
+          background: url("../../public/img/left-bottom.svg") 0 bottom no-repeat,
+            url("../../public/img/right-bottom.svg") right bottom no-repeat;
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          display: block;
+          width: 100%;
+          height: 13px;
+        }
       }
     }
+
     &.show-border {
       // border: 1px solid rgba(67, 108, 218, 0.8);
-      background-color: rgba(2, 12, 29, 0.2);
+      // background-color: rgba(2, 12, 29, 0.2);
       position: relative;
       // &::before {
       //   content: "";
@@ -943,6 +1415,8 @@ export default {
     }
     .digitalNumber {
       display: flex;
+      justify-content: center;
+      align-items: center;
       .units {
         font-size: 16px;
         height: 100%;
@@ -960,6 +1434,39 @@ export default {
   }
   .parent::-webkit-scrollbar {
     display: none;
+  }
+  .el-table {
+    // 滚动条整体宽度
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    // 滚动条滑槽样式
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    }
+    // 滚动条样式
+    &::-webkit-scrollbar-thumb {
+      border-radius: 8px;
+      background: rgb(9, 48, 133);
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: blue;
+    }
+    &::-webkit-scrollbar-thumb:active {
+      background: rgb(42, 55, 231);
+    }
+    // 浏览器失焦的样式
+    &::-webkit-scrollbar-thumb:window-inactive {
+      background: rgba(255, 0, 0, 0.4);
+    }
+  }
+  .el-table,
+  .el-table__expanded-cell,
+  .el-table th,
+  .el-table ::v-deep tr {
+    background-color: transparent !important;
   }
 }
 </style>

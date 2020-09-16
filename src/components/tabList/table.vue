@@ -39,7 +39,7 @@ export default {
     dataList: {
       type: Array,
       required: true,
-      default: null
+      default: ()=>[]
     },
   },
 

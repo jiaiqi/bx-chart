@@ -2,7 +2,7 @@
   <div
     class="tab-list"
     :style="{
-      height: chartHeight - 60 + 'px'
+      height: chartHeight - 60 + 'px',
     }"
   >
     <div class="tab-bar-box">
@@ -75,7 +75,13 @@ export default {
       default: () => {
         return []
       }
-    }
+    },
+    dataList: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
   },
   data () {
     return {
@@ -140,7 +146,7 @@ export default {
     height: 50px;
     .tab-bar {
       line-height: 30px;
-      max-width: 100px;
+      // max-width: 100px;
       padding: 0 5px;
       color: #999;
       text-align: center;

@@ -1,36 +1,71 @@
 <template>
-  <div ref="number" class="wrap-container"></div>
+  <div
+    ref="number"
+    class="wrap-container"
+    :style="{
+      'font-size': chartSettings.fontSize ? chartSettings.fontSize + 'px' : '',
+      width: wrapWidth ? wrapWidth : 'auto',
+    }"
+  ></div>
 </template>
 <script>
 export default {
-  name: "num",
+  name: "digital",
   data () {
     return {
       value: this.number.num,
       // value: 65656,
-      html: ""
+      html: "",
+      chartSettings:{}
     };
   },
   methods: {
     init () {
-      let html = ""
-      this.value.toString().split('').forEach(v => {
-        html += '<div class="wrap"><ul class="list scroll' + v + '">'
-        for (let i = 0; i <= 9; i++) {
-          html += '<li>' + i + '</li>'
-        }
-        html += '</ul></div>'
-      })
-      this.$refs.number.innerHTML = html
+      if (this.value || Number(this.value) === 0) {
+        let self = this
+        let html = ""
+        this.value.toString().split('').forEach(v => {
+          html += `<div class="digit-wrap"><ul class="list scroll${v}">`
+          for (let i = 0; i <= 9; i++) {
+            html += `<li style="color:${this.chartSettings.color}">${i}</li>`
+          }
+          html += '</ul></div>'
+        })
+        this.$refs.number.innerHTML = html
+      }
     }
   },
   updated () {
     this.init();
   },
+  computed: {
+    wrapWidth () {
+      if (this.value) {
+        let length = this.value.toString().split('').length
+        let fontSize = Number(this.chartSettings.fontSize)
+        // return fontSize * length + 'px'
+        return null
+      }
+    }
+  },
   props: {
     number: {
       type: Object,
       default: () => { { num: 0 } }
+    },
+    chartSetting: {
+      type: [Object,String],
+      default: () => { }
+    }
+  },
+  mounted(){
+    let chartSettings = this.chartSetting
+    if(typeof chartSettings==='string'){
+      try {
+        chartSettings = JSON.parse(chartSettings)
+      } catch (error) {
+        console.error(error)
+      }
     }
   },
   watch: {
@@ -48,15 +83,15 @@ export default {
 <style>
 .wrap-container {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
 }
-.wrap {
-  width: 30px;
+.digit-wrap {
+  width: 16px;
   height: 50px;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  font-size: 50px;
+  font-size: 18px;
 }
 .list {
   position: absolute;
@@ -69,10 +104,10 @@ export default {
 }
 .list li {
   list-style: none;
-  width: 30px;
+  width: 20px;
   height: 50px;
   line-height: 50px;
-  color: rgb(226, 243, 71);
+  color: #123123;
   text-align: center;
   float: left;
   box-sizing: border-box;

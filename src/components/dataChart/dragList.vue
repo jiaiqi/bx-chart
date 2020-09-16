@@ -1,7 +1,7 @@
 <template>
   <div class="dndList-list1">
     <div class="title">
-      <span>{{singList.name}}</span>
+      <span>{{ singList.name }}</span>
     </div>
     <div class="content">
       <draggable
@@ -9,23 +9,35 @@
         :options="deploy"
         class="dragArea"
         @start="start(singList)"
-        @end="onMove($event,singList)"
-        @add="add($event,singList)"
+        @end="onMove($event, singList)"
+        @add="add($event, singList)"
       >
-        <div class="content_list" v-for="(item,index) in singList.list" :key="index">
+        <div
+          class="content_list"
+          v-for="(item, index) in singList.list"
+          :key="index"
+        >
           <div
-            v-if="singList.type==='all'"
+            v-if="singList.type === 'all'"
             class="value"
-            :class="{columns:singList.type==='all'}"
-          >{{item.label}}</div>
-          <div v-else class="value" :class="{order_value:singList.type==='order'}">{{item.label}}</div>
+            :class="{ columns: singList.type === 'all' }"
+          >
+            {{ item.label }}
+          </div>
+          <div
+            v-else
+            class="value"
+            :class="{ order_value: singList.type === 'order' }"
+          >
+            {{ item.label }}
+          </div>
           <el-select
             v-model="item._condition.ruleType"
             filterable
             placeholder="请选择"
-            v-if="singList.type=='condition' && singList.list"
+            v-if="singList.type == 'condition' && singList.list"
             class="el-select"
-            @visible-change="selectConditionOperator(item,'click')"
+            @visible-change="selectConditionOperator(item, 'click')"
           >
             <el-option
               v-for="item in selectList"
@@ -33,16 +45,18 @@
               :label="item.label"
               :value="item.value"
             >
-              <span style="float: left;font-size: 13px">{{ item.label+'-'+item.value }}</span>
+              <span style="float: left; font-size: 13px;">{{
+                item.label + "-" + item.value
+              }}</span>
             </el-option>
           </el-select>
           <el-select
             v-model="item._group.type"
             filterable
             placeholder="请选择"
-            v-if="singList.type=='group'"
+            v-if="singList.type == 'group'"
             class="el-select"
-            @visible-change="selectGroupOperator(item,'click')"
+            @visible-change="selectGroupOperator(item, 'click')"
           >
             <el-option
               v-for="item in selectList"
@@ -55,7 +69,7 @@
             v-model="item._order.orderType"
             filterable
             placeholder="请选择"
-            v-if="singList.type=='order'"
+            v-if="singList.type == 'order'"
             class="el-select"
           >
             <el-option
@@ -64,35 +78,44 @@
               :label="item.label"
               :value="item.value"
             >
-              <span style="float: left;font-size: 13px">{{ item.label+'-'+item.value }}</span>
+              <span style="float: left; font-size: 13px;">{{
+                item.label + "-" + item.value
+              }}</span>
             </el-option>
           </el-select>
           <el-select
             v-model="item._aggregation.type"
             filterable
             placeholder="请选择"
-            v-if="singList.type=='aggregation'"
+            v-if="singList.type == 'aggregation'"
             class="el-select"
           >
             <el-option
-              v-for="(item,index) in selectList"
+              v-for="(item, index) in selectList"
               :key="index"
               :label="item.label"
               :value="item.value"
-              @visible-change="seleteAggregationOperator(item,'click')"
+              @visible-change="seleteAggregationOperator(item, 'click')"
             >
-              <span style="float: left;font-size: 13px">{{ item.label+'-'+item.value }}</span>
+              <span style="float: left; font-size: 13px;">{{
+                item.label + "-" + item.value
+              }}</span>
             </el-option>
           </el-select>
           <el-input
             v-model="item._condition.value"
-            v-if="singList.type!='all' && singList.type ==='condition'&&item.col_type!=='DateTime'&&item.col_type!=='Date'"
+            v-if="
+              singList.type != 'all' &&
+              singList.type === 'condition' &&
+              item.col_type !== 'DateTime' &&
+              item.col_type !== 'Date'
+            "
             placeholder="请输入内容"
             class="input-value"
           ></el-input>
           <el-input
             v-model="item.aliasName"
-            v-if="singList.type ==='aggregation'||singList.type ==='group'"
+            v-if="singList.type === 'aggregation' || singList.type === 'group'"
             placeholder="请输入别名"
             class="input-value"
           ></el-input>
@@ -107,7 +130,10 @@
           ></el-date-picker>-->
           <el-date-picker
             v-model="item._condition.value"
-            v-if="(item.col_type=='DateTime'||item.col_type=='Date' )&& singList.type ==='condition'"
+            v-if="
+              (item.col_type == 'DateTime' || item.col_type == 'Date') &&
+              singList.type === 'condition'
+            "
             type="daterange"
             align="right"
             unlink-panels
@@ -119,8 +145,8 @@
           <el-button
             type="danger"
             icon="el-icon-delete"
-            @click.prevent.stop="deleteItem(item,singList,index)"
-            v-if="singList.type!='all'"
+            @click.prevent.stop="deleteItem(item, singList, index)"
+            v-if="singList.type != 'all'"
           ></el-button>
         </div>
       </draggable>
@@ -246,7 +272,7 @@ export default {
     add (ev, list) {
       let num = 0;
       for (let i = 0; i < list.list.length; i++) {
-        if (list.list[i].id === list.list[ev.newIndex].id) {
+        if (list.list[ i ].id === list.list[ ev.newIndex ].id) {
           num++;
           if (num !== 1) {
             list.list.splice(ev.newIndex, 1);
@@ -268,7 +294,7 @@ export default {
       sign._order.orderType = "";
 
       for (let i = 0; i < list.list.length; i++) {
-        if (list.list[i].id === sign.id) {
+        if (list.list[ i ].id === sign.id) {
           list.list.splice(i, 1);
         }
       }
@@ -936,23 +962,23 @@ export default {
         flex: 1;
         border-radius: 0;
       }
-      .input-value /deep/.el-input__inner {
+      .input-value ::v-deep.el-input__inner {
         border-radius: 0;
         // border-left: 0;
         border-top-right-radius: 0px;
         border-bottom-right-radius: 0px;
       }
-      .date-picker /deep/ .el-input__inner {
+      .date-picker ::v-deep .el-input__inner {
         border-radius: 0;
         border-top-right-radius: 4px;
         border-bottom-right-radius: 4px;
       }
-      .el-select /deep/.el-input__inner {
+      .el-select ::v-deep.el-input__inner {
         border-radius: 0;
         border-right: 0;
       }
     }
-    .content_list /deep/ .el-button--danger {
+    .content_list ::v-deep .el-button--danger {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
       border-radius: 0;

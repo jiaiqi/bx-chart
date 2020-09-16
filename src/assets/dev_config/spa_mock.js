@@ -1,18 +1,29 @@
 // !!! mock !!!!
 let dummy = {
+
 	server_cfg: {
-		back_server_protocol: 'http',
+		back_server_protocol: 'https',
+		// back_server_protocol: 'http',
 		// back_server_ip: "192.168.0.192",
 		back_server_ip: "192.168.0.155",
-		// back_server_ip: '10.120.119.37',
+		// back_server_ip: 'srvms.100xsys.cn',
+		// back_server_port: '443'//https
 		back_server_port: '8106'
 		// back_server_port: '8101'
 		//  开发server_cfg
+		// http://124.47.10.210:18103
 	},
-	dummy: function() {
+	dummy: function () {
 		if (!top.pathConfig) {
 			top.pathConfig = {}
 			top.pathConfig.application = 'datacenter' //  开发app
+			// top.pathConfig = { gateway_protocol: "http", gateway_ip: "192.168.0.244", port: "8101", gateway: "http://192.168.0.244:8101", sso_app: "sso" }
+			top.pathConfig = { gateway_protocol: "http", gateway_ip: "192.168.0.155", port: "8106", gateway: "http://192.168.0.155:8106", sso_app: "sso" }
+			// top.pathConfig = { gateway_protocol: "http", gateway_ip: "192.168.0.192", port: "8101", gateway: "http://192.168.0.192:8101", sso_app: "sso" } //延安环境
+			// top.pathConfig = { gateway_protocol: "http", gateway_ip: "192.168.0.153", port: "8103", gateway: "http://192.168.0.153:8103", sso_app: "sso" }
+			// top.pathConfig = { gateway_protocol: "http", gateway_ip: "124.47.10.210", port: "18103", gateway: "http://124.47.10.210:18103", sso_app: "sso" }
+
+			sessionStorage.setItem('pathConfig', JSON.stringify(top.pathConfig))
 			top.user = localStorage.getItem('user')
 			top.user = {
 				create_time: '2019-08-11 22:30:15',
@@ -60,7 +71,7 @@ let dummy = {
 			}
 			sessionStorage.setItem(
 				'bx_auth_ticket',
-				'xabxdzkj-2adba909-7dc0-4f33-b34e-5459964e2615'
+				'xabxdzkj-8af62019-83b9-4110-9457-b36c03d6cc5f'
 			) //  开发bx_auth_ticket 更新后需清除浏览器缓存
 			// sessionStorage.setItem("current_login_user", JSON.stringify(top.user)); //  开发bx_auth_ticket
 		}

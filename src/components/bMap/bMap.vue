@@ -104,10 +104,6 @@ export default {
           styleId: '56e2904e70a8447d06fa76839ef638ef'
         });
       }
-
-      // this.map.setMapStyleV2({
-      //   styleId: '56e2904e70a8447d06fa76839ef638ef'
-      // });
       this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
       let rotationAngle = self.mapSettings.rotationAngle ? self.mapSettings.rotationAngle : 65;
       let tiltAngle = self.mapSettings.tiltAngle ? self.mapSettings.tiltAngle : 50;
@@ -191,8 +187,6 @@ export default {
   beforeMount () {
     let script = document.createElement('script')
     script.type = 'text/javascript'
-    // script.src = '//api.map.baidu.com/api?v=2.0&ak=M3oeNPOv6qb4CbiqcXVCpq27TaG9S7DB'
-    // document.getElementsByTagName('head')[ 0 ].appendChild(script)
     script.src = '//api.map.baidu.com/api?type=webgl&v=1.0&ak=M3oeNPOv6qb4CbiqcXVCpq27TaG9S7DB'
     document.getElementsByTagName('head')[ 0 ].appendChild(script)
   },
@@ -316,7 +310,7 @@ export default {
       handler (newValue, oldValue) {
         if (newValue.chart_width && newValue.chart_height) {
           try {
-            this.mapSettings = JSON.parse(decodeURIComponent(newValue.chart_settings))
+            this.mapSettings = newValue.chart_settings && typeof newValue.chart_settings === 'string' ? JSON.parse(decodeURIComponent(newValue.chart_settings)) : newValue.chart_settings
           } catch (error) {
             console.log(error, '\n', newValue);
           }

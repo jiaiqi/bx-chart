@@ -1,48 +1,58 @@
 <template>
   <div class="bx-chart-views">
-    <div class="chart-main" v-if="this.chartConfigs.chart_type==='digital'">
-      <div class="digital" :style="{'width':chartWidth + 'px','height':chartHeight + 'px'}">
-        <div class="digital-title" v-if="titleText">{{titleText}}</div>
+    <div class="chart-main" v-if="this.chartConfigs.chart_type === 'digital'">
+      <div
+        class="digital"
+        :style="{ width: chartWidth + 'px', height: chartHeight + 'px' }"
+      >
+        <div class="digital-title" v-if="titleText">{{ titleText }}</div>
         <div class="digitalNumber">
           <div
             class="units"
-            v-if="JSON.parse(this.chartConfigs.chart_settings).units_position ==='left'"
-          >{{JSON.parse(chartConfigs.chart_settings).units}}</div>
+            v-if="
+              JSON.parse(this.chartConfigs.chart_settings).units_position ===
+                'left'
+            "
+          >
+            {{ JSON.parse(chartConfigs.chart_settings).units }}
+          </div>
           <digital :number="chartDatas"></digital>
           <div
             class="units"
-            v-if="JSON.parse(this.chartConfigs.chart_settings).units_position ==='right'"
-          >{{JSON.parse(chartConfigs.chart_settings).units}}</div>
+            v-if="
+              JSON.parse(this.chartConfigs.chart_settings).units_position ===
+                'right'
+            "
+          >
+            {{ JSON.parse(chartConfigs.chart_settings).units }}
+          </div>
         </div>
       </div>
     </div>
     <div class="chart-main" :style="vchartStyle" v-else>
-      <div class="chart-title" :style="chartTitleStyle" v-if="titleText">{{titleText}}</div>
+      <div class="chart-title" :style="chartTitleStyle" v-if="titleText">
+        {{ titleText }}
+      </div>
       <div>
-        <!-- <eMap
-          v-if="this.chartConfigs.chart_type === 'map'"
-          :style="{'width':chartWidth + 'px','height':(chartHeight - 30) + 'px'}"
-          :chartWidth="chartWidth"
-          :chartHeight="chartHeight"
-          :mapConfigs="chartDatas"
-          :lengendSet="this.chartConfigs.legend_visible"
-        ></eMap>-->
         <ve-gauge
           :data="chartDatas"
           v-if="this.chartConfigs.chart_type === 'gauge'"
           :settings="JSON.parse(chartConfigs.chart_settings)"
-          :height="(chartHeight - 30) + 'px'"
+          :height="chartHeight - 30 + 'px'"
           :width="chartWidth + 'px'"
           :extend="getChartExtend(this.chartConfigs.chart_type)"
         ></ve-gauge>
         <div
           class="parent"
-          :style="{height:chartHeight + 'px'}"
-          v-if="this.chartConfigs.chart_type==='table'"
+          :style="{ height: chartHeight + 'px' }"
+          v-if="this.chartConfigs.chart_type === 'table'"
         >
           <el-table
-            :row-style="{background:'rgb(11, 15, 52)',color:'white'}"
-            :header-cell-style="{background:'rgb(11, 15, 52)',color:'white'}"
+            :row-style="{ background: 'rgb(11, 15, 52)', color: 'white' }"
+            :header-cell-style="{
+              background: 'rgb(11, 15, 52)',
+              color: 'white'
+            }"
             :data="chartDatas.data"
             style="width: 100%"
           >
@@ -53,25 +63,31 @@
         </div>
 
         <ve-liquidfill
-          v-if="this.chartConfigs.chart_type==='liquidfill'"
+          v-if="this.chartConfigs.chart_type === 'liquidfill'"
           :data="chartDatas"
-          :width="chartWidth+'px'"
-          :height="(chartHeight - 30)+ 'px'"
+          :width="chartWidth + 'px'"
+          :height="chartHeight - 30 + 'px'"
           :settings="chartSettings"
         ></ve-liquidfill>
         <ve-heatmap
           :data="chartDatas"
-          v-if="this.chartConfigs.chart_type==='heatmap'"
-          :width="chartWidth+'px'"
+          v-if="this.chartConfigs.chart_type === 'heatmap'"
+          :width="chartWidth + 'px'"
           :settings="chartSettings"
-          :height="(chartHeight - 30)+ 'px'"
+          :height="chartHeight - 30 + 'px'"
           :extend="getChartExtend(this.chartConfigs.chart_type)"
         ></ve-heatmap>
         <ve-chart
-          v-else-if="this.chartConfigs.chart_type!=='map'&&this.chartConfigs.chart_type!=='gauge'&&this.chartConfigs.chart_type!=='ranking'&&this.chartConfigs.chart_type!=='digital'&&this.chartConfigs.chart_type!=='liquidfill'"
+          v-else-if="
+            this.chartConfigs.chart_type !== 'map' &&
+              this.chartConfigs.chart_type !== 'gauge' &&
+              this.chartConfigs.chart_type !== 'ranking' &&
+              this.chartConfigs.chart_type !== 'digital' &&
+              this.chartConfigs.chart_type !== 'liquidfill'
+          "
           :data="chartDatas"
           :settings="chartSettings"
-          :height="(chartHeight - 30) + 'px'"
+          :height="chartHeight - 30 + 'px'"
           :width="chartWidth + 'px'"
           :extend="getChartExtend(this.chartConfigs.chart_type)"
         ></ve-chart>
@@ -129,33 +145,33 @@ export default {
     chartSettings () {
       let chartSetting = { type: this.chartConfigs.chart_type };
       if (this.chartConfigs.chart_type === "histogram" && this.isStack) {
-        chartSetting["stack"] = { 用户: this.stackLabel };
+        chartSetting[ "stack" ] = { 用户: this.stackLabel };
       }
       if (
         this.chartConfigs.chart_type === "histogram" &&
         this.chartConfigs.heapUp === true
       ) {
-        chartSetting["stack"] = { 用户: this.stackLabel };
+        chartSetting[ "stack" ] = { 用户: this.stackLabel };
       } else if (this.chartConfigs.chart_type === "liquidfill") {
-        chartSetting["seriesMap"] = [];
+        chartSetting[ "seriesMap" ] = [];
         let chartSettings = JSON.parse(this.chartConfigs.chart_settings);
         let formatter = chartSettings.label.formatter;
         if (formatter && typeof formatter === "string") {
           let max = this.liquid_max;
-          debugger
-          if(this.xssFilter(formatter)){
+
+          if (this.xssFilter(formatter)) {
             formatter = eval(formatter);
           }
           // formatter = eval("(o)=>`${o.seriesName}\n${this.convert(Math.round(o.value * this.liquid_max))}次\n占比:${(o.value*100).toFixed(2)}%`")
-          chartSettings.label["formatter"] = formatter;
+          chartSettings.label[ "formatter" ] = formatter;
         } else {
-          chartSettings.label["formatter"] = o => {
+          chartSettings.label[ "formatter" ] = o => {
             return `${o.seriesName}\n${Math.round(
               parseFloat(o.value * this.liquid_max)
             )}`;
           };
         }
-        chartSetting["seriesMap"].push(chartSettings);
+        chartSetting[ "seriesMap" ].push(chartSettings);
         // chartSetting["seriesMap"][0].label["formatter"] = (o) => {
         //   return `${o.seriesName}\n${Math.round(parseFloat(o.value * this.liquid_max))}`;
         // };
@@ -178,8 +194,8 @@ export default {
     chartPieSettings () {
       let seriess = {
         type: this.chartConfigs.chart_type,
-        center: ["50%", "50%"],
-        radius: [0, "60%"]
+        center: [ "50%", "50%" ],
+        radius: [ 0, "60%" ]
       };
       let legend = {
         show: this.legendVisible,
@@ -220,13 +236,13 @@ export default {
           color: "#5CF9FE" // 100% 处的颜色
         }
       ]);
-      let colorSet = [[1, color]];
+      let colorSet = [ [ 1, color ] ];
       let series = {
         type: this.chartConfigs.chart_type,
         axisLine: {
           show: true,
           lineStyle: {
-            color: [[0.09, "#5CF9FE"], [0.82, "#468EFD"], [1, "#5CF9FE"]],
+            color: [ [ 0.09, "#5CF9FE" ], [ 0.82, "#468EFD" ], [ 1, "#5CF9FE" ] ],
             width: 25,
             shadowOffsetX: 0,
             shadowOffsetY: 0,
@@ -308,7 +324,7 @@ export default {
         textStyle: textStyle,
         radar: {
           radius: "75%",
-          center: ["50%", "60%"]
+          center: [ "50%", "60%" ]
         }
       };
       return chartSetting;
@@ -405,7 +421,7 @@ export default {
       rotate: 0,
       colors:
         this.chartConfigs.chart_type == "line"
-          ? ["#00B7C3", "#00CC6A", "F7630C", "#0078D7", "#6B69D6", "#009688"]
+          ? [ "#00B7C3", "#00CC6A", "F7630C", "#0078D7", "#6B69D6", "#009688" ]
           : [
             "#1685a9",
             "#065279",
@@ -460,8 +476,8 @@ export default {
           conditions.map(cond => {
             let a = cond.value.toString();
             if (cond.value.indexOf("function") > -1) {
-              if(this.xssFilter(a )){
-               cond.value = eval(a);
+              if (this.xssFilter(a)) {
+                cond.value = eval(a);
               }
             } else {
               cond.value = a;
@@ -476,12 +492,13 @@ export default {
       ) {
         let keys = JSON.parse(information.chart_columns).columns; // 维度 +  指标合集
         let countColName = JSON.parse(information.chart_columns).nums; // count 字段
-        let dataType = JSON.parse(information.chart_columns).columns[1]; // 数据分类，例如tab时使用
+        let dataType = JSON.parse(information.chart_columns).columns[ 1 ]; // 数据分类，例如tab时使用
         let chartType = information.chart_type; // 图标类型
         let norm = null; //chartSetting 需要有几个指标及对应的名称
 
         if (chartType === "line" || chartType === "histogram") {
           let chart_settings = information.chart_settings;
+
           if (chart_settings) {
             chart_settings = JSON.parse(chart_settings);
           }
@@ -537,7 +554,7 @@ export default {
           } else if (chartType === "liquidfill") {
             this.chartDatas = resData.all;
           } else if (chartType === "table") {
-            
+
           }
           return { isRes: true, res: res };
         } else {
@@ -550,15 +567,25 @@ export default {
     }
   },
   mounted () {
-    
+
   },
   watch: {
     chartConfigs: {
+      immediate: true,
       handler: function (newValue, oldValue) {
-
         this.getCharts()
         if (newValue.chart_type === "ranking") {
-          this.chartDatas["waitTime"] = 9999999;
+          this.chartDatas[ "waitTime" ] = 9999999;
+        }
+
+
+        try {
+          let chart_settings = typeof newValue.chart_settings === 'string' ? JSON.parse(newValue.chart_settings) : {}
+          if (chart_settings.hideTitle === true) {
+            newValue.chart_name = null
+          }
+        } catch (error) {
+
         }
         return newValue;
       },

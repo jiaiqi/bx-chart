@@ -10,7 +10,7 @@
         label="模型名称："
         prop="modelName"
         :rules="[
-          { required: true, message: '请输入模型名称', trigger: 'blur' }
+          { required: true, message: '请输入模型名称', trigger: 'blur' },
         ]"
       >
         <el-input v-model="ruleForm.modelName"></el-input>
@@ -86,7 +86,7 @@
       <div class="preview-content">
         <el-table
           :data="tableData"
-          style="width: 100%"
+          style="width: 100%;"
           stripe
           fixed
           v-if="tableData && tableTitle"
@@ -1009,7 +1009,7 @@ export default {
     justify-content: center;
     height: 5rem;
   }
-  .detail-dialog /deep/ .el-dialog__body .el-table {
+  .detail-dialog ::v-deep .el-dialog__body .el-table {
     overflow-y: scroll;
     height: 600px;
   }
