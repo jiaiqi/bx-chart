@@ -1,4 +1,4 @@
-# data_display
+# bx-chart
 
 ## Project setup
 ```

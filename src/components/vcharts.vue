@@ -44,8 +44,8 @@
             :size="chartConfigs.chart_settings.size"
             v-if="
               chartConfigs.chart_settings &&
-              chartConfigs.chart_settings.theme === 'led' &&
-              (chartDatas.num || chartDatas.num === 0)
+                chartConfigs.chart_settings.theme === 'led' &&
+                (chartDatas.num || chartDatas.num === 0)
             "
           >
           </roller-digital>
@@ -77,7 +77,7 @@
       class="chart-main full-height"
       v-if="
         this.chartConfigs.chart_type === 'image' ||
-        this.chartConfigs.chart_type === 'obj'
+          this.chartConfigs.chart_type === 'obj'
       "
       :style="vchartStyle"
     >
@@ -121,7 +121,7 @@
         v-if="
           (chartConfigs.chart_type === 'image' ||
             chartConfigs.chart_type === 'obj') &&
-          chartConfigs.imgUrl
+            chartConfigs.imgUrl
         "
         :config="chartConfigs"
         :bgUrl="chartConfigs.imgUrl"
@@ -140,8 +140,8 @@
       class="chart-main"
       v-else-if="
         chartConfigs.chart_type !== 'digital' &&
-        chartConfigs.chart_type !== 'image' &&
-        chartConfigs.chart_type !== 'obj'
+          chartConfigs.chart_type !== 'image' &&
+          chartConfigs.chart_type !== 'obj'
       "
       :class="{
         'show-border':
@@ -239,6 +239,7 @@
               :label="chartConfigs.chart_settings['value']"
             ></el-table-column> -->
             <el-table-column
+              show-overflow-tooltip
               :prop="col.column"
               :label="col.label"
               :key="col.column"
@@ -264,7 +265,7 @@
         <customPage
           v-if="
             this.chartConfigs.chart_type === 'custompage' ||
-            this.chartConfigs.chart_type === '自定义页面'
+              this.chartConfigs.chart_type === '自定义页面'
           "
           :chartWidth="chartWidth"
           :chartHeight="chartHeight"
@@ -299,8 +300,8 @@
         <news-list
           v-if="
             this.chartConfigs.chart_type === 'newslist' &&
-            Array.isArray(chartDatas) &&
-            chartDatas.length > 0
+              Array.isArray(chartDatas) &&
+              chartDatas.length > 0
           "
           :chartSetting="chartConfigs.chart_settings"
           :dateCol="chartConfigs.chart_settings.dateColumn"
@@ -328,18 +329,18 @@
         <ve-chart
           v-else-if="
             this.chartConfigs.chart_type !== 'custompage' &&
-            this.chartConfigs.chart_type !== '自定义页面' &&
-            this.chartConfigs.chart_type !== 'tablist' &&
-            this.chartConfigs.chart_type !== 'table' &&
-            this.chartConfigs.chart_type !== 'map' &&
-            this.chartConfigs.chart_type !== 'baidumap' &&
-            this.chartConfigs.chart_type !== 'gauge' &&
-            this.chartConfigs.chart_type !== 'ranking' &&
-            this.chartConfigs.chart_type !== 'digital' &&
-            this.chartConfigs.chart_type !== 'liquidfill' &&
-            this.chartConfigs.chart_type !== 'surveillance' &&
-            this.chartConfigs.chart_type !== 'newslist' &&
-            this.chartConfigs.chart_type !== 'numberlist'
+              this.chartConfigs.chart_type !== '自定义页面' &&
+              this.chartConfigs.chart_type !== 'tablist' &&
+              this.chartConfigs.chart_type !== 'table' &&
+              this.chartConfigs.chart_type !== 'map' &&
+              this.chartConfigs.chart_type !== 'baidumap' &&
+              this.chartConfigs.chart_type !== 'gauge' &&
+              this.chartConfigs.chart_type !== 'ranking' &&
+              this.chartConfigs.chart_type !== 'digital' &&
+              this.chartConfigs.chart_type !== 'liquidfill' &&
+              this.chartConfigs.chart_type !== 'surveillance' &&
+              this.chartConfigs.chart_type !== 'newslist' &&
+              this.chartConfigs.chart_type !== 'numberlist'
           "
           :data="chartDatas"
           :settings="chartSettings"
@@ -396,13 +397,13 @@ export default {
   props: {
     chartsItemTitleStyle: {
       type: Object,
-      default: function () {
+      default: function() {
         return null;
       },
     },
     chartConfigs: {
       type: Object,
-      default: function () {
+      default: function() {
         return null;
       },
     },
@@ -424,7 +425,7 @@ export default {
       let chartHeight = this.chartHeight;
       let res = "0";
       if (chartHeight) {
-        chartHeight = chartHeight -10
+        chartHeight = chartHeight - 10;
         res = chartHeight;
         if (this.showBorder) {
           res = chartHeight - 60;
@@ -1322,10 +1323,16 @@ export default {
         let res = "";
         if (information.data_source === "mock") {
           try {
-            res =
+            let data =
               information.mock_data && typeof information.mock_data === "string"
                 ? JSON.parse(information.mock_data)
                 : [];
+            res = {
+              data: {
+                data: data,
+                state: "SUCCESS",
+              },
+            };
           } catch (error) {
             console.log(error);
           }
@@ -1335,12 +1342,7 @@ export default {
           }
           res = await this.axios.post(DataUrl, DataReq); // 请求异步，同步处理
         }
-        let datas =
-          information.data_source === "mock"
-            ? res
-            : res.data.state === "SUCCESS"
-            ? res.data.data
-            : [];
+        let datas = res.data.data || [];
         if (
           information.chart_type === "surveillance" &&
           information.data_source !== "mock"
@@ -1396,9 +1398,9 @@ export default {
             this.chartDatas = {
               data: datas.map((item) => {
                 return {
+                  ...item,
                   name: item[settings.name],
                   value: Number(item[settings.value]),
-                  ...item,
                 };
               }),
               unit: settings.unit,
@@ -1424,6 +1426,11 @@ export default {
           if (chartType === "newslist" || chartType === "numberlist") {
             this.chartDatas = datas;
           }
+          // if(information.data_source === "mock"){
+          //   this.chartDatas = {
+          //     data:datas
+          //   };
+          // }
           return { isRes: true, res: res };
         } else {
           if (chartType === "map") {
@@ -1472,7 +1479,7 @@ export default {
   watch: {
     chartConfigs: {
       immediate: true,
-      handler: function (newValue, oldValue) {
+      handler: function(newValue, oldValue) {
         let that = this;
         that.chartConfig = that.deepClone(newValue);
         if (

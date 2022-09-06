@@ -4,12 +4,12 @@ let dummy = {
 	server_cfg: {
 		back_server_protocol: 'https',
 		// back_server_protocol: 'http',
-		back_server_ip: "192.168.0.192",
+		// back_server_ip: "192.168.0.192",
 		// back_server_ip: "192.168.0.155",
-		// back_server_ip: 'srvms.100xsys.cn',
-		// back_server_port: '443'//https
+		back_server_ip: 'srvms.100xsys.cn',
+		back_server_port: '443'//https
 		// back_server_port: '8106'
-		back_server_port: '8101'
+		// back_server_port: '8101'
 		//  开发server_cfg
 		// http://124.47.10.210:18103
 	},
