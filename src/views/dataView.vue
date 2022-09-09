@@ -24,7 +24,7 @@
       <div
         v-if="
           !contentData.dashboard_config ||
-          !contentData.dashboard_config.hideTitle
+            !contentData.dashboard_config.hideTitle
         "
         class="title"
         :style="{
@@ -40,7 +40,7 @@
         class="date-time"
         v-if="
           !contentData.dashboard_config ||
-          !contentData.dashboard_config.hideDate
+            !contentData.dashboard_config.hideDate
         "
       >
         <DateTime></DateTime>
@@ -50,9 +50,9 @@
         @click="changeEditable"
         v-if="
           viewIsDraggable &&
-          (!contentData.dashboard_config ||
-            (contentData.dashboard_config &&
-              contentData.dashboard_config.editable))
+            (!contentData.dashboard_config ||
+              (contentData.dashboard_config &&
+                contentData.dashboard_config.editable))
         "
       >
         <img
@@ -76,7 +76,7 @@
         @click="openFullscreen"
         v-if="
           !contentData.dashboard_config ||
-          contentData.dashboard_config.hideFullscreen
+            contentData.dashboard_config.hideFullscreen
         "
       >
         <img
@@ -152,7 +152,7 @@
         <v-charts
           v-if="
             chartCol !== undefined &&
-            (!chartCol.use_flag || chartCol.use_flag !== '否')
+              (!chartCol.use_flag || chartCol.use_flag !== '否')
           "
           :chartConfigs="chartCol"
           :chartsItemTitleStyle="chartsItemTitleStyle"
@@ -178,7 +178,7 @@
         <v-charts
           v-if="
             chartCol !== undefined &&
-            (!chartCol.use_flag || chartCol.use_flag !== '否')
+              (!chartCol.use_flag || chartCol.use_flag !== '否')
           "
           :chartConfigs="chartCol"
           :chartHeight="300"
@@ -199,7 +199,7 @@ import DateTime from "@/components/date-time/dateTime";
 export default {
   components: { vCharts, DateTime },
   computed: {
-    setHeaderStyle () {
+    setHeaderStyle() {
       let style = {
         height: this.headerHeigth + "px",
         "font-size": this.headerFontSize + "px",
@@ -209,7 +209,7 @@ export default {
       };
       return style;
     },
-    setMainStyle () {
+    setMainStyle() {
       let style = {
         position: "relative",
         height: this.isPcEnv
@@ -222,7 +222,7 @@ export default {
       };
       return style;
     },
-    setViewStyle () {
+    setViewStyle() {
       let bx_auth_ticket = sessionStorage.getItem("bx_auth_ticket");
       let style = {};
       if (this.isPcEnv) {
@@ -236,7 +236,8 @@ export default {
             : "", //如果配置了页面宽度就用配的，否则宽度为视口宽度
           "background-image": this.contentData.dashboard_background_image,
           "background-size": this.contentData.background_size,
-          "background-color": this.contentData.background_color || 'transparent',
+          "background-color":
+            this.contentData.background_color || "transparent",
           "background-position": "center center",
           "background-repeat": "no-repeat",
           // overflow: "hidden"
@@ -245,18 +246,21 @@ export default {
         style = {
           "background-image": this.contentData.dashboard_background_image
             ? this.contentData.dashboard_background_image
-            : `url("${top?.pathConfig?.gateway
-              ? top?.pathConfig?.gateway
-              : top.backendIpAddr
-            }/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200714/20200603191436310100/20200714152755683100.png&bx_auth_ticket=${bx_auth_ticket}")`,
+            : `url("${
+                top?.pathConfig?.gateway
+                  ? top?.pathConfig?.gateway
+                  : top.backendIpAddr
+              }/file/download?filePath=/bxanalyze_dashboard/dashboard_background/20200714/20200603191436310100/20200714152755683100.png&bx_auth_ticket=${bx_auth_ticket}")`,
           "background-size": "100% 100%",
-          "background-color": this.contentData.background_color || 'transparent',
+          "background-color":
+            this.contentData.background_color || "transparent",
           "background-position": "center center",
           // overflow: "hidden"
         };
       }
       console.log(this.contentData, "contentData");
-      document.body.style.backgroundColor = this.contentData.background_color || 'transparent';
+      document.body.style.backgroundColor =
+        this.contentData.background_color || "transparent";
       document.body.style.width = "";
       document.body.style.height = "";
       return style;
@@ -272,7 +276,7 @@ export default {
     //   // console.log("contentData", this.contentData)
     // },
   },
-  data () {
+  data() {
     return {
       title: "",
       testVal: "",
@@ -305,40 +309,60 @@ export default {
   watch: {
     chartConfig: {
       deep: true,
-      handler (newValue, oldValue) {
+      handler(newValue, oldValue) {
         return newValue;
       },
     },
   },
   methods: {
-    clickChart (e, config) {
-      if (e.chart_type === "obj" && e?.objType === "tower" && e.lybm) {
-        if (e.targetUrl) {
-          top.window.open(e.targetUrl + '?lybm=' + e.lybm);
-        } else {
-          top.window.open("/bx-chart/#/dataView/DS202006110018?lybm=" + e.lybm);
+    clickChart(e, config) {
+      if (
+        ["obj", "对象"].includes(e.chart_type) &&
+        e?.objType === "tower" &&
+        e.lybm
+      ) {
+        let targetUrl = `${e?.targetUrl}?lybm=${e.lybm}`|| `/chart/#/dataView/DS202006110018?lybm=${e.lybm}`;
+        if (e.appName) {
+          targetUrl += `&appName=${e.appName}`;
         }
-      } if (e.chart_type === "obj" && e?.objType === "house" && e.lybm) {
-        if (e.targetUrl) {
-          top.window.open(e.targetUrl + '?lybm=' + e.lybm);
-        } else {
-          top.window.open("/bx-chart/#/dataView/DS202006110018?lybm=" + e.lybm);
+        top.window.open(targetUrl);
+        // if (e.targetUrl) {
+        //   top.window.open(e.targetUrl + "?lybm=" + e.lybm);
+        // } else {
+        //   top.window.open("/bx-chart/#/dataView/DS202006110018?lybm=" + e.lybm);
+        // }
+      }
+      if (
+        ["obj", "对象"].includes(e.chart_type) &&
+        e?.objType === "house" &&
+        e.lybm
+      ) {
+        let targetUrl = `${e?.targetUrl}?lybm=${e.lybm}` || `/chart/#/dataView/DS202006110018?lybm=${e.lybm}`;
+        if (e.appName) {
+          targetUrl += `&appName=${e.appName}`;
         }
-      } else if (e.chart_type === "obj" && e?.objType === "camera") {
-        debugger
-        if (e[ 'targetParams' ]) {
-          top.window.open(
-            `/bx-chart/#/monitoringScreen?${e[ "idCol" ]}=${e[ e[ "idCol" ] ]}&${e[ 'targetParams' ]}=${e[ e[ 'targetParams' ] ]}`
-          );
-        } else {
-          top.window.open(
-            "/bx-chart/#/monitoringScreen?" + e[ "idCol" ] + "=" + e[ e[ "idCol" ] ]
-          );
+        top.window.open(targetUrl);
+        // if (e.targetUrl) {
+        //   top.window.open(e.targetUrl + "?lybm=" + e.lybm);
+        // } else {
+        //   top.window.open("chart/#/dataView/DS202006110018?lybm=" + e.lybm);
+        // }
+      } else if (
+        ["obj", "对象"].includes(e.chart_type) &&
+        e?.objType === "camera"
+      ) {
+        let targetUrl = `/chart/#/monitoringScreen?${e["idCol"]}=${
+          e[e["idCol"]]
+        }`;
+        if (e["targetParams"]) {
+          targetUrl = `/chart/#/monitoringScreen?${e["idCol"]}=${
+            e[e["idCol"]]
+          }&${e["targetParams"]}=${e[e["targetParams"]]}`;
         }
-
+        top.window.open(targetUrl);
       }
     },
-    async getObjChartData (item) {
+    async getObjChartData(item) {
       //获取类型为obj的chart的数据
       if (
         item.chart_request_payload &&
@@ -350,13 +374,14 @@ export default {
           : top.backendIpAddr + item.chart_request_url;
         let req = item.chart_request_payload;
         let res = await this.$http.post(url, req);
+        debugger;
         if (res.data.state === "SUCCESS") {
           let data = res.data.data;
           return res.data.data;
         }
       }
     },
-    changeEditable () {
+    changeEditable() {
       //更改可编辑状态(是否可编辑)
       this.editable = !this.editable;
       let data = JSON.parse(JSON.stringify(this.chartConfig));
@@ -367,10 +392,10 @@ export default {
       });
       this.chartConfig = data;
     },
-    onResize (newRect) {
+    onResize(newRect) {
       // 缩放 拖拽 时
     },
-    uncheck (e, inN) {
+    uncheck(e, inN) {
       // 点击图表外范围时, 取消上次点击的图表的选中状态
       this.drIsActive = e.id;
       this.onIndex = inN;
@@ -385,7 +410,7 @@ export default {
       });
       this.chartConfig = data;
     },
-    clickedFun (e, inN) {
+    clickedFun(e, inN) {
       // 激活
       this.drIsActive = e.id;
       this.onIndex = inN;
@@ -403,7 +428,7 @@ export default {
         this.chartConfig = this.deepClone(data);
       }
     },
-    activatedFun (e, n) {
+    activatedFun(e, n) {
       this.drIsActive = "";
       let data = JSON.parse(JSON.stringify(this.chartConfig));
       data = data.map((item, index) => {
@@ -419,15 +444,15 @@ export default {
       });
       this.chartConfig = data;
     },
-    resizestopEnd (newRect) {
+    resizestopEnd(newRect) {
       // 拖拽结束
       this.setDrOps(this.drIsActive, newRect);
     },
-    dragstopEnd (newRect) {
+    dragstopEnd(newRect) {
       // 缩放结束
       this.setDrOps(this.drIsActive, newRect);
     },
-    setDrOps (key, ops) {
+    setDrOps(key, ops) {
       let colName = key;
       let data = JSON.parse(JSON.stringify(this.chartConfig));
       data.map((item, index) => {
@@ -440,11 +465,11 @@ export default {
       });
       this.chartConfig = data;
     },
-    setItemStype (e) {
+    setItemStype(e) {
       let style = {};
       return style;
     },
-    setColumnsStyle (e) {
+    setColumnsStyle(e) {
       let style = {
         width: parseInt(100) + "%",
         height: parseInt(100 / e.length) + "%",
@@ -452,13 +477,13 @@ export default {
       };
       return style;
     },
-    setChartHeight (e) {
+    setChartHeight(e) {
       let height = parseInt(
         (this.contentData.dashboard_height - this.headerHeigth) / e.length
       );
       return height;
     },
-    async getDashboardData (e) {
+    async getDashboardData(e) {
       let self = this;
       let isLoad = false;
       let resData = null;
@@ -471,7 +496,7 @@ export default {
         );
         let params = {
           serviceName: "srvanalyze_dashboard_select",
-          colNames: [ "*" ],
+          colNames: ["*"],
           condition: [
             {
               colName: "dashboard_no",
@@ -484,11 +509,13 @@ export default {
 
         let data = res.data.data;
         if (data && data.length > 0) {
-          let pageConfig = res.data.data[ 0 ];
-          if (e.indexOf(',') !== -1 && e.split(',').length > 0) {
-            let pageConfig1 = res.data.data.find(item => item.dashboard_no === e.split(',')[ 0 ])
+          let pageConfig = res.data.data[0];
+          if (e.indexOf(",") !== -1 && e.split(",").length > 0) {
+            let pageConfig1 = res.data.data.find(
+              (item) => item.dashboard_no === e.split(",")[0]
+            );
             if (pageConfig1) {
-              pageConfig = pageConfig1
+              pageConfig = pageConfig1;
             }
           }
           if (pageConfig) {
@@ -498,15 +525,16 @@ export default {
               self.viewIsDraggable = false;
             }
           } else {
-            return
+            return;
           }
           self.contentData.dashboard_no = pageConfig.dashboard_no;
           self.contentData.dashboard_width = pageConfig.dashboard_width;
           self.contentData.dashboard_height = pageConfig.dashboard_height;
-          self.contentData.dashboard_title = pageConfig.dashboard_title || '';
+          self.contentData.dashboard_title = pageConfig.dashboard_title || "";
 
           document.title = pageConfig.dashboard_title;
-          self.contentData.background_color = pageConfig.background_color || 'transparent';
+          self.contentData.background_color =
+            pageConfig.background_color || "transparent";
           let file_no = pageConfig.dashboard_background;
           let backgroundUrl = await self.getDashBackground(file_no);
           if (backgroundUrl) {
@@ -514,7 +542,7 @@ export default {
           }
           if (pageConfig.dashboard_config) {
             try {
-              self.contentData[ "dashboard_config" ] = JSON.parse(
+              self.contentData["dashboard_config"] = JSON.parse(
                 pageConfig.dashboard_config
               );
             } catch (error) {
@@ -524,15 +552,19 @@ export default {
           try {
             if (pageConfig.gis_info_cfg) {
               pageConfig.gis_info_cfg = JSON.parse(pageConfig.gis_info_cfg);
-              self.contentData[ "gis_info_cfg" ] = pageConfig.gis_info_cfg;
-              self.$set(self.contentData, 'gis_info_cfg', pageConfig.gis_info_cfg)
+              self.contentData["gis_info_cfg"] = pageConfig.gis_info_cfg;
+              self.$set(
+                self.contentData,
+                "gis_info_cfg",
+                pageConfig.gis_info_cfg
+              );
             }
           } catch (error) {
             console.log(error);
           }
-          let gis_info_cfg = this.contentData.gis_info_cfg
+          let gis_info_cfg = this.contentData.gis_info_cfg;
           if (gis_info_cfg && gis_info_cfg.hideTitle) {
-            this.title = ''
+            this.title = "";
           } else {
             this.title = this.contentData.dashboard_title;
           }
@@ -586,7 +618,7 @@ export default {
     //   };
     //   let res = await this.$http.post(url, params)
     // },
-    async getAreaMapConfig (e) {
+    async getAreaMapConfig(e) {
       let self = this;
       //获取关联地图的图表的配置
       let url = this.getServiceUrl(
@@ -596,7 +628,7 @@ export default {
       );
       let params = {
         serviceName: "srvanalyze_chart_select",
-        colNames: [ "*" ],
+        colNames: ["*"],
         condition: [
           {
             colName: "dashboard_no",
@@ -609,8 +641,8 @@ export default {
       if (res.data.data.length > 0) {
         let chartConfig = res.data.data;
         chartConfig = chartConfig.map((item) => {
-          item[ "_isActive" ] = false;
-          item[ "_isLoaded" ] = false;
+          item["_isActive"] = false;
+          item["_isLoaded"] = false;
           if (item.use_flag == "否") {
             // return {};
           }
@@ -624,31 +656,98 @@ export default {
         }
         const gis_info_cfg = self.contentData.gis_info_cfg;
         this.chartConfig.forEach((item, index) => {
-          if (item.chart_request_payload &&
-            typeof item.chart_request_payload === "string") {
+          // switch (item.chart_type) {
+          //   case "折线图":
+          //     item.chart_type = "line";
+          //     break;
+          //   case "柱状图":
+          //     item.chart_type = "histogram";
+          //     break;
+          //   case "饼图":
+          //     item.chart_type = "pie";
+          //     break;
+          //   case "条形图":
+          //     item.chart_type = "bar";
+          //     break;
+          //   case "雷达图":
+          //     item.chart_type = "radar";
+          //     break;
+          //   case "环图":
+          //     item.chart_type = "ring";
+          //     break;
+          //   case "地图":
+          //     item.chart_type = "map";
+          //     break;
+          //   case "散点图":
+          //     item.chart_type = "scatter";
+          //     break;
+          //   case "仪表盘":
+          //     item.chart_type = "gauge";
+          //     break;
+          //   case "水球图":
+          //     item.chart_type = "liquidfill";
+          //     break;
+          //   case "排行滚动表":
+          //     item.chart_type = "ranking";
+          //     break;
+          //   case "表格":
+          //     item.chart_type = "table";
+          //     break;
+          //   case "对象":
+          //     item.chart_type = "obj";
+          //     break;
+          //   case "多标签表格":
+          //     item.chart_type = "tablist";
+          //     break;
+          //   case "百度地图":
+          //     item.chart_type = "baidumap";
+          //     break;
+          //   case "自定义页面":
+          //     item.chart_type = "custompage";
+          //     break;
+          //   case "监控摄像头":
+          //     item.chart_type = "surveillance";
+          //     break;
+          //   case "对象":
+          //     item.chart_type = "obj";
+          //     break;
+          //   case "新闻列表":
+          //     item.chart_type = "newslist";
+          //     break;
+          //   case "数字列表":
+          //     item.chart_type = "numberlist";
+          //     break;
+          // }
+          if (
+            item.chart_request_payload &&
+            typeof item.chart_request_payload === "string"
+          ) {
             try {
-              item.chart_request_payload = JSON.parse(item.chart_request_payload)
-
+              item.chart_request_payload = JSON.parse(
+                item.chart_request_payload
+              );
             } catch (error) {
-              debugger
+              debugger;
             }
           }
-
 
           try {
             typeof item.chart_settings === "string" && item.chart_settings
               ? (item.chart_settings = JSON.parse(item.chart_settings))
               : null;
           } catch (error) {
-            debugger
+            debugger;
             console.log(error, "\n", item.chart_settings);
           }
-          if (item.chart_type === "obj") {
+          if (["obj", "对象"].includes(item.chart_type)) {
             let itemArr = [];
             self.getObjChartData(item).then((data) => {
               if (data && Array.isArray(data)) {
                 data = JSON.parse(JSON.stringify(data));
                 let datas = data.map((d, i) => {
+                  if (item.chart_settings?.appName) {
+                    d.appName = item.chart_settings?.appName;
+                  }
                   if (d.lon_width && d.lat_height) {
                     d.chart_width =
                       (parseFloat(d.lon_width) *
@@ -676,13 +775,13 @@ export default {
                   if (!d.rotation_angle) {
                     d.rotation_angle = 0;
                   }
-                  if (d.idCol && d[ d.idCol ]) {
-                    d.id = d[ d.idCol ];
+                  if (d.idCol && d[d.idCol]) {
+                    d.id = d[d.idCol];
                   }
                   if (
                     item.chart_settings.imgUrl &&
                     item.chart_settings.imgUrl.indexOf("&bx_auth_ticket") ===
-                    -1 &&
+                      -1 &&
                     item.chart_settings.imgUrl.indexOf(
                       top.pathConfig.gateway
                     ) === -1
@@ -695,7 +794,7 @@ export default {
                   } else if (
                     item.chart_settings.imgUrl &&
                     item.chart_settings.imgUrl.indexOf("&bx_auth_ticket") !==
-                    -1 &&
+                      -1 &&
                     item.chart_settings.imgUrl.indexOf(
                       top.pathConfig.gateway
                     ) !== -1
@@ -703,10 +802,10 @@ export default {
                     let params = item.chart_settings.imgUrl.split(
                       "&bx_auth_ticket"
                     );
-                    params = params.length > 1 ? params[ 1 ] : "";
+                    params = params.length > 1 ? params[1] : "";
                     if (params) {
                       params = params.split("&");
-                      params = params.length > 0 ? params[ 0 ] : "";
+                      params = params.length > 0 ? params[0] : "";
                       if (params) {
                         item.chart_settings.imgUrl = item.chart_settings.imgUrl.replace(
                           params,
@@ -728,7 +827,7 @@ export default {
                         (parseFloat(gis_info_cfg.center_lat) +
                           parseFloat(gis_info_cfg.height_lat) / 2)) /
                         parseFloat(gis_info_cfg.height_lat)) *
-                      parseFloat(self.contentData.dashboard_height)
+                        parseFloat(self.contentData.dashboard_height)
                     );
                     d.chart_left = Math.abs(
                       ((parseFloat(d.lon) -
@@ -736,7 +835,7 @@ export default {
                         (parseFloat(gis_info_cfg.center_lon) -
                           gis_info_cfg.width_lon / 2)) /
                         parseFloat(gis_info_cfg.width_lon)) *
-                      parseFloat(self.contentData.dashboard_width)
+                        parseFloat(self.contentData.dashboard_width)
                     );
                   }
                   if (item.chart_settings.type === "camera") {
@@ -747,21 +846,21 @@ export default {
                         (parseFloat(gis_info_cfg.center_lat) +
                           parseFloat(gis_info_cfg.height_lat) / 2)) /
                         parseFloat(gis_info_cfg.height_lat)) *
-                      parseFloat(self.contentData.dashboard_height)
+                        parseFloat(self.contentData.dashboard_height)
                     );
                     d.chart_left = Math.abs(
                       ((parseFloat(d.lon) -
                         (parseFloat(gis_info_cfg.center_lon) -
                           parseFloat(gis_info_cfg.width_lon) / 2)) /
                         parseFloat(gis_info_cfg.width_lon)) *
-                      parseFloat(self.contentData.dashboard_width)
+                        parseFloat(self.contentData.dashboard_width)
                     );
                   }
                   return d;
                 });
                 if (
-                  self.chartConfig[ index ] &&
-                  self.chartConfig[ index ].chart_no
+                  self.chartConfig[index] &&
+                  self.chartConfig[index].chart_no
                 ) {
                   self.chartConfig.splice(index, 1);
                 }
@@ -777,10 +876,12 @@ export default {
         });
       }
     },
-    getPageConfig () {
-      return this.getDashboardData(this.$route.params.chart||this.$route.query.dashboard_no);
+    getPageConfig() {
+      return this.getDashboardData(
+        this.$route.params.chart || this.$route.query.dashboard_no
+      );
     },
-    async getDashBackground (file_no) {
+    async getDashBackground(file_no) {
       this.resize();
       // 获取背景图文件url
       let url = this.getServiceUrl(
@@ -790,8 +891,8 @@ export default {
       );
       let req = {
         serviceName: "srvfile_attachment_select",
-        colNames: [ "*" ],
-        condition: [ { colName: "file_no", value: file_no, ruleType: "eq" } ],
+        colNames: ["*"],
+        condition: [{ colName: "file_no", value: file_no, ruleType: "eq" }],
       };
       let res = await this.$http.post(url, req);
       // .then(res => {
@@ -801,7 +902,7 @@ export default {
         let path = top?.pathConfig?.gateway
           ? top?.pathConfig?.gateway + "/file/download?filePath="
           : top.backendIpAddr + "/file/download?filePath=";
-        dashboard_background = path + data[ 0 ].fileurl;
+        dashboard_background = path + data[0].fileurl;
       } else {
         dashboard_background =
           "url(" + require("@/assets/images/home.png") + ")";
@@ -814,7 +915,7 @@ export default {
 
       // });
     },
-    async getChartConfig (e) {
+    async getChartConfig(e) {
       // 获取图表配置信息
       let url = this.getServiceUrl(
         "select",
@@ -823,7 +924,7 @@ export default {
       );
       let params = {
         serviceName: "srvanalyze_chart_select",
-        colNames: [ "*" ],
+        colNames: ["*"],
         condition: [
           {
             colName: "dashboard_no",
@@ -832,13 +933,17 @@ export default {
           },
         ],
       };
+      debugger;
+
       let res = await this.axios.post(url, params);
+      debugger;
+
       // .then(res => {
       if (res.data.data.length > 0) {
         let chartConfig = res.data.data;
         chartConfig = chartConfig.map((item) => {
-          item[ "_isActive" ] = false;
-          item[ "_isLoaded" ] = false;
+          item["_isActive"] = false;
+          item["_isLoaded"] = false;
           if (item.use_flag == "否") {
             // return {};
           }
@@ -857,7 +962,7 @@ export default {
       //   debugger
       // });
     },
-    resize () {
+    resize() {
       // 自适应缩放
       let resizeFull = () => {
         if (!window.screen.height || !window.screen.width)
@@ -903,29 +1008,30 @@ export default {
       }
     },
 
-    onSubmint (e) {
+    onSubmint(e) {
       let data = {
         lat_height: e.lat_height,
         lon_width: e.lon_width,
         lat: e.lat,
         lon: e.lon,
       };
-      let oData = this.chartConfigOld[ this.onIndex ];
+      debugger;
+      let oData = this.chartConfigOld[this.onIndex];
       let self = this;
-      if (e.chart_type === "obj") {
+      if (["obj", "对象"].includes(e.chart_type)) {
         let gis_info_cfg = self.contentData.gis_info_cfg;
         if (e.chart_height !== oData.chart_height) {
           // 像素高度->纬度高度
           // gis_info_cfg.height_lat:屏幕经度高度
           // e.chart_height:大楼像素高度
           // self.contentData.dashboard_height:屏幕像素宽度
-          data[ "lat_height" ] =
+          data["lat_height"] =
             (gis_info_cfg.height_lat * e.chart_height) /
             self.contentData.dashboard_height;
         }
         if (e.chart_width !== oData.chart_width) {
           // 像素宽度->纬度宽度
-          data[ "lon_width" ] =
+          data["lon_width"] =
             (gis_info_cfg.width_lon * e.chart_width) /
             self.contentData.dashboard_width;
         }
@@ -935,16 +1041,16 @@ export default {
           // gis_info_cfg.height_lat:屏幕经度高度
           //data.lat_height:大楼经度高度
           // data/lat 大楼中心点经度
-          data[ "lat" ] =
+          data["lat"] =
             (parseFloat(e.chart_top) * parseFloat(data.lat_height)) /
-            parseFloat(e.chart_height) +
+              parseFloat(e.chart_height) +
             (parseFloat(gis_info_cfg.center_lat) +
               parseFloat(gis_info_cfg.height_lat) / 2) -
             data.lat_height / 2;
           if (e.objType === "camera") {
-            data[ "lat" ] =
+            data["lat"] =
               (e.chart_top * parseFloat(gis_info_cfg.height_lat)) /
-              parseFloat(self.contentData.dashboard_height) +
+                parseFloat(self.contentData.dashboard_height) +
               (parseFloat(gis_info_cfg.center_lat) +
                 parseFloat(gis_info_cfg.height_lat) / 2);
           }
@@ -955,27 +1061,30 @@ export default {
           // gis_info_cfg.width_lon:屏幕纬度宽度
           //data.lon_width:大楼纬度宽度
           // data/lon 大楼中心点纬度
-          data[ "lon" ] =
+          data["lon"] =
             (parseFloat(e.chart_left) * parseFloat(data.lon_width)) /
-            parseFloat(e.chart_width) +
+              parseFloat(e.chart_width) +
             (parseFloat(gis_info_cfg.center_lon) -
               parseFloat(gis_info_cfg.width_lon) / 2) +
             parseFloat(data.lon_width) / 2;
           if (e.objType === "camera") {
-            data[ "lon" ] =
+            data["lon"] =
               (parseFloat(e.chart_left) * parseFloat(gis_info_cfg.width_lon)) /
-              parseFloat(self.contentData.dashboard_width) +
+                parseFloat(self.contentData.dashboard_width) +
               (parseFloat(gis_info_cfg.center_lon) -
                 parseFloat(gis_info_cfg.width_lon) / 2);
           }
         }
 
         if (e.rotation_angle !== oData.rotation_angle) {
-          data[ "rotation_angle" ] = e.rotation_angle;
+          data["rotation_angle"] = e.rotation_angle;
         }
         let appName = "zhxq";
         if (e.objType === "camera") {
           appName = "xqaf";
+        }
+        if (e.appName) {
+          appName = e.appName;
         }
         let url = this.getServiceUrl(
           "operate",
@@ -989,7 +1098,7 @@ export default {
         let params = [
           {
             serviceName: serviceName,
-            colNames: [ "*" ],
+            colNames: ["*"],
             condition: [
               {
                 colName: e.idCol ? e.idCol : "id",
@@ -997,7 +1106,7 @@ export default {
                 value: e.id,
               },
             ],
-            data: [ data ],
+            data: [data],
           },
         ];
         this.axios.post(url, params).then((res) => {
@@ -1007,8 +1116,8 @@ export default {
             c = c.map((item, index) => {
               if (e.idCol) {
                 if (
-                  item[ e.idCol ] ===
-                  data.response[ 0 ].response.effect_data[ 0 ][ e.idCol ]
+                  item[e.idCol] ===
+                  data.response[0].response.effect_data[0][e.idCol]
                 ) {
                   item._isActive = false;
                   item._isLoaded = false;
@@ -1019,8 +1128,8 @@ export default {
                 }
               } else {
                 if (
-                  item[ e.idCol ] ===
-                  data.response[ 0 ].response.effect_data[ 0 ][ e.idCol ]
+                  item[e.idCol] ===
+                  data.response[0].response.effect_data[0][e.idCol]
                 ) {
                   item._isActive = false;
                   item._isLoaded = false;
@@ -1036,19 +1145,19 @@ export default {
         return;
       }
       if (e.chart_height !== oData.chart_height) {
-        data[ "chart_height" ] = e.chart_height;
+        data["chart_height"] = e.chart_height;
       }
       if (e.chart_width !== oData.chart_width) {
-        data[ "chart_width" ] = e.chart_width;
+        data["chart_width"] = e.chart_width;
       }
       if (e.chart_top !== oData.chart_top) {
-        data[ "chart_top" ] = e.chart_top;
+        data["chart_top"] = e.chart_top;
       }
       if (e.chart_left !== oData.chart_left) {
-        data[ "chart_left" ] = e.chart_left;
+        data["chart_left"] = e.chart_left;
       }
       if (e.rotation_angle !== oData.rotation_angle) {
-        data[ "rotation_angle" ] = e.rotation_angle;
+        data["rotation_angle"] = e.rotation_angle;
       }
 
       let len = Object.keys(data);
@@ -1063,7 +1172,7 @@ export default {
           let params = [
             {
               serviceName: "srvanalyze_chart_update",
-              colNames: [ "*" ],
+              colNames: ["*"],
               condition: [
                 {
                   colName: "id",
@@ -1071,7 +1180,7 @@ export default {
                   value: e.id,
                 },
               ],
-              data: [ data ],
+              data: [data],
             },
           ];
           this.axios
@@ -1081,7 +1190,7 @@ export default {
               if (data.state === "SUCCESS") {
                 let c = this.chartConfig;
                 c = c.map((item, index) => {
-                  if (item.id === data.response[ 0 ].response.effect_data[ 0 ].id) {
+                  if (item.id === data.response[0].response.effect_data[0].id) {
                     item._isActive = false;
                     item._isLoaded = false;
                     return item;
@@ -1092,23 +1201,23 @@ export default {
                 });
               }
             })
-            .catch((err) => { });
+            .catch((err) => {});
         }
       } else {
         return false;
       }
     },
-    timeOutReqHttp (e) {
+    timeOutReqHttp(e) {
       this.testVal = e || null;
       return false;
     },
-    openFullscreen () {
-      let fullarea = document.getElementsByClassName("bx-data-view")[ 0 ];
+    openFullscreen() {
+      let fullarea = document.getElementsByClassName("bx-data-view")[0];
       this.isFullScreen = !this.isFullScreen;
       this.toggleFullScreen();
       // this.isFullScreen === false ? this.exitFull() : this.requestFullScreen(fullarea);
     },
-    requestFullScreen (element) {
+    requestFullScreen(element) {
       //进入全屏状态 判断各种浏览器，找到正确的方法
       // element = document.getElementById('bx-data-view')
       if (!element) {
@@ -1129,7 +1238,7 @@ export default {
         }
       }
     },
-    toggleFullScreen () {
+    toggleFullScreen() {
       //切换全屏状态
       console.log(document.fullscreenElement, document.exitFullscreen);
       if (!document.fullscreenElement) {
@@ -1140,7 +1249,7 @@ export default {
         }
       }
     },
-    exitFull () {
+    exitFull() {
       // 退出全屏状态 判断各种浏览器，找到正确的方法
       var exitMethod =
         document.exitFullscreen || //W3C
@@ -1158,12 +1267,12 @@ export default {
       }
     },
   },
-  created () { },
-  mounted () {
+  created() {},
+  mounted() {
     let self = this;
     this.isPcEnv = this.IsPC();
     self.getPageConfig();
-    window.onresize = function () {
+    window.onresize = function() {
       if (!document.fullscreenElement) {
         self.isFullScreen = false;
         console.log("非全屏");
@@ -1174,7 +1283,7 @@ export default {
     };
     document.addEventListener(
       "keydown",
-      function (e) {
+      function(e) {
         if (e.keyCode == 13) {
           self.toggleFullScreen();
         }
@@ -1189,15 +1298,15 @@ export default {
         alert("没有ChartID");
       }
       $(window, document)
-        .resize(function () {
+        .resize(function() {
           self.resize();
         })
-        .load(function () {
+        .load(function() {
           self.resize();
         });
-    } catch (error) { }
+    } catch (error) {}
   },
-  beforeDestroy () {
+  beforeDestroy() {
     $("body").css({
       transform: "none",
     });

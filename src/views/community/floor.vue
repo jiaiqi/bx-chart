@@ -60,7 +60,8 @@
                 :key="l"
                 :class="{
                   'has-data':
-                    f.dy_name === unit && parseInt(f.lydylc_name) === item,
+                    f.dy_name === unit &&
+                    parseInt(f.lydylc_name || f.floor_level) === item,
                 }"
               >
                 <!-- <div
@@ -86,7 +87,10 @@
                         ? 'blue'
                         : '#fff',
                   }"
-                  v-if="f.dy_name === unit && parseInt(f.lydylc_name) === item"
+                  v-if="
+                    f.dy_name === unit &&
+                      parseInt(f.lydylc_name || f.floor_level) === item
+                  "
                   @click="toDetail(f)"
                 >
                   <div class="people-num">
@@ -101,7 +105,12 @@
                             : '#F1C40F',
                       }"
                     >
-                      {{ f.people_number || f.person_count || "0" }}
+                      {{
+                        f.people_number ||
+                          f.person_count ||
+                          f.person_amount ||
+                          "0"
+                      }}
                     </div>
                     <div class="label">人数</div>
                   </div>
@@ -117,7 +126,7 @@
                             : '#F1C40F',
                       }"
                     >
-                      {{ f.car_number ? f.car_number : "0" }}
+                      {{ f.car_number || f.car_amount || "0" }}
                     </div>
                     <div class="label">车辆数</div>
                   </div>
@@ -177,109 +186,150 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
+      appName: "",
       floorList: [],
       currentUnit: 0,
       finalData: {},
       dyList: [],
       lcList: [],
       optionList: [],
-      levelOrHouse: ""
-    }
+      levelOrHouse: "",
+    };
   },
   computed: {
-    floorUnitList () {
-      let data = this.floorList
-      return Array.from(new Set(data.map(item => item.dy_name)))
+    floorUnitList() {
+      let data = this.floorList;
+      return Array.from(new Set(data.map((item) => item.dy_name)));
     },
-    floorLevelList () {
-      let arr = this.floorList
+    floorLevelList() {
+      let arr = this.floorList;
       // arr = arr.filter(item => item.dy_name === this.floorUnitList[ this.currentUnit ])
-      return Array.from(new Set(arr.map(item => parseInt(item.lydylc_name)))).sort((a, b) => b - a)
+      return Array.from(
+        new Set(
+          arr.map((item) => parseInt(item.lydylc_name || item.floor_level))
+        )
+      ).sort((a, b) => b - a);
       // return Array.from(new Set(arr.map(item => Number(item.floor_level)))).sort((a, b) => b - a)
     },
-    blockName () {
-      if (this.floorList && Array.isArray(this.floorList) && this.floorList.length > 0) {
-        return this.floorList[ 0 ].ly_name
+    blockName() {
+      if (
+        this.floorList &&
+        Array.isArray(this.floorList) &&
+        this.floorList.length > 0
+      ) {
+        return this.floorList[0].ly_name;
       }
-    }
+    },
   },
   methods: {
-    async getOptionList () {
-      let url = this.getServiceUrl('select', 'srvsys_service_columnex_v2_select', 'zhxq')
-      let req = { "serviceName": "srvsys_service_columnex_v2_select", "colNames": [ "*" ], "condition": [ { "colName": "service_name", "value": "srvzhxq_buiding_house_select", "ruleType": "eq" }, { "colName": "use_type", "value": "list", "ruleType": "eq" } ], "order": [ { "colName": "seq", "orderType": "asc" } ] }
-      let res = await this.$http.post(url, req)
-      if (res.data.state === 'SUCCESS') {
-        this.optionList = res.data.data
-        return res.data.data.srv_cols
+    async getOptionList() {
+      const appName = this.appName || "zhxq";
+      let url = this.getServiceUrl(
+        "select",
+        "srvsys_service_columnex_v2_select",
+        appName
+      );
+      let req = {
+        serviceName: "srvsys_service_columnex_v2_select",
+        colNames: ["*"],
+        condition: [
+          {
+            colName: "service_name",
+            value: "srvzhxq_buiding_house_select",
+            ruleType: "eq",
+          },
+          { colName: "use_type", value: "list", ruleType: "eq" },
+        ],
+        order: [{ colName: "seq", orderType: "asc" }],
+      };
+      let res = await this.$http.post(url, req);
+      if (res.data.state === "SUCCESS") {
+        this.optionList = res.data.data;
+        return res.data.data.srv_cols;
       }
     },
 
-    async getFloorList (lybm, cols) {
-      let url = this.getServiceUrl("select", "srvzhxq_buiding_house_select", "zhxq");
-      let req = { "serviceName": "srvzhxq_buiding_house_select", "colNames": [ "*" ], "condition": [], order: [ { colName: "dy_name", orderType: "asc" } ] }
+    async getFloorList(lybm, cols) {
+      const appName = this.appName || "zhxq";
+      let url = this.getServiceUrl(
+        "select",
+        "srvzhxq_buiding_house_select",
+        appName
+      );
+      let req = {
+        serviceName: "srvzhxq_buiding_house_select",
+        colNames: ["*"],
+        condition: [],
+        order: [{ colName: "dy_name", orderType: "asc" }],
+      };
       if (lybm) {
-        req.condition = [ { colName: "lybm", ruleType: "like", value: lybm } ]
+        req.condition = [{ colName: "lybm", ruleType: "like", value: lybm }];
       }
-      let res = await this.$http.post(url, req)
-      if (res.data.state === 'SUCCESS') {
+      let res = await this.$http.post(url, req);
+      if (res.data.state === "SUCCESS") {
         if (cols && Array.isArray(cols)) {
-          res.data.data.forEach(data => {
-            cols.forEach(col => {
-              if (col.col_type === 'Dict') {
-                col.option_list_v2.forEach(item => {
-                  if (data[ col.columns ] == item.value) {
-                    data[ col.columns ] = item.label
+          res.data.data.forEach((data) => {
+            cols.forEach((col) => {
+              if (col.col_type === "Dict") {
+                col.option_list_v2.forEach((item) => {
+                  if (data[col.columns] == item.value) {
+                    data[col.columns] = item.label;
                   }
-                })
+                });
                 // data[col['columns']]
               }
-            })
+            });
           });
         }
 
-        this.floorList = res.data.data.map(item => {
+        this.floorList = res.data.data.map((item) => {
           // if (!item.house_status) {
           //   item.house_status = '自用'
           // }
-          if (item.lydylc_name && item.lydylc_name.indexOf('户') !== -1) {
-
-            this.levelOrHouse = '户'
-          } else if (item.lydylc_name && item.lydylc_name.indexOf('楼') !== -1) {
-            this.levelOrHouse = '楼层'
-
+          if (item.lydylc_name && item.lydylc_name.indexOf("户") !== -1) {
+            this.levelOrHouse = "户";
+          } else if (
+            item.lydylc_name &&
+            item.lydylc_name.indexOf("楼") !== -1
+          ) {
+            this.levelOrHouse = "楼层";
           }
-          return item
-        })
+          return item;
+        });
       }
     },
-    getHousePersonInfo () {
-
-    },
-    getHouseCarInfo () { },
-    toDetail (e) {
+    getHousePersonInfo() {},
+    getHouseCarInfo() {},
+    toDetail(e) {
       if (e && e.fwbm) {
-        top.window.open('/bx-chart/#/houseMsg?fwbm=' + e.fwbm)
+        let url = `/chart/#/houseMsg?fwbm=${e.fwbm}&appName=${this.appName}`
+        top.window.open(url);
         // this.$router.push({ name: 'houseMsg', query: { fwbm: e.fwbm } })
       }
     },
   },
-  created () {
-    let lybm = this.$route.query.lybm
-    if (top.window.location.href.indexOf('lybm') !== -1) {
+  created() {
+    if (this.$route?.query?.appName) {
+      this.appName = this.$route?.query?.appName;
+    }
+    let lybm = this.$route.query.lybm;
+    if (top.window.location.href.indexOf("lybm") !== -1) {
       try {
-        lybm = top.window.location.href.slice(top.window.location.href.search('lybm')).split('&')[ 0 ].split('lybm=')[ 1 ]
+        lybm = top.window.location.href
+          .slice(top.window.location.href.search("lybm"))
+          .split("&")[0]
+          .split("lybm=")[1];
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-      this.getOptionList().then(cols => {
-        this.getFloorList(lybm, cols)
-      })
-
+      this.getOptionList().then((cols) => {
+        this.getFloorList(lybm, cols);
+      });
     }
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

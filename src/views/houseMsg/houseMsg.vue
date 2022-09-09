@@ -232,8 +232,9 @@
 import Card from "@/components/houseCard/houseCard.vue";
 export default {
   components: { Card },
-  data () {
+  data() {
     return {
+      appName: "",
       houseimg: require("../../assets/img/fz.jpg"),
       hximg: require("../../assets/img/fwxx.jpg"),
       doublecar: [
@@ -241,245 +242,331 @@ export default {
         { type: "房屋户型", name: "暂无" },
         { type: "房屋用途", name: "暂无" },
       ],
-      page: { //人员出入
+      page: {
+        //人员出入
         total: 0,
         pageNo: 1,
-        rownumber: 6
+        rownumber: 6,
       },
-      pagetwo: { //车辆出入
+      pagetwo: {
+        //车辆出入
         total: 0,
         pageNo: 1,
-        rownumber: 6
+        rownumber: 6,
       },
-      pagefk: { //访客信息
+      pagefk: {
+        //访客信息
         total: 0,
         pageNo: 1,
-        rownumber: 6
+        rownumber: 6,
       },
       pagefkjl: {
         total: 0,
         pageNo: 1,
-        rownumber: 6
+        rownumber: 6,
       },
       houseOwner: [
         { type: "户主姓名", name: "暂无" },
         { type: "户主电话", name: "暂无" },
         { type: "户主身份证号", name: "暂无" },
       ],
-      oneCon: '',
-      twoCon: '',
-      fkjlCon: '',
+      oneCon: "",
+      twoCon: "",
+      fkjlCon: "",
       houseType: {},
-      AccessRecords: [],//人员出入记录
+      AccessRecords: [], //人员出入记录
       homeMsg: "",
       tabfkData: [],
       fangkejl: [], //访客出入记录
       carcrjl: [], //车辆出入记录
       tableData: [],
-      carData: []
+      carData: [],
     };
   },
   methods: {
-    formatDate (cellValu) {
-      if (cellValu.sex == '1') {
-        return "男"
+    formatDate(cellValu) {
+      if (cellValu.sex == "1") {
+        return "男";
       } else {
-        return "女"
+        return "女";
       }
-
     },
-    formatDatename (e) {
-      return (e.receptionistName) ? (e.receptionistName) : '暂无'
+    formatDatename(e) {
+      return e.receptionistName ? e.receptionistName : "暂无";
     },
-    formatDattime (e) {
-      return e.fwrq ? (e.fwrq).split(' ')[ 0 ] : '暂无'
+    formatDattime(e) {
+      return e.fwrq ? e.fwrq.split(" ")[0] : "暂无";
     },
-    formatDattimeRy (e) {
-      return e.visitEndTime ? (e.visitEndTime).split(' ')[ 0 ] : '暂无'
+    formatDattimeRy(e) {
+      return e.visitEndTime ? e.visitEndTime.split(" ")[0] : "暂无";
     },
-    formatDattimefk (e) {
-      return e.eventTime ? (e.eventTime).split(' ')[ 0 ] : '暂无'
+    formatDattimefk(e) {
+      return e.eventTime ? e.eventTime.split(" ")[0] : "暂无";
     },
-    formatDattimecl (e) {
-      return e.crossTime ? (e.crossTime).split(' ')[ 0 ] : '暂无'
+    formatDattimecl(e) {
+      return e.crossTime ? e.crossTime.split(" ")[0] : "暂无";
     },
-    async gethouseMsg (fwbm) { //住户信息srvzhxq_guest_mgmt_select
-      let url = this.getServiceUrl("select", "srvzhxq_syrk_select", "zhxq");
+    async gethouseMsg(fwbm) {
+      //住户信息srvzhxq_guest_mgmt_select
+      const app = this.appName || "zhxq";
+      let url = this.getServiceUrl("select", "srvzhxq_syrk_select", app);
       let req = {
-        "serviceName": "srvzhxq_syrk_select", "colNames": [ "*" ], "condition": [
+        serviceName: "srvzhxq_syrk_select",
+        colNames: ["*"],
+        condition: [
           { colName: "fwbm", ruleType: "eq", value: fwbm },
           // {colName: "proc_status", ruleType: "eq", value: '完成'},
-        ], order: []
+        ],
+        order: [],
+      };
+      let res = await this.$http.post(url, req);
+      if (res.data.state === "SUCCESS") {
+        this.tableData = res.data.data;
       }
-      let res = await this.$http.post(url, req)
-      if (res.data.state === 'SUCCESS') {
-        this.tableData = (res.data.data)
-      }
-      let databoole = res.data.data
-      let con = ''
+      let databoole = res.data.data;
+      let con = "";
       for (let i in databoole) {
-        con += (databoole[ i ].syrkbm + ',')
+        con += databoole[i].syrkbm + ",";
       }
 
-      con = con.substring(0, con.lastIndexOf(','));
-      this.oneCon = con
+      con = con.substring(0, con.lastIndexOf(","));
+      this.oneCon = con;
 
-      this.peopleComein(con)
+      this.peopleComein(con);
     },
-    async peopleComein (val) { //人员出入记录
-      let url2 = this.getServiceUrl("select", "srvzhxa_person_inout_select", "zhxq");
+    async peopleComein(val) {
+      //人员出入记录
+      const app = this.appName || "zhxq";
+
+      let url2 = this.getServiceUrl(
+        "select",
+        "srvzhxa_person_inout_select",
+        app
+      );
       let req2 = {
-        "serviceName": "srvzhxa_person_inout_select", "colNames": [ "*" ], "condition": [
+        serviceName: "srvzhxa_person_inout_select",
+        colNames: ["*"],
+        condition: [
           {
-            colName: "personId", ruleType: "eq", value: val
+            colName: "personId",
+            ruleType: "eq",
+            value: val,
           },
           {
-            colName: "eventType", ruleType: "eq", value: '196893'
+            colName: "eventType",
+            ruleType: "eq",
+            value: "196893",
           },
-        ], page: this.page
-      }
-      let rese = await this.$http.post(url2, req2)
-      if (rese.data.state === 'SUCCESS') {
-        let dataItem = rese.data.data
-        this.AccessRecords = dataItem
-        this.page = rese.data.page
+        ],
+        page: this.page,
+      };
+      let rese = await this.$http.post(url2, req2);
+      if (rese.data.state === "SUCCESS") {
+        let dataItem = rese.data.data;
+        this.AccessRecords = dataItem;
+        this.page = rese.data.page;
       }
     },
-    changePage (val) { //人员出入
+    changePage(val) {
+      //人员出入
       this.page.pageNo = val;
       this.peopleComein(this.oneCon);
     },
-    changePagefkjl (val) {
+    changePagefkjl(val) {
       this.pagefkjl.pageNo = val;
       this.getfkjl(this.fkjlCon);
     },
-    changePagetwo (val) { //车辆出入
+    changePagetwo(val) {
+      //车辆出入
       this.pagetwo.pageNo = val;
       this.carComein(this.twoCon);
     },
-    changePagefk (val) { //访客信息
+    changePagefk(val) {
+      //访客信息
       this.pagefk.pageNo = val;
       this.getfkMsg(this.fwbm);
     },
-    async getfkMsg (fwbm) {
-      return //访客信息
-      let url = this.getServiceUrl("select", "srvzhxq_guest_mgmt_select", "zhxq");
+    async getfkMsg(fwbm) {
+      return; //访客信息
+      const app = this.appName || "zhxq";
+
+      let url = this.getServiceUrl("select", "srvzhxq_guest_mgmt_select", app);
       let req = {
-        "serviceName": "srvzhxq_guest_mgmt_select", "colNames": [ "*" ], "condition": [
+        serviceName: "srvzhxq_guest_mgmt_select",
+        colNames: ["*"],
+        condition: [
           { colName: "fwbm", ruleType: "eq", value: fwbm },
           // {colName: "proc_status", ruleType: "eq", value: '完成'},
-        ], order: [], page: this.pagefk
-      }
-      let res = await this.$http.post(url, req)
-      if (res.data.state === 'SUCCESS') {
-        this.tabfkData = (res.data.data)
-        this.pagefk = res.data.page
-        let databoole = res.data.data
-        let con = ''
+        ],
+        order: [],
+        page: this.pagefk,
+      };
+      let res = await this.$http.post(url, req);
+      if (res.data.state === "SUCCESS") {
+        this.tabfkData = res.data.data;
+        this.pagefk = res.data.page;
+        let databoole = res.data.data;
+        let con = "";
         for (let i in databoole) {
-          con += (databoole[ i ].xm + ',')
+          con += databoole[i].xm + ",";
         }
-        con = con.substring(0, con.lastIndexOf(','));
-        console.log(con)
-        this.fkjlCon = con
-        this.getfkjl(con)
+        con = con.substring(0, con.lastIndexOf(","));
+        console.log(con);
+        this.fkjlCon = con;
+        this.getfkjl(con);
       }
     },
-    async gethomeMsg (fwbm) { //房屋基本信息
-      let url = this.getServiceUrl("select", "srvzhxq_buiding_house_select", "zhxq");
+    async gethomeMsg(fwbm) {
+      //房屋基本信息
+      const app = this.appName || "zhxq";
+
+      let url = this.getServiceUrl(
+        "select",
+        "srvzhxq_buiding_house_select",
+        app
+      );
       let req = {
-        "serviceName": "srvzhxq_buiding_house_select", "colNames": [ "*" ], "condition": [
+        serviceName: "srvzhxq_buiding_house_select",
+        colNames: ["*"],
+        condition: [
           { colName: "fwbm", ruleType: "eq", value: fwbm },
           // {colName: "proc_status", ruleType: "eq", value: '完成'},
-        ], order: []
-      }
-      let res = await this.$http.post(url, req)
-      if (res.data.state === 'SUCCESS') {
-        if (res.data.data[ 0 ]) {
-          this.houseOwner[ 0 ].name = res.data.data[ 0 ].huzhu_name ? res.data.data[ 0 ].huzhu_name : "暂无"
-          this.houseOwner[ 1 ].name = res.data.data[ 0 ].huzhu_tel ? res.data.data[ 0 ].huzhu_tel : "暂无"
-          this.houseOwner[ 2 ].name = res.data.data[ 0 ].huzhu_picp ? res.data.data[ 0 ].huzhu_picp : "暂无"
-          this.doublecar[ 2 ].name = res.data.data[ 0 ]._building_yongtu_disp ? res.data.data[ 0 ]._building_yongtu_disp : "暂无"
-          this.homeMsg = res.data.data[ 0 ].ly_name + res.data.data[ 0 ].dy_name + res.data.data[ 0 ].name
+        ],
+        order: [],
+      };
+      let res = await this.$http.post(url, req);
+      if (res.data.state === "SUCCESS") {
+        if (res.data.data[0]) {
+          this.houseOwner[0].name = res.data.data[0].huzhu_name
+            ? res.data.data[0].huzhu_name
+            : "暂无";
+          this.houseOwner[1].name = res.data.data[0].huzhu_tel
+            ? res.data.data[0].huzhu_tel
+            : "暂无";
+          this.houseOwner[2].name = res.data.data[0].huzhu_picp
+            ? res.data.data[0].huzhu_picp
+            : "暂无";
+          this.doublecar[2].name = res.data.data[0]._building_yongtu_disp
+            ? res.data.data[0]._building_yongtu_disp
+            : "暂无";
+          this.homeMsg =
+            res.data.data[0].ly_name +
+            res.data.data[0].dy_name +
+            res.data.data[0].name;
         }
-        let url2 = this.getServiceUrl("select", "srvzhxq_buiding_unit_type_select", "zhxq"); //房屋户型
+        let url2 = this.getServiceUrl(
+          "select",
+          "srvzhxq_buiding_unit_type_select",
+          "zhxq"
+        ); //房屋户型
         let req2 = {
-          "serviceName": "srvzhxq_buiding_unit_type_select", "colNames": [ "*" ], "condition": [
-            { colName: "type_num", ruleType: "eq", value: res.data.data[ 0 ].hxbm },
-          ], order: []
-        }
-        let rese = await this.$http.post(url2, req2)
-        let houseType = (rese.data.data[ 0 ])
+          serviceName: "srvzhxq_buiding_unit_type_select",
+          colNames: ["*"],
+          condition: [
+            {
+              colName: "type_num",
+              ruleType: "eq",
+              value: res.data.data[0].hxbm,
+            },
+          ],
+          order: [],
+        };
+        let rese = await this.$http.post(url2, req2);
+        let houseType = rese.data.data[0];
         if (houseType) {
-          this.doublecar[ 0 ].name = houseType.mianji ? (houseType.mianji + 'm²') : "暂无"
-          this.doublecar[ 1 ].name = houseType.huxing ? houseType.huxing : "暂无"
+          this.doublecar[0].name = houseType.mianji
+            ? houseType.mianji + "m²"
+            : "暂无";
+          this.doublecar[1].name = houseType.huxing ? houseType.huxing : "暂无";
         }
-
       }
     },
 
-    async getcarMsg (fwbm) { //车辆信息srvzhxq_guest_mgmt_select
-      let url = this.getServiceUrl("select", "srvzhxq_clgl_select", "zhxq");
+    async getcarMsg(fwbm) {
+      //车辆信息srvzhxq_guest_mgmt_select
+      const app = this.appName || "zhxq";
+
+      let url = this.getServiceUrl("select", "srvzhxq_clgl_select", app);
       let req = {
-        "serviceName": "srvzhxq_clgl_select", "colNames": [ "*" ], "condition": [
+        serviceName: "srvzhxq_clgl_select",
+        colNames: ["*"],
+        condition: [
           { colName: "fwbm", ruleType: "eq", value: fwbm },
           // {colName: "proc_status", ruleType: "eq", value: '完成'},
-        ], order: []
+        ],
+        order: [],
+      };
+      let res = await this.$http.post(url, req);
+      if (res.data.state === "SUCCESS") {
+        this.carData = res.data.data;
       }
-      let res = await this.$http.post(url, req)
-      if (res.data.state === 'SUCCESS') {
-        this.carData = res.data.data
-      }
-      let databoole = res.data.data
-      let con = ''
+      let databoole = res.data.data;
+      let con = "";
       for (let i in databoole) {
-        con += (databoole[ i ].cphm + ',')
+        con += databoole[i].cphm + ",";
       }
-      con = con.substring(0, con.lastIndexOf(','));
-      this.twoCon = con
-      this.carComein(con)
+      con = con.substring(0, con.lastIndexOf(","));
+      this.twoCon = con;
+      this.carComein(con);
     },
 
-    async carComein (val) { //车辆出入记录
-      let url2 = this.getServiceUrl("select", "srvzhxa_car_inout_select", "zhxq");
+    async carComein(val) {
+      //车辆出入记录
+      const app = this.appName || "zhxq";
+
+      let url2 = this.getServiceUrl("select", "srvzhxa_car_inout_select", app);
       let req2 = {
-        "serviceName": "srvzhxa_car_inout_select", "colNames": [ "*" ], "condition": [
-          { colName: "plateNo", ruleType: "in", value: val }
-        ], order: [], page: this.pagetwo
-      }
-      let rese = await this.$http.post(url2, req2)
-      if (rese.data.state === 'SUCCESS') {
-        this.carcrjl = rese.data.data
-        this.pagetwo = rese.data.page
+        serviceName: "srvzhxa_car_inout_select",
+        colNames: ["*"],
+        condition: [{ colName: "plateNo", ruleType: "in", value: val }],
+        order: [],
+        page: this.pagetwo,
+      };
+      let rese = await this.$http.post(url2, req2);
+      if (rese.data.state === "SUCCESS") {
+        this.carcrjl = rese.data.data;
+        this.pagetwo = rese.data.page;
       }
     },
-    async getfkjl (val) { //访客出入记录
-      let url2 = this.getServiceUrl("select", "srvzhxa_visitors_inout_select", "zhxq");
+    async getfkjl(val) {
+      //访客出入记录
+      const app = this.appName || "zhxq";
+
+      let url2 = this.getServiceUrl(
+        "select",
+        "srvzhxa_visitors_inout_select",
+        app
+      );
       let req2 = {
-        "serviceName": "srvzhxa_visitors_inout_select", "colNames": [ "*" ], "condition": [
-          { colName: "visitorName", ruleType: "in", value: val }
-        ], order: [], page: this.pagefkjl
-      }
-      let rese = await this.$http.post(url2, req2)
-      if (rese.data.state === 'SUCCESS') {
-        this.fangkejl = rese.data.data
-        this.pagefkjl = rese.data.page
+        serviceName: "srvzhxa_visitors_inout_select",
+        colNames: ["*"],
+        condition: [{ colName: "visitorName", ruleType: "in", value: val }],
+        order: [],
+        page: this.pagefkjl,
+      };
+      let rese = await this.$http.post(url2, req2);
+      if (rese.data.state === "SUCCESS") {
+        this.fangkejl = rese.data.data;
+        this.pagefkjl = rese.data.page;
       }
     },
   },
-  created () {
-    let fwbm = this.$route.query.fwbm
-    this.fwbm = fwbm
-    this.gethomeMsg(fwbm)
-    this.gethouseMsg(fwbm)
+  created() {
+    let appName = this.$route.query.appName;
+    if (appName) {
+      this.appName = appName;
+    }
+    let fwbm = this.$route.query.fwbm;
+    this.fwbm = fwbm;
+    this.gethomeMsg(fwbm);
+    this.gethouseMsg(fwbm);
     // this.getfkMsg(fwbm)
-    this.getcarMsg(fwbm)
-  }
+    this.getcarMsg(fwbm);
+  },
 };
 </script>
 
-
-<style lang="scss" >
+<style lang="scss">
 .wrapboxContent {
   background-size: 100% 100%;
   background-image: url("../../assets/img/floorbg.jpg");

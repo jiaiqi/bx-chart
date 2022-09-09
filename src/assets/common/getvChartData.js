@@ -48,7 +48,6 @@ export class vChartInfo {
             return this.columns
         }
         this.getChart = (dimcols, countCol, chartType, norm, dataTypeCol, isMultiseriate, colList) => {
-            debugger
             // dimcols : 指标维度合集 countCol: 值对应字段, chartType：图标type, dataType : data分图标统计字段,isMultiseriate数据是否是多列中取得
             let datas = this.resData
             let timeArr = []

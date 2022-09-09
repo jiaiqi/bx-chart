@@ -76,9 +76,7 @@
     <div
       class="chart-main full-height"
       v-if="
-        this.chartConfigs.chart_type === 'image' ||
-          this.chartConfigs.chart_type === 'obj'
-      "
+      ['image','obj','对象'].includes(chartConfigs.chart_type)"
       :style="vchartStyle"
     >
       <div
@@ -119,8 +117,7 @@
       </div>
       <image-box
         v-if="
-          (chartConfigs.chart_type === 'image' ||
-            chartConfigs.chart_type === 'obj') &&
+          ['image', 'obj','对象'].includes(chartConfigs.chart_type) &&
             chartConfigs.imgUrl
         "
         :config="chartConfigs"
@@ -138,11 +135,7 @@
 
     <div
       class="chart-main"
-      v-else-if="
-        chartConfigs.chart_type !== 'digital' &&
-          chartConfigs.chart_type !== 'image' &&
-          chartConfigs.chart_type !== 'obj'
-      "
+      v-else-if="!['digital', 'image', 'obj'].includes(chartConfigs.chart_type)"
       :class="{
         'show-border':
           showBorder && this.chartConfigs.chart_type !== 'baidumap',
@@ -263,10 +256,7 @@
           :extend="getChartExtend(this.chartConfigs.chart_type)"
         ></ve-heatmap>
         <customPage
-          v-if="
-            this.chartConfigs.chart_type === 'custompage' ||
-              this.chartConfigs.chart_type === '自定义页面'
-          "
+          v-if="['custompage', '自定义页面'].includes(chartConfigs.chart_type)"
           :chartWidth="chartWidth"
           :chartHeight="chartHeight"
           :chartConfigs="chartConfigs"
@@ -539,6 +529,9 @@ export default {
         case "表格":
           chartSetting.type = "table";
           break;
+        case "对象":
+          chartSetting.type = "obj";
+          break;
         case "多标签表格":
           chartSetting.type = "tablist";
           break;
@@ -550,9 +543,6 @@ export default {
           break;
         case "监控摄像头":
           chartSetting.type = "surveillance";
-          break;
-        case "对象":
-          chartSetting.type = "obj";
           break;
         case "新闻列表":
           chartSetting.type = "newslist";
@@ -906,7 +896,7 @@ export default {
         background: this.chartConfigs.background,
         "background-size": "100% 100%",
         "box-sizing": "border-box",
-        height: this.chartHeight ? this.chartHeight : "100%",
+        height:   this.chartHeight ,
         width: this.chartWidth,
       };
       return style;
@@ -1244,6 +1234,9 @@ export default {
           case "表格":
             chartType = "table";
             break;
+          case "对象":
+            chartType = "obj";
+            break;
           case "多标签表格":
             chartType = "tablist";
             break;
@@ -1255,9 +1248,6 @@ export default {
             break;
           case "监控摄像头":
             chartType = "surveillance";
-            break;
-          case "对象":
-            chartType = "obj";
             break;
           case "新闻列表":
             chartType = "newslist";
@@ -1531,9 +1521,9 @@ export default {
           that.chartConfig.chart_settings.imgUrl.indexOf(
             top.pathConfig.gateway
           ) === -1 &&
-          (that.chartConfig.chart_type === "custompage" ||
-            that.chartConfig.chart_type === "自定义页面" ||
-            that.chartConfig.chart_type === "obj")
+          ["custompage", "自定义页面", "obj", "对象"].includes(
+            that.chartConfig.chart_type
+          )
         ) {
           that.chartConfig.chart_settings.imgUrl =
             top.pathConfig.gateway +

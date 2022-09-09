@@ -2,742 +2,243 @@
   <div>
     <div class="zero digital" v-if="number === 0">
       <div
-        class="l1 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
+        class="line"
+        :class="'l' + index"
+        :style="setStyle"
+        v-for="index in arr"
+        :key="index"
       ></div>
-      <div
-        class="l2 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l3 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l4 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l5 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l6 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l7 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
+      <!-- <div class="l1 line" :style="setStyle"></div>
+      <div class="l2 line" :style="setStyle"></div>
+      <div class="l3 line" :style="setStyle"></div>
+      <div class="l4 line" :style="setStyle"></div>
+      <div class="l5 line" :style="setStyle"></div>
+      <div class="l6 line" :style="setStyle"></div>
+      <div class="l7 line" :style="setStyle"></div> -->
     </div>
     <div class="one digital" v-if="number === 1">
       <div
-        class="l1 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
+        class="line"
+        :class="'l' + (index + 1)"
+        :style="setStyle"
+        v-for="index in 7"
+        :key="index"
       ></div>
-      <div
-        class="l2 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l3 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l4 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l5 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l6 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l7 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
+
+      <!-- <div class="l1 line" :style="setStyle"></div>
+      <div class="l2 line" :style="setStyle"></div>
+      <div class="l3 line" :style="setStyle"></div>
+      <div class="l4 line" :style="setStyle"></div>
+      <div class="l5 line" :style="setStyle"></div>
+      <div class="l6 line" :style="setStyle"></div>
+      <div class="l7 line" :style="setStyle"></div> -->
     </div>
     <div class="two digital" v-if="number === 2">
       <div
-        class="l1 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
+        class="line"
+        :class="'l' + (index + 1)"
+        :style="setStyle"
+        v-for="index in 7"
+        :key="index"
       ></div>
-      <div
-        class="l2 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l3 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l4 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l5 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l6 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l7 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
+
+      <!-- <div class="l1 line" :style="setStyle"></div>
+      <div class="l2 line" :style="setStyle"></div>
+      <div class="l3 line" :style="setStyle"></div>
+      <div class="l4 line" :style="setStyle"></div>
+      <div class="l5 line" :style="setStyle"></div>
+      <div class="l6 line" :style="setStyle"></div>
+      <div class="l7 line" :style="setStyle"></div> -->
     </div>
     <div class="three digital" v-if="number === 3">
       <div
-        class="l1 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
+        class="line"
+        :class="'l' + (index + 1)"
+        :style="setStyle"
+        v-for="index in 7"
+        :key="index"
       ></div>
-      <div
-        class="l2 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l3 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l4 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l5 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l6 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l7 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
+
+      <!-- <div class="l1 line" :style="setStyle"></div>
+      <div class="l2 line" :style="setStyle"></div>
+      <div class="l3 line" :style="setStyle"></div>
+      <div class="l4 line" :style="setStyle"></div>
+      <div class="l5 line" :style="setStyle"></div>
+      <div class="l6 line" :style="setStyle"></div>
+      <div class="l7 line" :style="setStyle"></div> -->
     </div>
     <div class="four digital" v-if="number === 4">
       <div
-        class="l1 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
+        class="line"
+        :class="'l' + (index + 1)"
+        :style="setStyle"
+        v-for="index in 7"
+        :key="index"
       ></div>
-      <div
-        class="l2 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l3 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l4 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l5 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l6 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l7 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
+
+      <!-- <div class="l1 line" :style="setStyle"></div>
+      <div class="l2 line" :style="setStyle"></div>
+      <div class="l3 line" :style="setStyle"></div>
+      <div class="l4 line" :style="setStyle"></div>
+      <div class="l5 line" :style="setStyle"></div>
+      <div class="l6 line" :style="setStyle"></div>
+      <div class="l7 line" :style="setStyle"></div> -->
     </div>
     <div class="five digital" v-if="number === 5">
       <div
-        class="l1 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
+        class="line"
+        :class="'l' + (index + 1)"
+        :style="setStyle"
+        v-for="index in 7"
+        :key="index"
       ></div>
-      <div
-        class="l2 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l3 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l4 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l5 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l6 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l7 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
+
+      <!-- <div class="l1 line" :style="setStyle"></div>
+      <div class="l2 line" :style="setStyle"></div>
+      <div class="l3 line" :style="setStyle"></div>
+      <div class="l4 line" :style="setStyle"></div>
+      <div class="l5 line" :style="setStyle"></div>
+      <div class="l6 line" :style="setStyle"></div>
+      <div class="l7 line" :style="setStyle"></div> -->
     </div>
     <div class="six digital" v-if="number === 6">
       <div
-        class="l1 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
+        class="line"
+        :class="'l' + (index + 1)"
+        :style="setStyle"
+        v-for="index in 7"
+        :key="index"
       ></div>
-      <div
-        class="l2 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l3 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l4 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l5 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l6 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l7 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
+
+      <!-- <div class="l1 line" :style="setStyle"></div>
+      <div class="l2 line" :style="setStyle"></div>
+      <div class="l3 line" :style="setStyle"></div>
+      <div class="l4 line" :style="setStyle"></div>
+      <div class="l5 line" :style="setStyle"></div>
+      <div class="l6 line" :style="setStyle"></div>
+      <div class="l7 line" :style="setStyle"></div> -->
     </div>
     <div class="seven digital" v-if="number === 7">
       <div
-        class="l1 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
+        class="line"
+        :class="'l' + (index + 1)"
+        :style="setStyle"
+        v-for="index in 7"
+        :key="index"
       ></div>
-      <div
-        class="l2 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l3 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l4 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l5 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l6 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l7 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
+
+      <!-- <div class="l1 line" :style="setStyle"></div>
+      <div class="l2 line" :style="setStyle"></div>
+      <div class="l3 line" :style="setStyle"></div>
+      <div class="l4 line" :style="setStyle"></div>
+      <div class="l5 line" :style="setStyle"></div>
+      <div class="l6 line" :style="setStyle"></div>
+      <div class="l7 line" :style="setStyle"></div> -->
     </div>
     <div class="eight digital" v-if="number === 8">
       <div
-        class="l1 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
+        class="line"
+        :class="'l' + (index + 1)"
+        :style="setStyle"
+        v-for="index in 7"
+        :key="index"
       ></div>
-      <div
-        class="l2 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l3 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l4 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l5 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l6 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l7 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
+
+      <!-- <div class="l1 line" :style="setStyle"></div>
+      <div class="l2 line" :style="setStyle"></div>
+      <div class="l3 line" :style="setStyle"></div>
+      <div class="l4 line" :style="setStyle"></div>
+      <div class="l5 line" :style="setStyle"></div>
+      <div class="l6 line" :style="setStyle"></div>
+      <div class="l7 line" :style="setStyle"></div> -->
     </div>
     <div class="nine digital" v-if="number === 9">
       <div
-        class="l1 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
+        class="line"
+        :class="'l' + (index + 1)"
+        :style="setStyle"
+        v-for="index in 7"
+        :key="index"
       ></div>
-      <div
-        class="l2 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l3 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l4 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l5 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l6 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
-      <div
-        class="l7 line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
+
+      <!-- <div class="l1 line" :style="setStyle"></div>
+      <div class="l2 line" :style="setStyle"></div>
+      <div class="l3 line" :style="setStyle"></div>
+      <div class="l4 line" :style="setStyle"></div>
+      <div class="l5 line" :style="setStyle"></div>
+      <div class="l6 line" :style="setStyle"></div>
+      <div class="l7 line" :style="setStyle"></div> -->
     </div>
     <div class="colons digital" v-if="number === 'colons'">
-      <div
-        class="colon line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
+      <div class="colon line" :style="setStyle"></div>
     </div>
     <div class="kilos digital" v-if="number === 'kilos'">
-      <div
-        class="kilo"
-        :style="{
-          color:
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : '',
-          'font-size': '50px'
-        }"
-      >
+      <div class="kilo" :style="setKilosStyle">
         ,
       </div>
     </div>
     <div class="dots digital" v-if="number === 'dots'">
-      <div
-        class="dot line"
-        :style="{
-          'background-color':
-            config.number && config.number.color ? config.number.color : '',
-          'border-color':
-            config.number && config.number.color ? config.number.color : ''
-        }"
-      ></div>
+      <div class="dot line" :style="setStyle"></div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  data () {
+  data() {
     return {
+      arr:[1,2,3,4,5,6,7],
       finalNumber: 0,
       domList: [
         {
-          type: 'number',
+          type: "number",
           out: {
-            class: 'one',
-            in: [
-              'l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7'
-            ]
-          }
+            class: "one",
+            in: ["l1", "l2", "l3", "l4", "l5", "l6", "l7"],
+          },
         },
         {
-          type: 'symbol',
+          type: "symbol",
           out: {
-            class: 'one',
-            in: [
-              'l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7'
-            ]
-          }
-        }
-      ]
-
-    }
+            class: "one",
+            in: ["l1", "l2", "l3", "l4", "l5", "l6", "l7"],
+          },
+        },
+      ],
+    };
+  },
+  computed: {
+    setKilosStyle() {
+      return {
+        color: this.config?.number?.color || "",
+        "border-color": this?.config?.number?.color || "",
+        "font-size": "50px",
+      };
+    },
+    setStyle() {
+      return {
+        "background-color": this.config?.number?.color || "",
+        "border-color": this.config?.number?.color || "",
+      };
+    },
   },
   methods: {
-    getFinalNumber (num) {
-      let timer = setTimeout(() => {
-
-      }, 500)
-    }
+    getFinalNumber(num) {
+      let timer = setTimeout(() => {}, 500);
+    },
   },
   props: {
     number: {
-      type: [ Number, String ],
-      default: 1
+      type: [Number, String],
+      default: 1,
     },
     config: {
       type: Object,
-      default: () => { }
+      default: () => {},
     },
   },
-  watch: {
-
-  },
-}
+  watch: {},
+};
 </script>
 
 <style lang="scss" scoped>

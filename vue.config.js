@@ -27,7 +27,7 @@ module.exports = {
   //   : '/',
 
   // build 输出文件目录
-   outputDir: "./build/bx-chart",
+   outputDir: "./build/chart",
   // outputDir: "../../bxdev/MS/opt_front/build/bx-chart",
   // 主目录
   publicPath: '/chart/',
